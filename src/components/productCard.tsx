@@ -1,9 +1,14 @@
 import { Button, Card, Image, Text } from "@chakra-ui/react";
 import { Link } from "react-router-dom";
 import { useColorMode } from "./ui/color-mode";
-
-export default function ProductCard() {
+import type { IProduct } from "@/interfaces";
+interface IProps{
+  product:IProduct
+}
+const apiUrl = import.meta.env.VITE_API_URL;
+export default function ProductCard({product}:IProps) {
   const { colorMode } = useColorMode();
+  const {title,description,price,thumbnail} = product
   return (
     <Card.Root
       overflow="hidden"
@@ -12,8 +17,8 @@ export default function ProductCard() {
       pt={"24px"}
     >
       <Image
-        src="https://images.unsplash.com/photo-1555041469-a586c61ea9bc?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1770&q=80"
-        alt="Green double couch with wooden legs"
+        src={apiUrl+thumbnail.url}
+        alt={title}
         boxSize={"200px"}
         rounded={"full"}
         mx={"auto"}
@@ -24,16 +29,15 @@ export default function ProductCard() {
           fontSize={"xl"}
           fontWeight={"revert"}
           color={"white"}
+          autoCapitalize="words"
         >
-          Living room Sofa
+         {title}
         </Card.Title>
         <Card.Description fontSize={"sm"} color={"white"}>
-          This sofa is perfect for modern tropical spaces, baroque inspired
-          spaces.This sofa is perfect for modern tropical spaces, baroque
-          inspired spaces.
+          {description}
         </Card.Description>
         <Text fontSize={"3xl"} color={"purple.600"} mt="2">
-          $450
+          ${price}
         </Text>
         <Button
           asChild
