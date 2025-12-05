@@ -4,7 +4,6 @@ import { useColorMode } from "./ui/color-mode";
 
 export default function ProductCard() {
   const { colorMode } = useColorMode();
-  console.log(colorMode);
   return (
     <Card.Root
       overflow="hidden"
