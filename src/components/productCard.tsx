@@ -7,7 +7,6 @@ export default function ProductCard() {
   console.log(colorMode);
   return (
     <Card.Root
-      maxW="sm"
       overflow="hidden"
       border={"1px solid #a8b5c8"}
       bg={"none"}
@@ -21,16 +20,15 @@ export default function ProductCard() {
         mx={"auto"}
         objectFit={"cover"}
       />
-      <Card.Body mt={6} gap={3} textAlign={"center"}>
+      <Card.Body gap={1} textAlign={"center"}>
         <Card.Title
           fontSize={"xl"}
           fontWeight={"revert"}
           color={"white"}
-          mb={2}
         >
           Living room Sofa
         </Card.Title>
-        <Card.Description fontSize={"md"} color={"white"}>
+        <Card.Description fontSize={"sm"} color={"white"}>
           This sofa is perfect for modern tropical spaces, baroque inspired
           spaces.This sofa is perfect for modern tropical spaces, baroque
           inspired spaces.
@@ -53,7 +51,7 @@ export default function ProductCard() {
             color: colorMode === "light" ? "white" : "#9f7aea",
             border: "transparent",
           }}
-          mt={6}
+          mt={2}
         >
           <Link  to={"/products/1"}>View Details</Link>
         </Button>
