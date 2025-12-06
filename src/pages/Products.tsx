@@ -1,7 +1,7 @@
 import { Grid } from "@chakra-ui/react";
 import ProductCard from "../components/ui/productCard";
 import useProducts from "@/hooks/useProducts";
-import ProductSkeleton from "@/components/ui/productCardSkelton";
+import ProductSkeleton from "@/components/ui/productCardSkeleton";
 
 export default function Products() {
   const { data, error, isLoading } = useProducts();
