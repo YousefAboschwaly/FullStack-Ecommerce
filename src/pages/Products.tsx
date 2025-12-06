@@ -1,10 +1,17 @@
 import { Grid } from "@chakra-ui/react";
 import ProductCard from "../components/ui/productCard";
 import useProducts from "@/hooks/useProducts";
+import ProductSkeleton from "@/components/ui/productCardSkelton";
 
 export default function Products() {
   const { data, error, isLoading } = useProducts();
-  if (isLoading) return <div>Loading...</div>;
+  if (isLoading) return <Grid
+      m={30}
+      templateColumns={"repeat(auto-fill , minmax(300px,1fr))"}
+      gap={6}
+    >
+      {Array.from({length:12},(_,i)=><ProductSkeleton key={i}/>)}
+    </Grid>
   if (error) return <div>Error loading products</div>;
 
   return (
