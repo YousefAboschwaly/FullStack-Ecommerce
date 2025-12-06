@@ -1,14 +1,14 @@
 import { Button, Card, Image, Text } from "@chakra-ui/react";
 import { Link } from "react-router-dom";
-import { useColorMode } from "./ui/color-mode";
+import { useColorMode } from "./color-mode";
 import type { IProduct } from "@/interfaces";
-interface IProps{
-  product:IProduct
+interface IProps {
+  product: IProduct;
 }
 const apiUrl = import.meta.env.VITE_API_URL;
-export default function ProductCard({product}:IProps) {
+export default function ProductCard({ product }: IProps) {
   const { colorMode } = useColorMode();
-  const {title,description,price,thumbnail} = product
+  const { title, description, price, thumbnail } = product;
   return (
     <Card.Root
       overflow="hidden"
@@ -17,7 +17,9 @@ export default function ProductCard({product}:IProps) {
       pt={"24px"}
     >
       <Image
-        src={apiUrl+thumbnail.url}
+        src={`${apiUrl}${thumbnail.url.startsWith("/") ? "" : "/"}${
+          thumbnail.url
+        }`}
         alt={title}
         boxSize={"200px"}
         rounded={"full"}
@@ -25,13 +27,8 @@ export default function ProductCard({product}:IProps) {
         objectFit={"cover"}
       />
       <Card.Body gap={1} textAlign={"center"}>
-        <Card.Title
-          fontSize={"xl"}
-          fontWeight={"revert"}
-          color={"white"}
-          autoCapitalize="words"
-        >
-         {title}
+        <Card.Title fontSize={"xl"} fontWeight={"revert"} color={"white"}>
+          {title}
         </Card.Title>
         <Card.Description fontSize={"sm"} color={"white"}>
           {description}
@@ -56,7 +53,7 @@ export default function ProductCard({product}:IProps) {
           }}
           mt={2}
         >
-          <Link  to={"/products/1"}>View Details</Link>
+          <Link to={"/products/1"}>View Details</Link>
         </Button>
       </Card.Body>
     </Card.Root>

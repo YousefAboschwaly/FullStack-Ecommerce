@@ -1,5 +1,5 @@
 import { Grid } from "@chakra-ui/react";
-import ProductCard from "./../components/productCard";
+import ProductCard from "../components/ui/productCard";
 import useProducts from "@/hooks/useProducts";
 
 export default function Products() {
