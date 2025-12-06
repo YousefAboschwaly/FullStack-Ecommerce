@@ -5,7 +5,7 @@ import type { IProduct } from "@/interfaces";
 interface IProps {
   product: IProduct;
 }
-const apiUrl = import.meta.env.VITE_API_URL;
+const apiUrl = import.meta.env.VITE_API_URL || "";
 export default function ProductCard({ product }: IProps) {
   const { colorMode } = useColorMode();
   const { title, description, price, thumbnail } = product;
@@ -27,10 +27,18 @@ export default function ProductCard({ product }: IProps) {
         objectFit={"cover"}
       />
       <Card.Body gap={1} textAlign={"center"}>
-        <Card.Title fontSize={"xl"} fontWeight={"revert"} color={"white"}>
+        <Card.Title
+          fontSize={"xl"}
+          fontWeight={"revert"}
+          color={colorMode === "light" ? "gray.800" : "white"}
+        >
           {title}
         </Card.Title>
-        <Card.Description fontSize={"sm"} color={"white"}>
+        <Card.Description
+          mt={4}
+          fontSize={"sm"}
+          color={colorMode === "light" ? "gray.600" : "white"}
+        >
           {description}
         </Card.Description>
         <Text fontSize={"3xl"} color={"purple.600"} mt="2">
@@ -53,7 +61,7 @@ export default function ProductCard({ product }: IProps) {
           }}
           mt={2}
         >
-          <Link to={"/products/1"}>View Details</Link>
+          <Link to={`/products/${product.id}`}>View Details</Link>{" "}
         </Button>
       </Card.Body>
     </Card.Root>
