@@ -19,6 +19,7 @@ import {
 import { Heart, Minus, Plus, RotateCcw, Shield, ShoppingCart, Truck } from 'lucide-react';
 import { useState } from 'react';
 import { useParams } from 'react-router-dom';
+import ProductDetailsSkeleton from './productDetailsSkeleton';
 
 
 const baseUrl = import.meta.env.VITE_API_URL || "";
@@ -37,7 +38,7 @@ const ProductDetails = () => {
   const { data, isLoading, error } = useProduct(id??"");
   const [quantity, setQuantity] = useState(1);
   const [isWishlisted, setIsWishlisted] = useState(false);
-  if (isLoading) return <div>Loading...</div>;
+  if (isLoading) return <ProductDetailsSkeleton />;
   if (error || !data) return <div>Error loading product</div>;
   const product: IProduct = data as IProduct;
   console.log(product, id);
@@ -54,8 +55,7 @@ const ProductDetails = () => {
               bg={colors.navy[800]}
               borderRadius="2xl"
               p={8}
-              border="1px"
-              borderColor="yellow.500"
+         
               position="relative"
             >
               <IconButton
