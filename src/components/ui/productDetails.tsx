@@ -29,6 +29,7 @@ import { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import ProductDetailsSkeleton from "./productDetailsSkeleton";
 import { colors } from "@/constants";
+import ErrorHandler from "./ErrorHandler";
 
 const baseUrl = import.meta.env.VITE_API_URL || "";
 
@@ -41,7 +42,7 @@ const ProductDetails = () => {
   const navigate = useNavigate();
 
   if (isLoading) return <ProductDetailsSkeleton />;
-  if (error || !data) return <div>Error loading product</div>;
+  if (error || !data) return <ErrorHandler error={error} />;
   const product: IProduct = data as IProduct;
 
   const imageUrl = `${baseUrl}${product.thumbnail.url}`;
