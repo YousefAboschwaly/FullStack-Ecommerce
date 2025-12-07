@@ -29,19 +29,20 @@ import { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import ProductDetailsSkeleton from "./productDetailsSkeleton";
 import { colors } from "@/constants";
+import ErrorHandler from "./ErrorHandler";
 
 const baseUrl = import.meta.env.VITE_API_URL || "";
 
 
 const ProductDetails = () => {
   const { id } = useParams<{ id: string }>();
-  const { data, isLoading } = useProduct(id ?? "");
+  const { data, isLoading, error } = useProduct(id ?? "");
   const [quantity, setQuantity] = useState(1);
   const [isWishlisted, setIsWishlisted] = useState(false);
   const navigate = useNavigate();
-
+console.log(error)
   if (isLoading) return <ProductDetailsSkeleton />;
-  
+  if (error || !data) return <ErrorHandler error={"Failed to Fetch Product of this Id "} />;
   const product: IProduct = data as IProduct;
 
   const imageUrl = `${baseUrl}${product.thumbnail.url}`;
