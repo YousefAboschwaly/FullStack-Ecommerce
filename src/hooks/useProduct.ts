@@ -9,6 +9,7 @@ export default function useProduct(id: string) {
   const { data, isLoading, error } = useQuery<ProductsResponse>({
     queryKey: ["product", id],
     queryFn: () => getProduct(id),
+    throwOnError: true
   });
 
   return { data: data?.data ?? {}, isLoading, error };

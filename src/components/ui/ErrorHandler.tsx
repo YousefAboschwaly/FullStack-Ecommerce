@@ -8,6 +8,7 @@ import {
   Text,
   VStack,
 } from '@chakra-ui/react';
+import { AxiosError } from 'axios';
 import { AlertTriangle, ArrowLeft, RefreshCw } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
@@ -26,10 +27,10 @@ const ErrorHandler = ({
 }: ErrorHandlerProps) => {
   const navigate = useNavigate();
 
-  const errorMessage = error instanceof Error ? error.message : error;
+  const errorMessage = error instanceof AxiosError ? error.response?.data.error.message : error;
 
   return (
-    <Box bg={colors.navy[900]} display="flex" alignItems="center">
+    <Box bg={colors.navy[900]}  pt={"6rem"} display="flex" alignItems="center">
       <Container maxW="container.md" >
         <VStack gap={8} textAlign="center">
           {/* Error Icon */}

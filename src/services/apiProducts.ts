@@ -1,7 +1,7 @@
 import axiosInstance from "@/config/axios.config";
 
 export async function getProducts(){
-  const {data} = await axiosInstance.get('/products?populate=*')
+  const {data} = await axiosInstance.get('/productsmmm?populate=*')
 
   if(!data){
     throw new Error('Failed to fetch products')
@@ -12,7 +12,7 @@ export async function getProduct(id:string){
   const {data} = await axiosInstance.get(`/products/${id}?populate=*`)
 
   if(!data){
-    throw new Error('Failed to fetch products')
+    throw new Error('Failed to fetch product')
   }
   return data;
 }

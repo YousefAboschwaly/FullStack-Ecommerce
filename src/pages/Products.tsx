@@ -4,7 +4,7 @@ import useProducts from "@/hooks/useProducts";
 import ProductSkeleton from "@/components/ui/productCardSkeleton";
 
 export default function Products() {
-  const { data, error, isLoading } = useProducts();
+  const { data,isLoading } = useProducts();
   if (isLoading) return <Grid
       m={30}
       templateColumns={"repeat(auto-fill , minmax(300px,1fr))"}
@@ -12,7 +12,6 @@ export default function Products() {
     >
       {Array.from({length:12},(_,i)=><ProductSkeleton key={i}/>)}
     </Grid>
-  if (error) return <div>Error loading products</div>;
 
   return (
     <Grid
