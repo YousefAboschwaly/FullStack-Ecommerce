@@ -1,6 +1,16 @@
 // ProductCard.tsx
 import type { IProduct } from "@/interfaces";
-import { Badge, Box, Button, Card, Flex, Icon, IconButton, Image, Text } from "@chakra-ui/react";
+import {
+  Badge,
+  Box,
+  Button,
+  Card,
+  Flex,
+  Icon,
+  IconButton,
+  Image,
+  Text,
+} from "@chakra-ui/react";
 import { Eye, Heart, ShoppingCart } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useColorMode } from "./color-mode";
@@ -99,13 +109,16 @@ export default function ProductCard({ product }: IProps) {
         pt={8}
         pb={4}
         px={6}
-        bg={isDark 
-          ? "linear-gradient(180deg, rgba(212, 175, 55, 0.05) 0%, transparent 100%)"
-          : "linear-gradient(180deg, rgba(128, 90, 213, 0.05) 0%, transparent 100%)"
+        bg={
+          isDark
+            ? "linear-gradient(180deg, rgba(212, 175, 55, 0.05) 0%, transparent 100%)"
+            : "linear-gradient(180deg, rgba(128, 90, 213, 0.05) 0%, transparent 100%)"
         }
       >
         <Image
-          src={`${apiUrl}${thumbnail.url.startsWith("/") ? "" : "/"}${thumbnail.url}`}
+          src={`${apiUrl}${thumbnail.url.startsWith("/") ? "" : "/"}${
+            thumbnail.url
+          }`}
           alt={title}
           boxSize="180px"
           mx="auto"
@@ -116,8 +129,6 @@ export default function ProductCard({ product }: IProps) {
       </Box>
 
       <Card.Body px={5} pb={5} pt={3}>
-  
-
         {/* Title */}
         <Text
           fontSize="lg"
@@ -145,12 +156,15 @@ export default function ProductCard({ product }: IProps) {
           <Text
             fontSize="2xl"
             fontWeight="bold"
-            bgGradient={isDark 
-              ? "linear(to-r, #D4AF37, #F4E4A6)"
-              : "linear(to-r, purple.500, purple.700)"
-            }
-            bgClip="text"
-            color={"white"}
+            css={{
+              background: isDark
+                ? "linear-gradient(to right, #D4AF37, #F4E4A6)"
+                : "linear-gradient(to right, var(--chakra-colors-purple-500), var(--chakra-colors-purple-700))",
+              WebkitBackgroundClip: "text",
+              WebkitTextFillColor: "transparent",
+              backgroundClip: "text",
+              color: "transparent",
+            }}
           >
             ${price}
           </Text>
@@ -170,22 +184,22 @@ export default function ProductCard({ product }: IProps) {
         <Flex gap={2}>
           <Button
             flex={1}
-            bg={isDark 
-              ? "linear-gradient(135deg, #D4AF37 0%, #B8962E 100%)"
-              : "linear-gradient(135deg, #805AD5 0%, #6B46C1 100%)"
+            bg={
+              isDark
+                ? "linear-gradient(135deg, #D4AF37 0%, #B8962E 100%)"
+                : "linear-gradient(135deg, #805AD5 0%, #6B46C1 100%)"
             }
             color={isDark ? "#0F1419" : "white"}
             fontWeight="semibold"
             _hover={{
               transform: "translateY(-2px)",
-              boxShadow: isDark 
+              boxShadow: isDark
                 ? "0 4px 20px rgba(212, 175, 55, 0.4)"
                 : "0 4px 20px rgba(128, 90, 213, 0.4)",
             }}
             transition="all 0.2s ease"
-                      >
-              <Icon as={ShoppingCart} boxSize={4} />
-
+          >
+            <Icon as={ShoppingCart} boxSize={4} />
             Add to Cart
           </Button>
           <Button
