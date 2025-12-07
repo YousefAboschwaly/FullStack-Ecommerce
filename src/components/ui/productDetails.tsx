@@ -1,11 +1,10 @@
 // ProductDetails.tsx - Chakra UI 3.x version
-import useProduct from '@/hooks/useProduct';
-import type { IProduct } from '@/interfaces';
+import useProduct from "@/hooks/useProduct";
+import type { IProduct } from "@/interfaces";
 import {
   Badge,
   Box,
   Button,
-  Container,
   Grid,
   GridItem,
   Heading,
@@ -15,47 +14,59 @@ import {
   Image,
   Text,
   VStack
-} from '@chakra-ui/react';
-import { Heart, Minus, Plus, RotateCcw, Shield, ShoppingCart, Truck } from 'lucide-react';
-import { useState } from 'react';
-import { useParams } from 'react-router-dom';
-import ProductDetailsSkeleton from './productDetailsSkeleton';
-
+} from "@chakra-ui/react";
+import {
+  ArrowLeft,
+  Heart,
+  Minus,
+  Plus,
+  RotateCcw,
+  Shield,
+  ShoppingCart,
+  Truck,
+} from "lucide-react";
+import { useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import ProductDetailsSkeleton from "./productDetailsSkeleton";
+import { colors } from "@/constants";
 
 const baseUrl = import.meta.env.VITE_API_URL || "";
-// Navy color palette
-const colors = {
-  navy: {
-    900: '#0f172a', // Main background
-    800: '#1e293b', // Card backgrounds
-    700: '#334155', // Borders/muted elements
-    600: '#475569', // Muted text
-  }
-};
+
 
 const ProductDetails = () => {
-  const {id} = useParams<{id:string}>()
-  const { data, isLoading, error } = useProduct(id??"");
+  const { id } = useParams<{ id: string }>();
+  const { data, isLoading, error } = useProduct(id ?? "");
   const [quantity, setQuantity] = useState(1);
   const [isWishlisted, setIsWishlisted] = useState(false);
+  const navigate = useNavigate();
+
   if (isLoading) return <ProductDetailsSkeleton />;
   if (error || !data) return <div>Error loading product</div>;
   const product: IProduct = data as IProduct;
-  console.log(product, id);
 
   const imageUrl = `${baseUrl}${product.thumbnail.url}`;
 
   return (
-    <Box bg={colors.navy[900]}  >
-      <Container px={-8} >
-        <Grid templateColumns={{ base: '1fr', lg: 'repeat(2, 1fr)' }} gap={12}>
+    <Box bg={colors.navy[900]}>
+      <Box>
+        <Box mb={6}>
+          <Button
+            variant="ghost"
+            color="white"
+            _hover={{ bg: colors.navy[800], color: "yellow.400" }}
+            onClick={() => navigate(-1)}
+          >
+            <ArrowLeft size={20} />
+            Back
+          </Button>
+        </Box>
+        <Grid templateColumns={{ base: "1fr", lg: "repeat(2, 1fr)" }} gap={12}>
           {/* Image Section */}
           <GridItem>
             <Box
               bg={colors.navy[800]}
               borderRadius="2xl"
               p={8}
-         
               position="relative"
             >
               <IconButton
@@ -64,11 +75,11 @@ const ProductDetails = () => {
                 top={4}
                 right={4}
                 variant="ghost"
-                color={isWishlisted ? 'red.500' : colors.navy[600]}
-                _hover={{ color: isWishlisted ? 'red.400' : 'yellow.400' }}
+                color={isWishlisted ? "red.500" : colors.navy[600]}
+                _hover={{ color: isWishlisted ? "red.400" : "yellow.400" }}
                 onClick={() => setIsWishlisted(!isWishlisted)}
               >
-                <Heart fill={isWishlisted ? 'currentColor' : 'none'} />
+                <Heart fill={isWishlisted ? "currentColor" : "none"} />
               </IconButton>
               <Image
                 src={imageUrl}
@@ -95,8 +106,10 @@ const ProductDetails = () => {
                 <Text fontSize="4xl" fontWeight="bold" color="yellow.400">
                   ${product.price}
                 </Text>
-                <Badge colorScheme={product.stock > 0 ? 'green' : 'red'}>
-                  {product.stock > 0 ? `${product.stock} in stock` : 'Out of stock'}
+                <Badge colorScheme={product.stock > 0 ? "green" : "red"}>
+                  {product.stock > 0
+                    ? `${product.stock} in stock`
+                    : "Out of stock"}
                 </Badge>
               </HStack>
 
@@ -130,7 +143,9 @@ const ProductDetails = () => {
                     variant="ghost"
                     color="white"
                     _hover={{ bg: colors.navy[700] }}
-                    onClick={() => setQuantity(Math.min(product.stock, quantity + 1))}
+                    onClick={() =>
+                      setQuantity(Math.min(product.stock, quantity + 1))
+                    }
                   >
                     <Plus size={16} />
                   </IconButton>
@@ -144,7 +159,7 @@ const ProductDetails = () => {
                   size="lg"
                   bg="yellow.500"
                   color={colors.navy[900]}
-                  _hover={{ bg: 'yellow.400' }}
+                  _hover={{ bg: "yellow.400" }}
                 >
                   <>
                     <ShoppingCart size={20} />
@@ -157,7 +172,7 @@ const ProductDetails = () => {
                   variant="outline"
                   borderColor="yellow.500"
                   color="yellow.500"
-                  _hover={{ bg: 'yellow.500', color: colors.navy[900] }}
+                  _hover={{ bg: "yellow.500", color: colors.navy[900] }}
                 >
                   Buy Now
                 </Button>
@@ -165,13 +180,13 @@ const ProductDetails = () => {
 
               {/* Features */}
               <Grid templateColumns="repeat(3, 1fr)" gap={4} w="full" pt={6}>
-                <VStack 
-                  bg={colors.navy[800]} 
-                  p={4} 
+                <VStack
+                  bg={colors.navy[800]}
+                  p={4}
                   borderRadius="lg"
                   border="1px"
                   borderColor={colors.navy[700]}
-                  _hover={{ borderColor: 'yellow.500' }}
+                  _hover={{ borderColor: "yellow.500" }}
                   transition="all 0.2s"
                 >
                   <Icon as={Truck} color="yellow.400" boxSize={6} />
@@ -179,13 +194,13 @@ const ProductDetails = () => {
                     Free Shipping
                   </Text>
                 </VStack>
-                <VStack 
-                  bg={colors.navy[800]} 
-                  p={4} 
+                <VStack
+                  bg={colors.navy[800]}
+                  p={4}
                   borderRadius="lg"
                   border="1px"
                   borderColor={colors.navy[700]}
-                  _hover={{ borderColor: 'yellow.500' }}
+                  _hover={{ borderColor: "yellow.500" }}
                   transition="all 0.2s"
                 >
                   <Icon as={Shield} color="yellow.400" boxSize={6} />
@@ -193,13 +208,13 @@ const ProductDetails = () => {
                     2 Year Warranty
                   </Text>
                 </VStack>
-                <VStack 
-                  bg={colors.navy[800]} 
-                  p={4} 
+                <VStack
+                  bg={colors.navy[800]}
+                  p={4}
                   borderRadius="lg"
                   border="1px"
                   borderColor={colors.navy[700]}
-                  _hover={{ borderColor: 'yellow.500' }}
+                  _hover={{ borderColor: "yellow.500" }}
                   transition="all 0.2s"
                 >
                   <Icon as={RotateCcw} color="yellow.400" boxSize={6} />
@@ -211,7 +226,7 @@ const ProductDetails = () => {
             </VStack>
           </GridItem>
         </Grid>
-      </Container>
+      </Box>
     </Box>
   );
 };

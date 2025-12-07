@@ -1,25 +1,19 @@
+import { colors } from "@/constants";
 import {
   Box,
-  Container,
   Grid,
   GridItem,
   HStack,
   Skeleton,
-  VStack,
+  VStack
 } from "@chakra-ui/react";
 
-const colors = {
-  navy: {
-    900: "#0f172a",
-    800: "#1e293b",
-    700: "#334155",
-  },
-};
+
 
 const ProductDetailsSkeleton = () => {
   return (
     <Box bg={colors.navy[900]} minH="100vh" py={8}>
-      <Container maxW="container.xl" px={4}>
+      <Box>
         <Grid templateColumns={{ base: "1fr", lg: "repeat(2, 1fr)" }} gap={12}>
           {/* Image Section Skeleton */}
           <GridItem>
@@ -106,7 +100,7 @@ const ProductDetailsSkeleton = () => {
             </VStack>
           </GridItem>
         </Grid>
-      </Container>
+      </Box>
     </Box>
   );
 };
