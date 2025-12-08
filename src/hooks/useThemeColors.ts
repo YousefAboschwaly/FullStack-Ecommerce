@@ -6,6 +6,7 @@ export const useThemeColors = () => {
   // Background colors
   const bgMain = useColorModeValue(themeColors.bg.main.light, themeColors.bg.main.dark);
   const bgCard = useColorModeValue(themeColors.bg.card.light, themeColors.bg.card.dark);
+  const bgSkeleton = useColorModeValue(themeColors.bg.Skeleton.light, themeColors.bg.Skeleton.dark);
   const bgCardHover = useColorModeValue(themeColors.bg.cardHover.light, themeColors.bg.cardHover.dark);
   const bgOverlay = useColorModeValue(themeColors.bg.overlay.light, themeColors.bg.overlay.dark);
   const bgCardTranslucent = useColorModeValue(themeColors.bg.cardTranslucent.light, themeColors.bg.cardTranslucent.dark);
@@ -54,6 +55,7 @@ export const useThemeColors = () => {
     // Backgrounds
     bgMain,
     bgCard,
+    bgSkeleton,
     bgCardHover,
     bgOverlay,
     bgCardTranslucent,

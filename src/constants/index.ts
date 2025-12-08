@@ -31,6 +31,7 @@ export const themeColors = {
   bg: {
     main: { light: 'hsl(210, 40%, 98%)', dark: 'hsl(222, 47%, 11%)' },
     card: { light: 'hsl(0, 0%, 100%)', dark: 'hsl(217, 33%, 17%)' },
+    Skeleton: { light: 'hsl(0, 0%, 100%)', dark: '#52525b' },
     cardHover: { light: 'hsl(215, 20%, 95%)', dark: 'hsl(217, 33%, 20%)' },
     overlay: { light: 'rgba(255, 255, 255, 0.9)', dark: 'rgba(26, 32, 44, 0.9)' },
     cardTranslucent: { light: 'rgba(255, 255, 255, 0.8)', dark: 'rgba(26, 32, 44, 0.8)' },
