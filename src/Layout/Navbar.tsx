@@ -1,5 +1,6 @@
-import { useColorMode, useColorModeValue } from '@/components/ui/color-mode';
+import { useColorMode } from '@/components/ui/color-mode';
 import { navLinks, profileMenuItems } from '@/constants';
+import { useThemeColors } from '@/hooks/useThemeColors';
 import {
   Box,
   Button,
@@ -20,15 +21,19 @@ const Navbar = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { colorMode, toggleColorMode } = useColorMode();
-const navBg = useColorModeValue('hsl(0, 0%, 100%)', 'hsl(222, 47%, 11%)');
-const navBorderColor = useColorModeValue('hsl(215, 25%, 85%)', 'hsl(215, 25%, 27%)');
-const textColor = useColorModeValue('hsl(222, 47%, 11%)', 'hsl(210, 40%, 98%)');
-const mutedTextColor = useColorModeValue('hsl(215, 19%, 45%)', 'hsl(215, 19%, 65%)');
-const accentColor = 'hsl(48, 96%, 53%)';
-const hoverBg = useColorModeValue('hsl(215, 20%, 95%)', 'hsl(217, 33%, 17%)');
-
-const menuBg = useColorModeValue('hsl(0, 0%, 100%)', 'hsl(217, 33%, 17%)');
-
+  
+  // Use centralized theme colors
+  const {
+    bgCard,
+    bgCardHover,
+    textPrimary,
+    textMuted,
+    borderDefault,
+    accentPrimary,
+    gradientLogo,
+    statusError,
+    statusErrorBg,
+  } = useThemeColors();
 
   const isActiveLink = (path: string) => {
     if (path === '/') {
@@ -43,9 +48,9 @@ const menuBg = useColorModeValue('hsl(0, 0%, 100%)', 'hsl(217, 33%, 17%)');
       position="sticky"
       top={0}
       zIndex={50}
-      bg={navBg}
+      bg={bgCard}
       borderBottom="1px solid"
-      borderColor={navBorderColor}
+      borderColor={borderDefault}
       shadow="lg"
     >
       <Flex
@@ -62,13 +67,13 @@ const menuBg = useColorModeValue('hsl(0, 0%, 100%)', 'hsl(217, 33%, 17%)');
             <Box
               w="40px"
               h="40px"
-              bg={`linear-gradient(135deg, ${accentColor}, hsl(48, 96%, 60%))`}
+              bg={gradientLogo}
               borderRadius="lg"
               display="flex"
               alignItems="center"
               justifyContent="center"
               fontWeight="bold"
-              color={navBg}
+              color={bgCard}
               fontSize="xl"
             >
               S
@@ -76,7 +81,7 @@ const menuBg = useColorModeValue('hsl(0, 0%, 100%)', 'hsl(217, 33%, 17%)');
             <Text
               fontSize="xl"
               fontWeight="bold"
-              color={textColor}
+              color={textPrimary}
               display={{ base: 'none', sm: 'block' }}
             >
               Store
@@ -97,12 +102,12 @@ const menuBg = useColorModeValue('hsl(0, 0%, 100%)', 'hsl(217, 33%, 17%)');
                   variant="ghost"
                   fontSize="sm"
                   fontWeight="500"
-                  color={isActive ? accentColor : mutedTextColor}
+                  color={isActive ? accentPrimary : textMuted}
                   position="relative"
                   px={4}
                   _hover={{
-                    color: accentColor,
-                    bg: hoverBg,
+                    color: accentPrimary,
+                    bg: bgCardHover,
                   }}
                   _after={isActive ? {
                     content: '""',
@@ -112,7 +117,7 @@ const menuBg = useColorModeValue('hsl(0, 0%, 100%)', 'hsl(217, 33%, 17%)');
                     transform: 'translateX(-50%)',
                     width: '60%',
                     height: '2px',
-                    bg: accentColor,
+                    bg: accentPrimary,
                     borderRadius: 'full',
                   } : undefined}
                 >
@@ -129,8 +134,8 @@ const menuBg = useColorModeValue('hsl(0, 0%, 100%)', 'hsl(217, 33%, 17%)');
           <IconButton
             aria-label="Wishlist"
             variant="ghost"
-            color={mutedTextColor}
-            _hover={{ color: accentColor, bg: hoverBg }}
+            color={textMuted}
+            _hover={{ color: accentPrimary, bg: bgCardHover }}
             display={{ base: 'none', md: 'flex' }}
           >
             <Heart size={20} />
@@ -140,8 +145,8 @@ const menuBg = useColorModeValue('hsl(0, 0%, 100%)', 'hsl(217, 33%, 17%)');
           <IconButton
             aria-label="Shopping Cart"
             variant="ghost"
-            color={mutedTextColor}
-            _hover={{ color: accentColor, bg: hoverBg }}
+            color={textMuted}
+            _hover={{ color: accentPrimary, bg: bgCardHover }}
           >
             <ShoppingCart size={20} />
           </IconButton>
@@ -150,8 +155,8 @@ const menuBg = useColorModeValue('hsl(0, 0%, 100%)', 'hsl(217, 33%, 17%)');
           <IconButton
             aria-label={`Switch to ${colorMode === 'light' ? 'dark' : 'light'} mode`}
             variant="ghost"
-            color={mutedTextColor}
-            _hover={{ color: accentColor, bg: hoverBg }}
+            color={textMuted}
+            _hover={{ color: accentPrimary, bg: bgCardHover }}
             onClick={toggleColorMode}
           >
             {colorMode === 'light' ? <Moon size={20} /> : <Sun size={20} />}
@@ -168,7 +173,7 @@ const menuBg = useColorModeValue('hsl(0, 0%, 100%)', 'hsl(217, 33%, 17%)');
               cursor="pointer"
               p={2}
               borderRadius="lg"
-              _hover={{ bg: hoverBg }}
+              _hover={{ bg: bgCardHover }}
             >
               <Image
                 src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=40&h=40&fit=crop&crop=face"
@@ -177,11 +182,11 @@ const menuBg = useColorModeValue('hsl(0, 0%, 100%)', 'hsl(217, 33%, 17%)');
                 h="36px"
                 borderRadius="full"
                 border="2px solid"
-                borderColor={accentColor}
+                borderColor={accentPrimary}
               />
               <ChevronDown
                 size={16}
-                color={mutedTextColor}
+                color={textMuted}
                 style={{
                   transform: isProfileMenuOpen ? 'rotate(180deg)' : 'rotate(0deg)',
                   transition: 'transform 0.2s ease',
@@ -197,16 +202,16 @@ const menuBg = useColorModeValue('hsl(0, 0%, 100%)', 'hsl(217, 33%, 17%)');
                 right={0}
                 mt={2}
                 w="220px"
-                bg={menuBg}
+                bg={bgCard}
                 borderRadius="xl"
                 border="1px solid"
-                borderColor={navBorderColor}
+                borderColor={borderDefault}
                 shadow="xl"
                 overflow="hidden"
                 zIndex={100}
               >
                 {/* User Info */}
-                <Box p={4} borderBottom="1px solid" borderColor={navBorderColor}>
+                <Box p={4} borderBottom="1px solid" borderColor={borderDefault}>
                   <HStack gap={3}>
                     <Image
                       src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=40&h=40&fit=crop&crop=face"
@@ -216,10 +221,10 @@ const menuBg = useColorModeValue('hsl(0, 0%, 100%)', 'hsl(217, 33%, 17%)');
                       borderRadius="full"
                     />
                     <Box>
-                      <Text fontWeight="600" fontSize="sm" color={textColor}>
+                      <Text fontWeight="600" fontSize="sm" color={textPrimary}>
                         John Doe
                       </Text>
-                      <Text fontSize="xs" color={mutedTextColor}>
+                      <Text fontSize="xs" color={textMuted}>
                         john@example.com
                       </Text>
                     </Box>
@@ -237,8 +242,8 @@ const menuBg = useColorModeValue('hsl(0, 0%, 100%)', 'hsl(217, 33%, 17%)');
                       py={3}
                       px={4}
                       borderRadius={0}
-                      color={mutedTextColor}
-                      _hover={{ bg: hoverBg, color: accentColor }}
+                      color={textMuted}
+                      _hover={{ bg: bgCardHover, color: accentPrimary }}
                       onClick={() => navigate(item.path)}
                     >
                       <item.icon size={18} />
@@ -246,7 +251,7 @@ const menuBg = useColorModeValue('hsl(0, 0%, 100%)', 'hsl(217, 33%, 17%)');
                     </Button>
                   ))}
 
-                  <Box borderTop="1px solid" borderColor={navBorderColor}>
+                  <Box borderTop="1px solid" borderColor={borderDefault}>
                     <Button
                       variant="ghost"
                       justifyContent="flex-start"
@@ -254,8 +259,8 @@ const menuBg = useColorModeValue('hsl(0, 0%, 100%)', 'hsl(217, 33%, 17%)');
                       py={3}
                       px={4}
                       borderRadius={0}
-                      color="hsl(0, 84%, 60%)"
-                      _hover={{ bg: 'hsl(0, 84%, 60%, 0.1)', color: 'hsl(0, 84%, 60%)' }}
+                      color={statusError}
+                      _hover={{ bg: statusErrorBg, color: statusError }}
                       w="full"
                     >
                       <LogOut size={18} />
@@ -271,8 +276,8 @@ const menuBg = useColorModeValue('hsl(0, 0%, 100%)', 'hsl(217, 33%, 17%)');
           <IconButton
             aria-label="Toggle Menu"
             variant="ghost"
-            color={mutedTextColor}
-            _hover={{ color: accentColor, bg: hoverBg }}
+            color={textMuted}
+            _hover={{ color: accentPrimary, bg: bgCardHover }}
             display={{ base: 'flex', md: 'none' }}
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
           >
@@ -285,9 +290,9 @@ const menuBg = useColorModeValue('hsl(0, 0%, 100%)', 'hsl(217, 33%, 17%)');
       {isMobileMenuOpen && (
         <Box
           display={{ base: 'block', md: 'none' }}
-          bg={menuBg}
+          bg={bgCard}
           borderTop="1px solid"
-          borderColor={navBorderColor}
+          borderColor={borderDefault}
           py={4}
         >
           <VStack gap={1} align="stretch" px={4}>
@@ -299,12 +304,12 @@ const menuBg = useColorModeValue('hsl(0, 0%, 100%)', 'hsl(217, 33%, 17%)');
                     variant="ghost"
                     w="full"
                     justifyContent="flex-start"
-                    color={isActive ? accentColor : mutedTextColor}
-                    bg={isActive ? hoverBg : 'transparent'}
+                    color={isActive ? accentPrimary : textMuted}
+                    bg={isActive ? bgCardHover : 'transparent'}
                     fontWeight={isActive ? '600' : '500'}
-                    _hover={{ color: accentColor, bg: hoverBg }}
+                    _hover={{ color: accentPrimary, bg: bgCardHover }}
                     onClick={() => setIsMobileMenuOpen(false)}
-                    borderLeft={isActive ? `3px solid ${accentColor}` : '3px solid transparent'}
+                    borderLeft={isActive ? `3px solid ${accentPrimary}` : '3px solid transparent'}
                     borderRadius="0"
                     pl={4}
                   >
