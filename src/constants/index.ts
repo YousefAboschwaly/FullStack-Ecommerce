@@ -25,34 +25,96 @@ export  const profileMenuItems = [
   ];
 
   // Centralized color mode values for consistent theming
-export const themeColors = {
-  // Backgrounds
-  bg: {
-    main: { light: "gray.50", dark: "#0f172a" },
-    card: { light: "white", dark: "#1e293b" },
-    hover: { light: "gray.100", dark: "#334155" },
-    input: { light: "white", dark: "#1e293b" },
-  },
-  
-  // Text
-  text: {
-    primary: { light: "gray.800", dark: "white" },
-    secondary: { light: "gray.600", dark: "gray.300" },
-    muted: { light: "gray.500", dark: "#94a3b8" },
-  },
-  
-  // Borders
-  border: {
-    default: { light: "gray.200", dark: "#334155" },
-    hover: { light: "gray.300", dark: "#475569" },
-  },
-  
-  // Shadows
-  shadow: {
-    card: { light: "lg", dark: "dark-lg" },
-  },
-};
 
-// Helper to get color mode value
-export const getColor = (colorObj: { light: string; dark: string }, colorMode: string) => 
-  colorMode === "light" ? colorObj.light : colorObj.dark;
+export const themeColors = {
+  // Background colors
+  bg: {
+    main: { light: 'hsl(210, 40%, 98%)', dark: 'hsl(222, 47%, 11%)' },
+    card: { light: 'hsl(0, 0%, 100%)', dark: 'hsl(217, 33%, 17%)' },
+    cardHover: { light: 'hsl(215, 20%, 95%)', dark: 'hsl(217, 33%, 20%)' },
+    overlay: { light: 'rgba(255, 255, 255, 0.9)', dark: 'rgba(26, 32, 44, 0.9)' },
+    cardTranslucent: { light: 'rgba(255, 255, 255, 0.8)', dark: 'rgba(26, 32, 44, 0.8)' },
+  },
+
+  // Text colors
+  text: {
+    primary: { light: 'hsl(222, 47%, 11%)', dark: 'hsl(210, 40%, 98%)' },
+    secondary: { light: 'hsl(215, 19%, 35%)', dark: 'hsl(215, 19%, 65%)' },
+    muted: { light: 'hsl(215, 19%, 45%)', dark: 'hsl(215, 19%, 65%)' },
+  },
+
+  // Border colors
+  border: {
+    default: { light: 'hsl(215, 25%, 85%)', dark: 'hsl(215, 25%, 27%)' },
+    accent: { light: 'hsl(48, 96%, 53%)', dark: 'hsl(48, 96%, 53%)' },
+    hover: { light: 'hsl(270, 50%, 60%)', dark: 'hsl(48, 96%, 60%)' },
+  },
+
+  // Accent/Brand colors (same for both modes)
+  accent: {
+    primary: 'hsl(48, 96%, 53%)',
+    primaryHover: 'hsl(48, 96%, 60%)',
+    secondary: { light: 'hsl(270, 50%, 60%)', dark: 'hsl(48, 96%, 53%)' },
+  },
+
+  // Button colors
+  button: {
+    primary: { light: 'hsl(270, 50%, 60%)', dark: 'hsl(48, 96%, 53%)' },
+    primaryHover: { light: 'hsl(270, 50%, 50%)', dark: 'hsl(48, 96%, 45%)' },
+    text: { light: 'hsl(0, 0%, 100%)', dark: 'hsl(222, 47%, 11%)' },
+  },
+
+  // Skeleton colors
+  skeleton: {
+    base: { light: 'hsl(215, 20%, 90%)', dark: 'hsl(217, 33%, 20%)' },
+    shine: { light: 'hsl(215, 20%, 95%)', dark: 'hsl(217, 33%, 28%)' },
+  },
+
+  // Shadow colors
+  shadow: {
+    card: { 
+      light: '0 20px 40px rgba(0, 0, 0, 0.1)', 
+      dark: '0 20px 40px rgba(212, 175, 55, 0.15)' 
+    },
+    button: { 
+      light: '0 4px 20px rgba(128, 90, 213, 0.4)', 
+      dark: '0 4px 20px rgba(212, 175, 55, 0.4)' 
+    },
+  },
+
+  // Gradient colors
+  gradient: {
+    cardBg: {
+      light: 'linear-gradient(180deg, rgba(128, 90, 213, 0.05) 0%, transparent 100%)',
+      dark: 'linear-gradient(180deg, rgba(212, 175, 55, 0.05) 0%, transparent 100%)',
+    },
+    button: {
+      light: 'linear-gradient(135deg, #805AD5 0%, #6B46C1 100%)',
+      dark: 'linear-gradient(135deg, #D4AF37 0%, #B8962E 100%)',
+    },
+    price: {
+      light: 'linear-gradient(to right, #805AD5, #6B46C1)',
+      dark: 'linear-gradient(to right, #D4AF37, #F4E4A6)',
+    },
+    logo: {
+      light: 'linear-gradient(135deg, hsl(48, 96%, 53%), hsl(48, 96%, 60%))',
+      dark: 'linear-gradient(135deg, hsl(48, 96%, 53%), hsl(48, 96%, 60%))',
+    },
+  },
+
+  // Status colors
+  status: {
+    error: 'hsl(0, 84%, 60%)',
+    errorBg: 'hsl(0, 84%, 60%, 0.1)',
+    success: 'hsl(142, 76%, 36%)',
+    warning: 'hsl(38, 92%, 50%)',
+  },
+} as const;
+
+// Helper function to get color value
+export const getColor = (
+  colorPath: { light: string; dark: string },
+  mode: 'light' | 'dark'
+): string => {
+  return colorPath[mode];
+};
