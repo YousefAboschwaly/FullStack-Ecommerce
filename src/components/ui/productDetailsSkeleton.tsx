@@ -1,4 +1,5 @@
-import { useColorModeValue } from '@/components/ui/color-mode';
+// ProductDetailsSkeleton.tsx - with centralized theme colors
+import { useThemeColors } from '@/hooks/useThemeColors';
 import {
   Box,
   Button,
@@ -15,25 +16,27 @@ import { useNavigate } from "react-router-dom";
 const ProductDetailsSkeleton = () => {
   const navigate = useNavigate();
 
-  // Color mode values
-  const bgColor = useColorModeValue('hsl(210, 40%, 98%)', 'hsl(222, 47%, 11%)');
-  const cardBg = useColorModeValue('hsl(0, 0%, 100%)', 'hsl(217, 33%, 17%)');
-  const borderColor = useColorModeValue('hsl(48, 96%, 53%)', 'hsl(48, 96%, 53%)');
-  const textColor = useColorModeValue('hsl(222, 47%, 11%)', 'hsl(210, 40%, 98%)');
-  const skeletonBase = useColorModeValue('hsl(215, 20%, 90%)', 'hsl(217, 33%, 20%)');
-  const skeletonShine = useColorModeValue('hsl(215, 20%, 95%)', 'hsl(217, 33%, 28%)');
-  const accentColor = useColorModeValue('hsl(48, 96%, 53%)', 'hsl(48, 96%, 53%)');
-  const hoverBg = useColorModeValue('hsl(215, 20%, 95%)', 'hsl(217, 33%, 20%)');
+  // Use centralized theme colors
+  const {
+    bgMain,
+    bgCard,
+    bgCardHover,
+    textPrimary,
+    borderDefault,
+    accentPrimary,
+    skeletonBase,
+    skeletonShine,
+  } = useThemeColors();
 
   return (
-    <Box bg={bgColor} minH="100vh" py={8}>
+    <Box bg={bgMain}  >
       <Container maxW="container.xl" px={4}>
         {/* Back Button */}
         <Box mb={6}>
           <Button
             variant="ghost"
-            color={textColor}
-            _hover={{ bg: hoverBg, color: accentColor }}
+            color={textPrimary}
+            _hover={{ bg: bgCardHover, color: accentPrimary }}
             onClick={() => navigate(-1)}
           >
             <ArrowLeft size={20} />
@@ -45,11 +48,11 @@ const ProductDetailsSkeleton = () => {
           {/* Image Section Skeleton */}
           <GridItem>
             <Box
-              bg={cardBg}
+              bg={bgCard}
               borderRadius="2xl"
               p={8}
               border="1px solid"
-              borderColor={borderColor}
+              borderColor={borderDefault}
               position="relative"
             >
               {/* Wishlist button skeleton */}
@@ -90,10 +93,10 @@ const ProductDetailsSkeleton = () => {
               <HStack gap={3}>
                 <Skeleton height="20px" width="80px" css={{ "--skeleton-start-color": skeletonBase, "--skeleton-end-color": skeletonShine }} />
                 <HStack
-                  bg={cardBg}
+                  bg={bgCard}
                   borderRadius="lg"
                   border="1px solid"
-                  borderColor={borderColor}
+                  borderColor={borderDefault}
                   overflow="hidden"
                   gap={0}
                 >
@@ -114,11 +117,11 @@ const ProductDetailsSkeleton = () => {
                 {[1, 2, 3].map((i) => (
                   <VStack
                     key={i}
-                    bg={cardBg}
+                    bg={bgCard}
                     p={4}
                     borderRadius="lg"
                     border="1px solid"
-                    borderColor={borderColor}
+                    borderColor={borderDefault}
                   >
                     <Skeleton height="24px" width="24px" borderRadius="full" css={{ "--skeleton-start-color": skeletonBase, "--skeleton-end-color": skeletonShine }} />
                     <Skeleton height="16px" width="64px" css={{ "--skeleton-start-color": skeletonBase, "--skeleton-end-color": skeletonShine }} />

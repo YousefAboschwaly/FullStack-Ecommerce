@@ -40,7 +40,7 @@ const ProductDetails = () => {
   const [quantity, setQuantity] = useState(1);
   const [isWishlisted, setIsWishlisted] = useState(false);
   const navigate = useNavigate();
-  if (isLoading) return <ProductDetailsSkeleton />;
+  if (!isLoading) return <ProductDetailsSkeleton />;
   if (error || !data) return <ErrorHandler error={"Failed to Fetch Product of this Id "} />;
   const product: IProduct = data as IProduct;
 
