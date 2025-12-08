@@ -9,23 +9,22 @@ export const colors = {
   },
 };
 
- export const navLinks = [
-    { name: 'Home', path: '/' },
-    { name: 'Products', path: '/products' },
-    { name: 'Categories', path: '/categories' },
-    { name: 'About', path: '/about' },
-    { name: 'Contact', path: '/contact' },
-  ];
+export const navLinks = [
+  { name: 'Home', path: '/' },
+  { name: 'Products', path: '/products' },
+  { name: 'Categories', path: '/categories' },
+  { name: 'About', path: '/about' },
+  { name: 'Contact', path: '/contact' },
+];
 
-export  const profileMenuItems = [
-    { name: 'My Profile', icon: User, path: '/profile' },
-    { name: 'My Orders', icon: ShoppingCart, path: '/orders' },
-    { name: 'Wishlist', icon: Heart, path: '/wishlist' },
-    { name: 'Settings', icon: Settings, path: '/settings' },
-  ];
+export const profileMenuItems = [
+  { name: 'My Profile', icon: User, path: '/profile' },
+  { name: 'My Orders', icon: ShoppingCart, path: '/orders' },
+  { name: 'Wishlist', icon: Heart, path: '/wishlist' },
+  { name: 'Settings', icon: Settings, path: '/settings' },
+];
 
-  // Centralized color mode values for consistent theming
-
+// Centralized color mode values for consistent theming
 export const themeColors = {
   // Background colors
   bg: {
@@ -47,21 +46,21 @@ export const themeColors = {
   // Border colors
   border: {
     default: { light: 'hsl(215, 25%, 85%)', dark: 'hsl(215, 25%, 27%)' },
-    accent: { light: 'hsl(48, 96%, 53%)', dark: 'hsl(48, 96%, 53%)' },
-    hover: { light: 'hsl(270, 50%, 60%)', dark: 'hsl(48, 96%, 60%)' },
+    accent: { light: 'hsl(270, 70%, 60%)', dark: 'hsl(48, 96%, 53%)' }, // Purple in light, gold in dark
+    hover: { light: 'hsl(270, 70%, 50%)', dark: 'hsl(48, 96%, 60%)' },
   },
 
-  // Accent/Brand colors (same for both modes)
+  // Accent/Brand colors - Purple for light mode, Gold for dark mode
   accent: {
-    primary: 'hsl(48, 96%, 53%)',
-    primaryHover: 'hsl(48, 96%, 60%)',
-    secondary: { light: 'hsl(270, 50%, 60%)', dark: 'hsl(48, 96%, 53%)' },
+    primary: { light: 'hsl(270, 70%, 60%)', dark: 'hsl(48, 96%, 53%)' },
+    primaryHover: { light: 'hsl(270, 70%, 50%)', dark: 'hsl(48, 96%, 60%)' },
+    secondary: { light: 'hsl(270, 70%, 70%)', dark: 'hsl(48, 96%, 70%)' },
   },
 
   // Button colors
   button: {
-    primary: { light: 'hsl(270, 50%, 60%)', dark: 'hsl(48, 96%, 53%)' },
-    primaryHover: { light: 'hsl(270, 50%, 50%)', dark: 'hsl(48, 96%, 45%)' },
+    primary: { light: 'hsl(270, 70%, 60%)', dark: 'hsl(48, 96%, 53%)' },
+    primaryHover: { light: 'hsl(270, 70%, 50%)', dark: 'hsl(48, 96%, 45%)' },
     text: { light: 'hsl(0, 0%, 100%)', dark: 'hsl(222, 47%, 11%)' },
   },
 
@@ -97,13 +96,14 @@ export const themeColors = {
       light: 'linear-gradient(to right, #805AD5, #6B46C1)',
       dark: 'linear-gradient(to right, #D4AF37, #F4E4A6)',
     },
+    // Logo stays yellow/golden in both modes
     logo: {
-      light: 'linear-gradient(135deg, hsl(48, 96%, 53%), hsl(48, 96%, 60%))',
+      light: 'linear-gradient(135deg, hsl(45, 100%, 55%), hsl(40, 100%, 50%))',
       dark: 'linear-gradient(135deg, hsl(48, 96%, 53%), hsl(48, 96%, 60%))',
     },
   },
 
-  badge: {
+    badge: {
   category: {
     bg: { light: 'hsl(270, 50%, 95%)', dark: 'hsl(48, 96%, 15%)' },
     text: { light: 'hsl(270, 50%, 45%)', dark: 'hsl(48, 96%, 70%)' },

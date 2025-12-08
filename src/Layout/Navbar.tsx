@@ -29,6 +29,7 @@ const Navbar = () => {
     textPrimary,
     textMuted,
     borderDefault,
+    borderAccent,
     accentPrimary,
     gradientLogo,
     statusError,
@@ -182,7 +183,7 @@ const Navbar = () => {
                 h="36px"
                 borderRadius="full"
                 border="2px solid"
-                borderColor={accentPrimary}
+                borderColor={borderAccent}
               />
               <ChevronDown
                 size={16}
@@ -309,7 +310,8 @@ const Navbar = () => {
                     fontWeight={isActive ? '600' : '500'}
                     _hover={{ color: accentPrimary, bg: bgCardHover }}
                     onClick={() => setIsMobileMenuOpen(false)}
-                    borderLeft={isActive ? `3px solid ${accentPrimary}` : '3px solid transparent'}
+                    borderLeft={isActive ? `3px solid` : '3px solid transparent'}
+                    borderLeftColor={isActive ? accentPrimary : 'transparent'}
                     borderRadius="0"
                     pl={4}
                   >
