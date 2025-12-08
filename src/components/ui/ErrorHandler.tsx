@@ -26,7 +26,6 @@ const ErrorHandler = ({
   description = "We encountered an unexpected error. Please try again or go back to the previous page."
 }: ErrorHandlerProps) => {
   const navigate = useNavigate();
-  console.log(error)
 
   const errorMessage = error instanceof AxiosError ? error.response?.data.error.message : error;
 
