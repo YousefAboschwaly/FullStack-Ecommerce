@@ -45,6 +45,11 @@ export const useThemeColors = () => {
   const gradientPrice = useColorModeValue(themeColors.gradient.price.light, themeColors.gradient.price.dark);
   const gradientLogo = themeColors.gradient.logo.light; // Same for both modes
 
+  // Add to useThemeColors hook:
+const badgeCategoryBg = useColorModeValue(themeColors.badge.category.bg.light, themeColors.badge.category.bg.dark);
+const badgeCategoryText = useColorModeValue(themeColors.badge.category.text.light, themeColors.badge.category.text.dark);
+const badgeCategoryBorder = useColorModeValue(themeColors.badge.category.border.light, themeColors.badge.category.border.dark);
+
   // Status colors
   const statusError = themeColors.status.error;
   const statusErrorBg = themeColors.status.errorBg;
@@ -94,6 +99,10 @@ export const useThemeColors = () => {
     gradientPrice,
     gradientLogo,
 
+    // Badges
+    badgeCategoryBg,
+    badgeCategoryText,
+    badgeCategoryBorder,
     // Status
     statusError,
     statusErrorBg,

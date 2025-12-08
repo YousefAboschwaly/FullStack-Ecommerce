@@ -103,6 +103,17 @@ export const themeColors = {
     },
   },
 
+  badge: {
+  category: {
+    bg: { light: 'hsl(270, 50%, 95%)', dark: 'hsl(48, 96%, 15%)' },
+    text: { light: 'hsl(270, 50%, 45%)', dark: 'hsl(48, 96%, 70%)' },
+    border: { light: 'hsl(270, 50%, 80%)', dark: 'hsl(48, 96%, 40%)' },
+  },
+  stock: {
+    inStock: { bg: 'hsl(142, 76%, 90%)', text: 'hsl(142, 76%, 30%)' },
+    outOfStock: { bg: 'hsl(0, 84%, 92%)', text: 'hsl(0, 84%, 40%)' },
+  },
+},
   // Status colors
   status: {
     error: 'hsl(0, 84%, 60%)',
