@@ -1,4 +1,3 @@
-import { colors } from '@/constants';
 import {
   Box,
   Button,
@@ -7,10 +6,11 @@ import {
   Icon,
   Text,
   VStack,
-} from '@chakra-ui/react';
-import { AxiosError } from 'axios';
-import { AlertTriangle, ArrowLeft, RefreshCw } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+} from "@chakra-ui/react";
+import { AxiosError } from "axios";
+import { AlertTriangle, ArrowLeft, RefreshCw } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import useThemeColors from "@/hooks/useThemeColors";
 
 interface ErrorHandlerProps {
   error?: Error | string | null;
@@ -19,34 +19,48 @@ interface ErrorHandlerProps {
   description?: string;
 }
 
-const ErrorHandler = ({ 
-  error, 
-  onRetry, 
+const ErrorHandler = ({
+  error,
+  onRetry,
   title = "Something Went Wrong",
-  description = "We encountered an unexpected error. Please try again or go back to the previous page."
+  description = "We encountered an unexpected error. Please try again or go back to the previous page.",
 }: ErrorHandlerProps) => {
   const navigate = useNavigate();
 
-  const errorMessage = error instanceof AxiosError ? error.response?.data.error.message : error;
+  const {
+    bgMain,
+    bgCard,
+    textPrimary,
+    textSecondary,
+    buttonPrimary,
+    buttonPrimaryHover,
+    buttonText,
+  } = useThemeColors();
+
+  const errorMessage =
+    error instanceof AxiosError ? error.response?.data?.error?.message : error;
 
   return (
-    <Box bg={colors.navy[900]}  pt={"6rem"} display="flex" alignItems="center">
-      <Container maxW="container.md" >
-        <VStack gap={8} textAlign="center">
+    <Box
+      bg={bgMain}
+      pt="6rem"
+      minH="100vh"
+      display="flex"
+      alignItems="center"
+      position="relative"
+    >
+      <Container maxW="container.md">
+        <VStack gap={8} textAlign="center" position="relative">
           {/* Error Icon */}
           <Box
-            bg={colors.navy[800]}
+            bg={bgCard}
             p={6}
             borderRadius="full"
             border="2px solid"
-            borderColor="red.500"
+            borderColor="red.400"
             position="relative"
           >
-            <Icon 
-              as={AlertTriangle} 
-              boxSize={16} 
-              color="red.400"
-            />
+            <Icon as={AlertTriangle} boxSize={16} color="red.400" />
             <Box
               position="absolute"
               inset={-2}
@@ -60,40 +74,44 @@ const ErrorHandler = ({
 
           {/* Error Message */}
           <VStack gap={4}>
-            <Heading color="white" size="xl">
+            <Heading color={textPrimary} size="xl">
               {title}
             </Heading>
-            <Text color={colors.navy[600]} fontSize="lg" maxW="md">
+
+            <Text color={textSecondary} fontSize="lg" maxW="md">
               {description}
             </Text>
-            
+
             {/* Error Details */}
             {errorMessage && (
               <Box
-                bg={colors.navy[800]}
+                bg={bgCard}
                 border="1px solid"
-                borderColor="red.500"
+                borderColor="red.400"
                 borderRadius="lg"
                 p={4}
                 maxW="md"
                 w="full"
               >
-                <Text color="red.400" fontSize="sm" fontFamily="mono">
+                <Text color="red.300" fontSize="sm" fontFamily="mono">
                   {errorMessage}
                 </Text>
               </Box>
             )}
           </VStack>
 
-          {/* Action Buttons */}
+          {/* Buttons */}
           <VStack gap={4} w="full" maxW="sm">
             {onRetry && (
               <Button
                 w="full"
                 size="lg"
-                bg="yellow.500"
-                color={colors.navy[900]}
-                _hover={{ bg: 'yellow.400', transform: 'translateY(-2px)' }}
+                bg={buttonPrimary}
+                color={buttonText}
+                _hover={{
+                  bg: buttonPrimaryHover,
+                  transform: "translateY(-2px)",
+                }}
                 transition="all 0.2s"
                 onClick={onRetry}
               >
@@ -101,17 +119,15 @@ const ErrorHandler = ({
                 Try Again
               </Button>
             )}
+
             <Button
               w="full"
               size="lg"
-              variant={onRetry ? "outline" : "solid"}
-              bg={onRetry ? "transparent" : "yellow.500"}
-              borderColor={colors.navy[700]}
-              color={onRetry ? "white" : colors.navy[900]}
-              _hover={{ 
-                bg: onRetry ? colors.navy[800] : 'yellow.400',
-                borderColor: 'yellow.500',
-                transform: 'translateY(-2px)' 
+              bg={onRetry ? "transparent" : buttonPrimary}
+              color={onRetry ? textPrimary : buttonText}
+              _hover={{
+                bg: onRetry ? bgCard : buttonPrimaryHover,
+                transform: "translateY(-2px)",
               }}
               transition="all 0.2s"
               onClick={() => navigate(-1)}
@@ -121,7 +137,7 @@ const ErrorHandler = ({
             </Button>
           </VStack>
 
-          {/* Decorative elements */}
+          {/* Decorative Glows */}
           <Box
             position="absolute"
             top="30%"
@@ -131,18 +147,19 @@ const ErrorHandler = ({
             bg="red.500"
             borderRadius="full"
             filter="blur(80px)"
-            opacity={0.1}
+            opacity={0.08}
           />
+
           <Box
             position="absolute"
-            bottom="30%"
+            bottom="20%"
             right="5%"
             w="200px"
             h="200px"
             bg="yellow.400"
             borderRadius="full"
             filter="blur(100px)"
-            opacity={0.08}
+            opacity={0.06}
           />
         </VStack>
       </Container>

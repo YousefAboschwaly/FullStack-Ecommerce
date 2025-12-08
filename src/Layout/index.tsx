@@ -6,7 +6,7 @@ export default function Layout() {
   return (
     <>
     <Navbar/>
-   <Container pt={"8"} >
+   <Container my={"8"} >
 
     <Outlet/>
    </Container>
