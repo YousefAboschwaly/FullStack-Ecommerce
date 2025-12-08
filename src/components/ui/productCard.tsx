@@ -1,4 +1,5 @@
-// ProductCard.tsx
+// ProductCard.tsx - with centralized theme colors
+import { useThemeColors } from "@/hooks/useThemeColors";
 import type { IProduct } from "@/interfaces";
 import {
   Badge,
@@ -22,24 +23,40 @@ interface IProps {
 const apiUrl = import.meta.env.VITE_API_URL || "";
 
 export default function ProductCard({ product }: IProps) {
-  const { colorMode } = useColorMode();
   const { title, description, price, thumbnail, stock, category } = product;
+
+  // Use centralized theme colors
+  const {
+    bgCardTranslucent,
+    bgOverlay,
+    textPrimary,
+    textMuted,
+    borderDefault,
+    borderHover,
+    accentPrimary,
+    accentSecondary,
+    buttonText,
+    shadowCard,
+    shadowButton,
+    gradientCardBg,
+    gradientButton,
+    gradientPrice,
+  } = useThemeColors();
+  const { colorMode } = useColorMode();
   const isDark = colorMode === "dark";
 
   return (
     <Card.Root
       overflow="hidden"
-      bg={isDark ? "rgba(26, 32, 44, 0.8)" : "white"}
+      bg={bgCardTranslucent}
       borderRadius="2xl"
       border="1px solid"
-      borderColor={isDark ? "rgba(212, 175, 55, 0.2)" : "gray.200"}
+      borderColor={borderDefault}
       transition="all 0.3s ease"
       _hover={{
         transform: "translateY(-8px)",
-        boxShadow: isDark
-          ? "0 20px 40px rgba(212, 175, 55, 0.15)"
-          : "0 20px 40px rgba(0, 0, 0, 0.1)",
-        borderColor: isDark ? "rgba(212, 175, 55, 0.4)" : "purple.300",
+        boxShadow: shadowCard,
+        borderColor: borderHover,
       }}
       position="relative"
       role="group"
@@ -60,11 +77,11 @@ export default function ProductCard({ product }: IProps) {
           aria-label="Add to wishlist"
           size="sm"
           rounded="full"
-          bg={isDark ? "rgba(26, 32, 44, 0.9)" : "white"}
-          color={isDark ? "#D4AF37" : "gray.600"}
+          bg={bgOverlay}
+          color={accentSecondary}
           _hover={{
-            bg: "#D4AF37",
-            color: isDark ? "#0F1419" : "white",
+            bg: accentPrimary,
+            color: buttonText,
           }}
         >
           <Icon as={Heart} boxSize={4} />
@@ -73,17 +90,16 @@ export default function ProductCard({ product }: IProps) {
           aria-label="Quick view"
           size="sm"
           rounded="full"
-          bg={isDark ? "rgba(26, 32, 44, 0.9)" : "white"}
-          color={isDark ? "#D4AF37" : "gray.600"}
+          bg={bgOverlay}
+          color={accentSecondary}
           _hover={{
-            bg: "#D4AF37",
-            color: isDark ? "#0F1419" : "white",
+            bg: accentPrimary,
+            color: buttonText,
           }}
         >
           <Icon as={Eye} boxSize={4} />
         </IconButton>
       </Flex>
-
       {/* Category Badge */}
       {category && (
         <Badge
@@ -91,7 +107,7 @@ export default function ProductCard({ product }: IProps) {
           top={4}
           left={4}
           bg={isDark ? "rgba(212, 175, 55, 0.2)" : "purple.100"}
-          color={isDark ? "#D4AF37" : "purple.700"}
+          color={accentSecondary}
           px={3}
           py={1}
           borderRadius="full"
@@ -102,19 +118,8 @@ export default function ProductCard({ product }: IProps) {
           {category.title}
         </Badge>
       )}
-
       {/* Image Container */}
-      <Box
-        position="relative"
-        pt={8}
-        pb={4}
-        px={6}
-        bg={
-          isDark
-            ? "linear-gradient(180deg, rgba(212, 175, 55, 0.05) 0%, transparent 100%)"
-            : "linear-gradient(180deg, rgba(128, 90, 213, 0.05) 0%, transparent 100%)"
-        }
-      >
+      <Box position="relative" pt={8} pb={4} px={6} bg={gradientCardBg}>
         <Image
           src={`${apiUrl}${thumbnail.url.startsWith("/") ? "" : "/"}${
             thumbnail.url
@@ -127,13 +132,12 @@ export default function ProductCard({ product }: IProps) {
           _groupHover={{ transform: "scale(1.05)" }}
         />
       </Box>
-
       <Card.Body px={5} pb={5} pt={3}>
         {/* Title */}
         <Text
           fontSize="lg"
           fontWeight="bold"
-          color={isDark ? "white" : "gray.800"}
+          color={textPrimary}
           lineClamp={1}
           mb={1}
         >
@@ -141,13 +145,7 @@ export default function ProductCard({ product }: IProps) {
         </Text>
 
         {/* Description */}
-        <Text
-          fontSize="sm"
-          color={isDark ? "gray.400" : "gray.600"}
-          lineClamp={2}
-          minH="40px"
-          mb={3}
-        >
+        <Text fontSize="sm" color={textMuted} lineClamp={2} minH="40px" mb={3}>
           {description}
         </Text>
 
@@ -157,9 +155,7 @@ export default function ProductCard({ product }: IProps) {
             fontSize="2xl"
             fontWeight="bold"
             css={{
-              background: isDark
-                ? "linear-gradient(to right, #D4AF37, #F4E4A6)"
-                : "linear-gradient(to right, var(--chakra-colors-purple-500), var(--chakra-colors-purple-700))",
+              background: gradientPrice,
               WebkitBackgroundClip: "text",
               WebkitTextFillColor: "transparent",
               backgroundClip: "text",
@@ -184,18 +180,12 @@ export default function ProductCard({ product }: IProps) {
         <Flex gap={2}>
           <Button
             flex={1}
-            bg={
-              isDark
-                ? "linear-gradient(135deg, #D4AF37 0%, #B8962E 100%)"
-                : "linear-gradient(135deg, #805AD5 0%, #6B46C1 100%)"
-            }
-            color={isDark ? "#0F1419" : "white"}
+            bg={gradientButton}
+            color={buttonText}
             fontWeight="semibold"
             _hover={{
               transform: "translateY(-2px)",
-              boxShadow: isDark
-                ? "0 4px 20px rgba(212, 175, 55, 0.4)"
-                : "0 4px 20px rgba(128, 90, 213, 0.4)",
+              boxShadow: shadowButton,
             }}
             transition="all 0.2s ease"
           >
@@ -205,10 +195,10 @@ export default function ProductCard({ product }: IProps) {
           <Button
             asChild
             variant="outline"
-            borderColor={isDark ? "#D4AF37" : "purple.500"}
-            color={isDark ? "#D4AF37" : "purple.600"}
+            borderColor={accentSecondary}
+            color={accentSecondary}
             _hover={{
-              bg: isDark ? "rgba(212, 175, 55, 0.1)" : "purple.50",
+              bg: bgCardTranslucent,
             }}
             px={4}
           >
