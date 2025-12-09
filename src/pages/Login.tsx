@@ -13,10 +13,21 @@ import {
 import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
 import { Link } from "react-router-dom";
 import useThemeColors from "@/hooks/useThemeColors";
+import { useForm } from "react-hook-form";
+import { loginSchema } from "@/validation";
 
+interface IFormInput {
+  email: string;
+  password: string;
+}
 export default function Login() {
   const [showPassword, setShowPassword] = useState(false);
-
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<IFormInput>();
+  const { email, password } = loginSchema;
   const {
     bgMain,
     bgCard,
@@ -33,7 +44,10 @@ export default function Login() {
     borderInputFocus,
     placeholderInput,
   } = useThemeColors();
-
+  const onSubmit = (data: IFormInput) => {
+    console.log(data);
+  };
+  console.log(errors);
   return (
     <Box
       minH="100vh"
@@ -61,35 +75,42 @@ export default function Login() {
         </VStack>
 
         {/* FORM (no validation – ready for react-hook-form) */}
-        <VStack as="form" gap={6}>
+        <VStack as="form" gap={6} onSubmit={handleSubmit(onSubmit)}>
           {/* EMAIL FIELD */}
-          <Field.Root invalid={true}>
+          <Field.Root invalid={!!errors.email}>
             <Field.Label>
               Email Address <Field.RequiredIndicator />
             </Field.Label>
 
             <Input
               type="email"
+              {...register("email", email)}
               placeholder="Enter your email"
               bg={bgInput}
               border="2px solid"
-              _invalid={{ borderColor: borderInputError }}
-              borderColor={borderInput}
+              borderColor={errors.email ? borderInputError : borderInput}
               _placeholder={{ color: placeholderInput }}
               color={textPrimary}
-              _hover={{ borderColor: borderInputFocus }}
+              _hover={{
+                borderColor: errors.email ? borderInputError : borderInputFocus,
+              }}
               _focus={{
-                borderColor: borderInputFocus,
-                boxShadow: `0 0 0 1px ${borderInputFocus}`,
+                borderColor: errors.email ? borderInputError : borderInputFocus,
+                boxShadow: `0 0 0 1px ${
+                  errors.email ? borderInputError : borderInputFocus
+                }`,
               }}
               h="48px"
               borderRadius="lg"
             />
 
+            {errors.email && (
+              <Field.ErrorText>{errors.email.message}</Field.ErrorText>
+            )}
           </Field.Root>
 
           {/* PASSWORD FIELD */}
-          <Field.Root>
+          <Field.Root invalid={!!errors.password}>
             <Field.Label>
               Password <Field.RequiredIndicator />
             </Field.Label>
@@ -98,16 +119,24 @@ export default function Login() {
               <Input
                 type={showPassword ? "text" : "password"}
                 placeholder="Enter your password"
+                {...register("password", password)}
                 bg={bgInput}
                 border="2px solid"
-                _invalid={{ borderColor: borderInputError }}
-                borderColor={borderInput}
+                borderColor={errors.password ? borderInputError : borderInput}
                 _placeholder={{ color: placeholderInput }}
                 color={textPrimary}
-                _hover={{ borderColor: borderInputFocus }}
+                _hover={{
+                  borderColor: errors.password
+                    ? borderInputError
+                    : borderInputFocus,
+                }}
                 _focus={{
-                  borderColor: borderInputFocus,
-                  boxShadow: `0 0 0 1px ${borderInputFocus}`,
+                  borderColor: errors.password
+                    ? borderInputError
+                    : borderInputFocus,
+                  boxShadow: `0 0 0 1px ${
+                    errors.password ? borderInputError : borderInputFocus
+                  }`,
                 }}
                 h="48px"
                 borderRadius="lg"
@@ -133,7 +162,9 @@ export default function Login() {
                 )}
               </IconButton>
             </Box>
-
+            {errors.password && (
+              <Field.ErrorText>{errors.password.message}</Field.ErrorText>
+            )}
           </Field.Root>
 
           {/* Forgot Password */}
