@@ -29,6 +29,7 @@ export default function Login() {
     buttonText,
     bgInput,
     borderInput,
+    borderInputError,
     borderInputFocus,
     placeholderInput,
   } = useThemeColors();
@@ -53,23 +54,16 @@ export default function Login() {
         borderColor={borderDefault}
       >
         {/* Header */}
-        <VStack gap={2} mb={8}>
-          <Box fontSize="2xl" fontWeight="bold" color={accentPrimary}>
-            ✦ StoreName
-          </Box>
+        <VStack mb={8}>
           <Heading size="lg" color={textPrimary} textAlign="center">
-            Welcome Back
+            Login to Your Account
           </Heading>
-          <Text color={textMuted} textAlign="center">
-            Sign in to your account to continue
-          </Text>
         </VStack>
 
         {/* FORM (no validation – ready for react-hook-form) */}
         <VStack as="form" gap={6}>
-
           {/* EMAIL FIELD */}
-          <Field.Root>
+          <Field.Root invalid={true}>
             <Field.Label>
               Email Address <Field.RequiredIndicator />
             </Field.Label>
@@ -79,6 +73,7 @@ export default function Login() {
               placeholder="Enter your email"
               bg={bgInput}
               border="2px solid"
+              _invalid={{ borderColor: borderInputError }}
               borderColor={borderInput}
               _placeholder={{ color: placeholderInput }}
               color={textPrimary}
@@ -91,8 +86,6 @@ export default function Login() {
               borderRadius="lg"
             />
 
-            <Field.HelperText>Use a valid email address.</Field.HelperText>
-            {/* <Field.ErrorText>Error message (optional)</Field.ErrorText> */}
           </Field.Root>
 
           {/* PASSWORD FIELD */}
@@ -101,12 +94,13 @@ export default function Login() {
               Password <Field.RequiredIndicator />
             </Field.Label>
 
-            <Box position="relative">
+            <Box position="relative" width={"full"}>
               <Input
                 type={showPassword ? "text" : "password"}
                 placeholder="Enter your password"
                 bg={bgInput}
                 border="2px solid"
+                _invalid={{ borderColor: borderInputError }}
                 borderColor={borderInput}
                 _placeholder={{ color: placeholderInput }}
                 color={textPrimary}
@@ -124,7 +118,7 @@ export default function Login() {
                 aria-label="toggle password"
                 onClick={() => setShowPassword(!showPassword)}
                 variant="ghost"
-                size="sm"
+                size="md"
                 position="absolute"
                 right={1}
                 top="50%"
@@ -140,7 +134,6 @@ export default function Login() {
               </IconButton>
             </Box>
 
-            <Field.HelperText>Password must be secure.</Field.HelperText>
           </Field.Root>
 
           {/* Forgot Password */}
@@ -171,7 +164,6 @@ export default function Login() {
           >
             Sign In
           </Button>
-
         </VStack>
 
         {/* FOOTER */}
