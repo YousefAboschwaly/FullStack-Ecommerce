@@ -85,6 +85,25 @@ export const useThemeColors = () => {
     themeColors.button.text.dark
   );
 
+  // Input colors
+  
+  const bgInput = useColorModeValue(
+    themeColors.input.bg.light,
+    themeColors.input.bg.dark)
+  const borderInput = useColorModeValue(
+    themeColors.input.border.light,
+    themeColors.input.border.dark)
+  const borderInputFocus = useColorModeValue(
+    themeColors.input.borderFocus.light,
+    themeColors.input.borderFocus.dark)
+  const borderInputError = useColorModeValue(
+    themeColors.input.borderError.light,
+    themeColors.input.borderError.dark)
+  const placeholderInput = useColorModeValue(
+    themeColors.input.placeholder.light,
+    themeColors.input.placeholder.dark)
+
+
   // Skeleton colors
   const skeletonBase = useColorModeValue(
     themeColors.skeleton.base.light,
@@ -163,6 +182,13 @@ const badgeCategoryBorder = useColorModeValue(themeColors.badge.category.border.
     buttonPrimaryHover,
     buttonText,
 
+    // Inputs
+    bgInput,
+    borderInput,
+    borderInputFocus,
+    borderInputError,
+    placeholderInput,
+    
     // Skeleton
     skeletonBase,
     skeletonShine,

@@ -63,6 +63,14 @@ export const themeColors = {
     primaryHover: { light: 'hsl(270, 70%, 50%)', dark: 'hsl(48, 96%, 45%)' },
     text: { light: 'hsl(0, 0%, 100%)', dark: 'hsl(222, 47%, 11%)' },
   },
+    // Input colors
+  input: {
+    bg: { light: 'hsl(0, 0%, 100%)', dark: 'hsl(217, 33%, 17%)' },
+    border: { light: 'hsl(215, 25%, 85%)', dark: 'hsl(215, 25%, 27%)' },
+    borderFocus: { light: 'hsl(270, 70%, 60%)', dark: 'hsl(48, 96%, 53%)' },
+    borderError: { light: 'hsl(0, 84%, 60%)', dark: 'hsl(0, 84%, 60%)' },
+    placeholder: { light: 'hsl(215, 19%, 60%)', dark: 'hsl(215, 19%, 50%)' },
+  },
 
   // Skeleton colors
   skeleton: {
