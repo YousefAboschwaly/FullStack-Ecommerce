@@ -1,12 +1,20 @@
 /* eslint-disable react-refresh/only-export-components */
-import { Toaster as ChakraToaster, Portal, Spinner, Stack, Toast, createToaster } from "@chakra-ui/react";
+
+import {
+  Toaster as ChakraToaster,
+  Portal,
+  Spinner,
+  Stack,
+  Toast,
+  createToaster,
+} from "@chakra-ui/react"
 
 export const toaster = createToaster({
-  placement: "top-end",
-  pauseOnPageIdle: true,
-});
+  duration: 5000,
+  placement: "bottom-end",
+})
 
-export function Toaster() {
+export const Toaster = () => {
   return (
     <Portal>
       <ChakraToaster toaster={toaster} insetInline={{ mdDown: "4" }}>
@@ -26,10 +34,10 @@ export function Toaster() {
             {toast.action && (
               <Toast.ActionTrigger>{toast.action.label}</Toast.ActionTrigger>
             )}
-            {toast.meta?.closable && <Toast.CloseTrigger />}
+            {toast.closable && <Toast.CloseTrigger cursor={"pointer"}/>}
           </Toast.Root>
         )}
       </ChakraToaster>
     </Portal>
-  );
+  )
 }

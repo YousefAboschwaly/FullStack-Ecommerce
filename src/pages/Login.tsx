@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { toaster } from "@/components/ui/toaster";
 import useThemeColors from "@/hooks/useThemeColors";
 import { loginSchema } from "@/validation";
@@ -49,14 +50,31 @@ export default function Login() {
   const { email, password } = loginSchema;
   const [login,{isLoading}] = useLoginMutation()
 
-  const onSubmit =  (data: IFormInput) => {
+  const onSubmit =  async(data: IFormInput) => {
     console.log(data);
 
-    login(data).then((res:any)=>{
-      if(res.error){
-        toaster.error({ title:"Login Failed",description:res.error.data.message,meta:{closable:true} })
-      } 
-    }); 
+     try {
+    const response = await login(data).unwrap();  
+    console.log(response); 
+    toaster.success({
+      title: "Login successful",
+      description: `Welcome ${response.user.username}`,
+      duration: 3000,
+      closable: true,
+    });
+    localStorage.setItem("token", response.jwt);
+  } catch (err: any) {
+    let message = "Login failed";
+    if (err?.data?.error?.message) message = err.data.error.message;
+    else if (err?.message) message = err.message;
+
+    toaster.error({
+      title: "Login failed",
+      description: message,
+      duration: 5000,
+      closable: true,
+    });
+  }
     
   };
   return (
