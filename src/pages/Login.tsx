@@ -1,20 +1,20 @@
-import { useState } from "react";
+import useThemeColors from "@/hooks/useThemeColors";
+import { loginSchema } from "@/validation";
 import {
   Box,
   Button,
-  Heading,
-  Input,
-  VStack,
-  Text,
-  IconButton,
-  HStack,
   Field,
+  Heading,
+  HStack,
+  IconButton,
+  Input,
+  Text,
+  VStack
 } from "@chakra-ui/react";
+import { useState } from "react";
+import { useForm } from "react-hook-form";
 import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
 import { Link } from "react-router-dom";
-import useThemeColors from "@/hooks/useThemeColors";
-import { useForm } from "react-hook-form";
-import { loginSchema } from "@/validation";
 import { useLoginMutation } from "../app/services/authApi";
 
 interface IFormInput {
@@ -45,12 +45,14 @@ export default function Login() {
     formState: { errors },
   } = useForm<IFormInput>();
   const { email, password } = loginSchema;
-  const [login,{isLoading}] = useLoginMutation()
-
+  const [login,{isLoading,isError,error}] = useLoginMutation()
+  if(isError){
+    console.log(error);
+  }
   const onSubmit = async (data: IFormInput) => {
     console.log(data);
 
-    await  login(data); 
+ const response =   await  login(data); 
     
   };
   return (
@@ -197,7 +199,8 @@ export default function Login() {
             fontWeight="semibold"
             _hover={{ bg: accentPrimaryHover }}
             transition="all 0.2s"
-            disabled={isLoading}
+            loading={isLoading}
+      
           >
             Sign In
           </Button>
