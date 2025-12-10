@@ -18,7 +18,7 @@ import { loginSchema } from "@/validation";
 import { useLoginMutation } from "../app/services/authApi";
 
 interface IFormInput {
-  email: string;
+  identifier: string;
   password: string;
 }
 export default function Login() {
@@ -49,10 +49,9 @@ export default function Login() {
 
   const onSubmit = async (data: IFormInput) => {
     console.log(data);
-    if (Object.keys(errors).length === 0) {
-      // Call login API
-    await  login({identifier: data.email, password: data.password}); 
-    }
+
+    await  login(data); 
+    
   };
   return (
     <Box
@@ -83,35 +82,35 @@ export default function Login() {
         {/* FORM (no validation – ready for react-hook-form) */}
         <VStack as="form" gap={6} onSubmit={handleSubmit(onSubmit)}>
           {/* EMAIL FIELD */}
-          <Field.Root invalid={!!errors.email}>
+          <Field.Root invalid={!!errors.identifier}>
             <Field.Label>
               Email Address <Field.RequiredIndicator />
             </Field.Label>
 
             <Input
               type="email"
-              {...register("email", email)}
+              {...register("identifier", email)}
               placeholder="Enter your email"
               bg={bgInput}
               border="2px solid"
-              borderColor={errors.email ? borderInputError : borderInput}
+              borderColor={errors.identifier ? borderInputError : borderInput}
               _placeholder={{ color: placeholderInput }}
               color={textPrimary}
               _hover={{
-                borderColor: errors.email ? borderInputError : borderInputFocus,
+                borderColor: errors.identifier ? borderInputError : borderInputFocus,
               }}
               _focus={{
-                borderColor: errors.email ? borderInputError : borderInputFocus,
+                borderColor: errors.identifier ? borderInputError : borderInputFocus,
                 boxShadow: `0 0 0 1px ${
-                  errors.email ? borderInputError : borderInputFocus
+                  errors.identifier ? borderInputError : borderInputFocus
                 }`,
               }}
               h="48px"
               borderRadius="lg"
             />
 
-            {errors.email && (
-              <Field.ErrorText>{errors.email.message}</Field.ErrorText>
+            {errors.identifier && (
+              <Field.ErrorText>{errors.identifier.message}</Field.ErrorText>
             )}
           </Field.Root>
 
