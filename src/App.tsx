@@ -1,11 +1,12 @@
 import { createBrowserRouter, createRoutesFromElements, Route, RouterProvider } from "react-router-dom";
+import ErrorHandler from "./components/ui/ErrorHandler";
 import ProductDetails from "./components/ui/productDetails";
 import Layout from "./Layout";
 import About from "./pages/About";
+import Login from "./pages/Login";
 import NotFound from "./pages/NotFound";
 import Products from "./pages/Products";
-import ErrorHandler from "./components/ui/ErrorHandler";
-import Login from "./pages/Login";
+import { Toaster } from "./components/ui/toaster";
 
 export default function App() {
 
@@ -29,5 +30,8 @@ export default function App() {
     )
   );
 
-  return <RouterProvider router={router} />;
+  return<>
+  <Toaster/>
+   <RouterProvider router={router} />
+  </>;
 }

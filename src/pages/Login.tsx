@@ -1,3 +1,4 @@
+import { toaster } from "@/components/ui/toaster";
 import useThemeColors from "@/hooks/useThemeColors";
 import { loginSchema } from "@/validation";
 import {
@@ -16,6 +17,7 @@ import { useForm } from "react-hook-form";
 import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
 import { Link } from "react-router-dom";
 import { useLoginMutation } from "../app/services/authApi";
+
 
 interface IFormInput {
   identifier: string;
@@ -45,14 +47,16 @@ export default function Login() {
     formState: { errors },
   } = useForm<IFormInput>();
   const { email, password } = loginSchema;
-  const [login,{isLoading,isError,error}] = useLoginMutation()
-  if(isError){
-    console.log(error);
-  }
-  const onSubmit = async (data: IFormInput) => {
+  const [login,{isLoading}] = useLoginMutation()
+
+  const onSubmit =  (data: IFormInput) => {
     console.log(data);
 
- const response =   await  login(data); 
+    login(data).then((res:any)=>{
+      if(res.error){
+        toaster.error({ title:"Login Failed",description:res.error.data.message,meta:{closable:true} })
+      } 
+    }); 
     
   };
   return (

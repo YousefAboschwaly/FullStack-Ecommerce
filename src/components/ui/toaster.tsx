@@ -1,20 +1,12 @@
-"use client"
-
-import {
-  Toaster as ChakraToaster,
-  Portal,
-  Spinner,
-  Stack,
-  Toast,
-  createToaster,
-} from "@chakra-ui/react"
+/* eslint-disable react-refresh/only-export-components */
+import { Toaster as ChakraToaster, Portal, Spinner, Stack, Toast, createToaster } from "@chakra-ui/react";
 
 export const toaster = createToaster({
-  placement: "bottom-end",
+  placement: "top-end",
   pauseOnPageIdle: true,
-})
+});
 
-export const Toaster = () => {
+export function Toaster() {
   return (
     <Portal>
       <ChakraToaster toaster={toaster} insetInline={{ mdDown: "4" }}>
@@ -34,10 +26,10 @@ export const Toaster = () => {
             {toast.action && (
               <Toast.ActionTrigger>{toast.action.label}</Toast.ActionTrigger>
             )}
-            {toast.closable && <Toast.CloseTrigger />}
+            {toast.meta?.closable && <Toast.CloseTrigger />}
           </Toast.Root>
         )}
       </ChakraToaster>
     </Portal>
-  )
+  );
 }
