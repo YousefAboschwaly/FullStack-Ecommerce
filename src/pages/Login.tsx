@@ -15,19 +15,13 @@ import { Link } from "react-router-dom";
 import useThemeColors from "@/hooks/useThemeColors";
 import { useForm } from "react-hook-form";
 import { loginSchema } from "@/validation";
+import { useLoginMutation } from "../app/services/authApi";
 
 interface IFormInput {
   email: string;
   password: string;
 }
 export default function Login() {
-  const [showPassword, setShowPassword] = useState(false);
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm<IFormInput>();
-  const { email, password } = loginSchema;
   const {
     bgMain,
     bgCard,
@@ -44,10 +38,22 @@ export default function Login() {
     borderInputFocus,
     placeholderInput,
   } = useThemeColors();
-  const onSubmit = (data: IFormInput) => {
+  const [showPassword, setShowPassword] = useState(false);
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<IFormInput>();
+  const { email, password } = loginSchema;
+  const [login,{isLoading}] = useLoginMutation()
+
+  const onSubmit = async (data: IFormInput) => {
     console.log(data);
+    if (Object.keys(errors).length === 0) {
+      // Call login API
+    await  login({identifier: data.email, password: data.password}); 
+    }
   };
-  console.log(errors);
   return (
     <Box
       minH="100vh"
@@ -192,6 +198,7 @@ export default function Login() {
             fontWeight="semibold"
             _hover={{ bg: accentPrimaryHover }}
             transition="all 0.2s"
+            disabled={isLoading}
           >
             Sign In
           </Button>
