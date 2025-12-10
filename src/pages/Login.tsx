@@ -51,7 +51,6 @@ export default function Login() {
   const [login,{isLoading}] = useLoginMutation()
 
   const onSubmit =  async(data: IFormInput) => {
-    console.log(data);
 
      try {
     const response = await login(data).unwrap();  
@@ -87,7 +86,7 @@ export default function Login() {
       p={4}
     >
       <Box
-        w="100%"
+        w="100%" 
         maxW="420px"
         bg={bgCard}
         borderRadius="xl"
