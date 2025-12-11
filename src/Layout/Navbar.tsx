@@ -201,7 +201,6 @@ const Navbar = () => {
                 position="absolute"
                 top="100%"
                 right={0}
-                mt={2}
                 w="220px"
                 bg={bgCard}
                 borderRadius="xl"
