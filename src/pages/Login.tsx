@@ -16,7 +16,7 @@ import {
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
-import { Link } from "react-router-dom";
+import { Link, Navigate } from "react-router-dom";
 import { useLoginMutation } from "../app/services/authApi";
 
 
@@ -24,7 +24,7 @@ interface IFormInput {
   identifier: string;
   password: string;
 }
-export default function Login() {
+export default function Login({isAuthenticated}:{isAuthenticated:string|undefined}) {
   const {
     bgMain,
     bgCard,
@@ -76,6 +76,11 @@ export default function Login() {
   }
     
   };
+
+  // Handle already authenticated user
+    if(isAuthenticated) return <Navigate to="/" replace/>
+
+
   return (
     <Box
       minH="100vh"

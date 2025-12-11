@@ -1,8 +1,9 @@
 import { Container } from "@chakra-ui/react";
-import { Outlet } from "react-router-dom";
+import { Navigate, Outlet } from "react-router-dom";
 import Navbar from "./Navbar";
 
-export default function Layout() {
+export default function Layout({isAuthenticated}:{isAuthenticated:string|undefined}) {
+  if(!isAuthenticated) return <Navigate to="/login" replace/>
   return (
     <>
     <Navbar/>
