@@ -11,7 +11,7 @@ import {
   IconButton,
   Input,
   Text,
-  VStack
+  VStack,
 } from "@chakra-ui/react";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
@@ -19,12 +19,16 @@ import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
 import { Link, Navigate } from "react-router-dom";
 import { useLoginMutation } from "../app/services/authApi";
 
-
 interface IFormInput {
   identifier: string;
   password: string;
 }
-export default function Login({isAuthenticated}:{isAuthenticated:string|undefined}) {
+export default function Login({
+  isAuthenticated,
+}: {
+  isAuthenticated: string | undefined;
+}) {
+  console.log(isAuthenticated);
   const {
     bgMain,
     bgCard,
@@ -48,38 +52,37 @@ export default function Login({isAuthenticated}:{isAuthenticated:string|undefine
     formState: { errors },
   } = useForm<IFormInput>();
   const { email, password } = loginSchema;
-  const [login,{isLoading}] = useLoginMutation()
+  const [login, { isLoading, data }] = useLoginMutation();
 
-  const onSubmit =  async(data: IFormInput) => {
+  const onSubmit = async (data: IFormInput) => {
+    try {
+      const response = await login(data).unwrap();
+      toaster.success({
+        title: "Login successful",
+        description: `Welcome ${response.user.username}`,
+        duration: 3000,
+        closable: true,
+      });
+      
 
-     try {
-    const response = await login(data).unwrap();  
-    console.log(response); 
-    toaster.success({
-      title: "Login successful",
-      description: `Welcome ${response.user.username}`,
-      duration: 3000,
-      closable: true,
-    });
-    localStorage.setItem("token", response.jwt);
-  } catch (err: any) {
-    let message = "Login failed";
-    if (err?.data?.error?.message) message = err.data.error.message;
-    else if (err?.message) message = err.message;
+    } catch (err: any) {
+      let message = "Login failed";
+      if (err?.data?.error?.message) message = err.data.error.message;
+      else if (err?.message) message = err.message;
 
-    toaster.error({
-      title: "Login failed",
-      description: message,
-      duration: 5000,
-      closable: true,
-    });
-  }
-    
+      toaster.error({
+        title: "Login failed",
+        description: message,
+        duration: 5000,
+        closable: true,
+      });
+    }
   };
-
   // Handle already authenticated user
-    if(isAuthenticated) return <Navigate to="/" replace/>
-
+  if (isAuthenticated || data?.jwt) {
+    console.log("Authenticated, redirecting...");
+    return <Navigate to="/" replace />;
+  }
 
   return (
     <Box
@@ -91,7 +94,7 @@ export default function Login({isAuthenticated}:{isAuthenticated:string|undefine
       p={4}
     >
       <Box
-        w="100%" 
+        w="100%"
         maxW="420px"
         bg={bgCard}
         borderRadius="xl"
@@ -125,10 +128,14 @@ export default function Login({isAuthenticated}:{isAuthenticated:string|undefine
               _placeholder={{ color: placeholderInput }}
               color={textPrimary}
               _hover={{
-                borderColor: errors.identifier ? borderInputError : borderInputFocus,
+                borderColor: errors.identifier
+                  ? borderInputError
+                  : borderInputFocus,
               }}
               _focus={{
-                borderColor: errors.identifier ? borderInputError : borderInputFocus,
+                borderColor: errors.identifier
+                  ? borderInputError
+                  : borderInputFocus,
                 boxShadow: `0 0 0 1px ${
                   errors.identifier ? borderInputError : borderInputFocus
                 }`,
@@ -226,7 +233,6 @@ export default function Login({isAuthenticated}:{isAuthenticated:string|undefine
             _hover={{ bg: accentPrimaryHover }}
             transition="all 0.2s"
             loading={isLoading}
-      
           >
             Sign In
           </Button>

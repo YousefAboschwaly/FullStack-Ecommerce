@@ -1,6 +1,7 @@
-import { useColorMode } from '@/components/ui/color-mode';
-import { navLinks, profileMenuItems } from '@/constants';
-import { useThemeColors } from '@/hooks/useThemeColors';
+import cookieService from "@/app/services/cookieService";
+import { useColorMode } from "@/components/ui/color-mode";
+import { navLinks, profileMenuItems } from "@/constants";
+import { useThemeColors } from "@/hooks/useThemeColors";
 import {
   Box,
   Button,
@@ -10,10 +11,19 @@ import {
   Image,
   Text,
   VStack,
-} from '@chakra-ui/react';
-import { ChevronDown, Heart, LogOut, Menu, Moon, ShoppingCart, Sun, X } from 'lucide-react';
-import { useState } from 'react';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
+} from "@chakra-ui/react";
+import {
+  ChevronDown,
+  Heart,
+  LogOut,
+  Menu,
+  Moon,
+  ShoppingCart,
+  Sun,
+  X,
+} from "lucide-react";
+import { useState } from "react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 
 const Navbar = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -21,7 +31,7 @@ const Navbar = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { colorMode, toggleColorMode } = useColorMode();
-  
+
   // Use centralized theme colors
   const {
     bgCard,
@@ -37,11 +47,16 @@ const Navbar = () => {
   } = useThemeColors();
 
   const isActiveLink = (path: string) => {
-    if (path === '/') {
-      return location.pathname === '/';
+    if (path === "/") {
+      return location.pathname === "/";
     }
     return location.pathname.startsWith(path);
   };
+
+  function handleLogout() {
+    cookieService.removeCookie("jwt");
+    window.location.reload();
+  }
 
   return (
     <Box
@@ -83,7 +98,7 @@ const Navbar = () => {
               fontSize="xl"
               fontWeight="bold"
               color={textPrimary}
-              display={{ base: 'none', sm: 'block' }}
+              display={{ base: "none", sm: "block" }}
             >
               Store
             </Text>
@@ -91,10 +106,7 @@ const Navbar = () => {
         </Link>
 
         {/* Desktop Navigation */}
-        <HStack
-          gap={1}
-          display={{ base: 'none', md: 'flex' }}
-        >
+        <HStack gap={1} display={{ base: "none", md: "flex" }}>
           {navLinks.map((link) => {
             const isActive = isActiveLink(link.path);
             return (
@@ -110,17 +122,21 @@ const Navbar = () => {
                     color: accentPrimary,
                     bg: bgCardHover,
                   }}
-                  _after={isActive ? {
-                    content: '""',
-                    position: 'absolute',
-                    bottom: '0',
-                    left: '50%',
-                    transform: 'translateX(-50%)',
-                    width: '60%',
-                    height: '2px',
-                    bg: accentPrimary,
-                    borderRadius: 'full',
-                  } : undefined}
+                  _after={
+                    isActive
+                      ? {
+                          content: '""',
+                          position: "absolute",
+                          bottom: "0",
+                          left: "50%",
+                          transform: "translateX(-50%)",
+                          width: "60%",
+                          height: "2px",
+                          bg: accentPrimary,
+                          borderRadius: "full",
+                        }
+                      : undefined
+                  }
                 >
                   {link.name}
                 </Button>
@@ -137,7 +153,7 @@ const Navbar = () => {
             variant="ghost"
             color={textMuted}
             _hover={{ color: accentPrimary, bg: bgCardHover }}
-            display={{ base: 'none', md: 'flex' }}
+            display={{ base: "none", md: "flex" }}
           >
             <Heart size={20} />
           </IconButton>
@@ -154,13 +170,15 @@ const Navbar = () => {
 
           {/* Color Mode Toggle */}
           <IconButton
-            aria-label={`Switch to ${colorMode === 'light' ? 'dark' : 'light'} mode`}
+            aria-label={`Switch to ${
+              colorMode === "light" ? "dark" : "light"
+            } mode`}
             variant="ghost"
             color={textMuted}
             _hover={{ color: accentPrimary, bg: bgCardHover }}
             onClick={toggleColorMode}
           >
-            {colorMode === 'light' ? <Moon size={20} /> : <Sun size={20} />}
+            {colorMode === "light" ? <Moon size={20} /> : <Sun size={20} />}
           </IconButton>
 
           {/* User Profile with Hover Menu */}
@@ -189,8 +207,10 @@ const Navbar = () => {
                 size={16}
                 color={textMuted}
                 style={{
-                  transform: isProfileMenuOpen ? 'rotate(180deg)' : 'rotate(0deg)',
-                  transition: 'transform 0.2s ease',
+                  transform: isProfileMenuOpen
+                    ? "rotate(180deg)"
+                    : "rotate(0deg)",
+                  transition: "transform 0.2s ease",
                 }}
               />
             </HStack>
@@ -262,6 +282,7 @@ const Navbar = () => {
                       color={statusError}
                       _hover={{ bg: statusErrorBg, color: statusError }}
                       w="full"
+                      onClick={handleLogout}
                     >
                       <LogOut size={18} />
                       <Text fontSize="sm">Logout</Text>
@@ -278,7 +299,7 @@ const Navbar = () => {
             variant="ghost"
             color={textMuted}
             _hover={{ color: accentPrimary, bg: bgCardHover }}
-            display={{ base: 'flex', md: 'none' }}
+            display={{ base: "flex", md: "none" }}
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
           >
             {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
@@ -289,7 +310,7 @@ const Navbar = () => {
       {/* Mobile Navigation */}
       {isMobileMenuOpen && (
         <Box
-          display={{ base: 'block', md: 'none' }}
+          display={{ base: "block", md: "none" }}
           bg={bgCard}
           borderTop="1px solid"
           borderColor={borderDefault}
@@ -305,12 +326,14 @@ const Navbar = () => {
                     w="full"
                     justifyContent="flex-start"
                     color={isActive ? accentPrimary : textMuted}
-                    bg={isActive ? bgCardHover : 'transparent'}
-                    fontWeight={isActive ? '600' : '500'}
+                    bg={isActive ? bgCardHover : "transparent"}
+                    fontWeight={isActive ? "600" : "500"}
                     _hover={{ color: accentPrimary, bg: bgCardHover }}
                     onClick={() => setIsMobileMenuOpen(false)}
-                    borderLeft={isActive ? `3px solid` : '3px solid transparent'}
-                    borderLeftColor={isActive ? accentPrimary : 'transparent'}
+                    borderLeft={
+                      isActive ? `3px solid` : "3px solid transparent"
+                    }
+                    borderLeftColor={isActive ? accentPrimary : "transparent"}
                     borderRadius="0"
                     pl={4}
                   >
