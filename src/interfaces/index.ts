@@ -14,3 +14,13 @@ export interface IProduct{
     title:string;
   }
 }
+
+export interface LoginResponse {
+  jwt: string;
+  user: {
+  id:number;
+  documentId:string;
+  username:string;
+  email:string;
+}
+}

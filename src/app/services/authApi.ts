@@ -3,16 +3,9 @@ interface LoginRequest {
   password: string;
 }
 
-interface LoginResponse {
-  jwt: string;
-  user: {
-    id: number;
-    documentId: string;
-    username: string;
-    email: string;
-  };
-}
 
+
+import type { LoginResponse } from "@/interfaces";
 import { saveAuth } from "@/utils";
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
@@ -32,6 +25,7 @@ export const authApi = createApi({
       async onQueryStarted(_, { queryFulfilled }) {
         try {
           const { data } = await queryFulfilled;
+          console.log("Login successful:", data);
           saveAuth(data.jwt);
           
         } catch (error) {

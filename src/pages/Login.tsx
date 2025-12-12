@@ -60,7 +60,7 @@ export default function Login() {
         duration: 3000,
         closable: true,
       });
-      loginHandler(response.jwt);
+      loginHandler(response);
     } catch (err: any) {
       let message = "Login failed";
       if (err?.data?.error?.message) message = err.data.error.message;
