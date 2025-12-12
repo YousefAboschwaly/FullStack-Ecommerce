@@ -20,8 +20,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     return cookieService.getCookie("jwt") || undefined;
   });
   const [user, setUser] = useState<LoginResponse["user"] | null>(null);
-console.log(user ,  "AuthContext user state");
-console.log(token ,  "AuthContext token state");
+
   const login = (data: LoginResponse) => {
     setToken(data.jwt);
     setUser(data.user);
@@ -34,16 +33,15 @@ console.log(token ,  "AuthContext token state");
 
   // This effect fetches user data when the token changes or when the user refresh the page to persist the login state and make sure user data is up-to-date
   useEffect(() => {
-  if (token) {
-    fetch(`${import.meta.env.VITE_API_URL }/api/users/me`, {
-      headers: { Authorization: `Bearer ${token}` }
-    })
-      .then((res) => res.json())
-      .then((data) => setUser(data))
-      .catch(() => setUser(null));
-  }
-}, [token]);
-
+    if (token) {
+      fetch(`${import.meta.env.VITE_API_URL}/api/users/me`, {
+        headers: { Authorization: `Bearer ${token}` },
+      })
+        .then((res) => res.json())
+        .then((data) => setUser(data))
+        .catch(() => setUser(null));
+    }
+  }, [token]);
 
   return (
     <AuthContext.Provider value={{ user, token, login, logout }}>

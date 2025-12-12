@@ -4,10 +4,12 @@ import { createSlice } from "@reduxjs/toolkit";
 
 interface ICartState{
   cartProducts:  Array<{product: IProduct; quantity: number}>;
+  cartItemsCount:number;
 }
 
 const initialState:ICartState = {
   cartProducts:[],
+  cartItemsCount:10,
 }
 const cartSlice = createSlice({
   name:"cart",
@@ -19,4 +21,5 @@ const cartSlice = createSlice({
   },
 })
 export const {addToCart} = cartSlice.actions;
+export const selectCart = (state: { cart: ICartState }) => state.cart;
 export default cartSlice.reducer;

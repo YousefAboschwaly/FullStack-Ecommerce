@@ -1,3 +1,4 @@
+import { selectCart } from "@/app/services/cartSlice";
 import { useColorMode } from "@/components/ui/color-mode";
 import { navLinks, profileMenuItems } from "@/constants";
 import { useAuth } from "@/context/AuthContext";
@@ -23,6 +24,7 @@ import {
   X,
 } from "lucide-react";
 import { useState } from "react";
+import { useSelector } from "react-redux";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 
 const Navbar = () => {
@@ -34,8 +36,7 @@ const Navbar = () => {
   const { colorMode, toggleColorMode } = useColorMode();
 
   // Mock cart items count - replace with your actual cart state
-  const cartItemsCount = 3;
-  console.log(user)
+  const {cartItemsCount} = useSelector(selectCart);
   // Use centralized theme colors
   const {
     bgCard,
