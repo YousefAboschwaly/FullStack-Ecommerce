@@ -30,12 +30,12 @@ const Navbar = () => {
   const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
-  const { logout } = useAuth();
+  const {user, logout } = useAuth();
   const { colorMode, toggleColorMode } = useColorMode();
 
   // Mock cart items count - replace with your actual cart state
   const cartItemsCount = 3;
-
+  console.log(user)
   // Use centralized theme colors
   const {
     bgCard,
@@ -264,10 +264,10 @@ const Navbar = () => {
                     />
                     <Box>
                       <Text fontWeight="600" fontSize="sm" color={textPrimary}>
-                        John Doe
+                       {user?.username||"Guest User"}
                       </Text>
                       <Text fontSize="xs" color={textMuted}>
-                        john@example.com
+                        {user?.email||"No email provided"}
                       </Text>
                     </Box>
                   </HStack>

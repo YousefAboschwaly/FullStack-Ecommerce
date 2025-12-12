@@ -25,7 +25,6 @@ export const authApi = createApi({
       async onQueryStarted(_, { queryFulfilled }) {
         try {
           const { data } = await queryFulfilled;
-          console.log("Login successful:", data);
           saveAuth(data.jwt);
           
         } catch (error) {
