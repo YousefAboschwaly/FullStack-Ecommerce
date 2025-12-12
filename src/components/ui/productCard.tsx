@@ -120,17 +120,28 @@ export default function ProductCard({ product }: IProps) {
       )}
       {/* Image Container */}
       <Box position="relative" pt={8} pb={4} px={6} bg={gradientCardBg}>
-        <Image
-          src={`${apiUrl}${thumbnail.url.startsWith("/") ? "" : "/"}${
-            thumbnail.url
-          }`}
-          alt={title}
-          boxSize="180px"
-          mx="auto"
-          objectFit="contain"
-          transition="transform 0.3s ease"
-          _groupHover={{ transform: "scale(1.05)" }}
-        />
+        {thumbnail?.url ? (
+          <Image
+            src={`${apiUrl}${thumbnail.url.startsWith("/") ? "" : "/"}${thumbnail.url}`}
+            alt={title}
+            boxSize="180px"
+            mx="auto"
+            objectFit="contain"
+            transition="transform 0.3s ease"
+            _groupHover={{ transform: "scale(1.05)" }}
+          />
+        ) : (
+          <Box
+            boxSize="180px"
+            mx="auto"
+            bg="gray.200"
+            display="flex"
+            alignItems="center"
+            justifyContent="center"
+          >
+            <Text color="gray.500">No image</Text>
+          </Box>
+        )} 
       </Box>
       <Card.Body px={5} pb={5} pt={3}>
         {/* Title */}
