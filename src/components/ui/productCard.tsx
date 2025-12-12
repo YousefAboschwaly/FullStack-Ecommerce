@@ -15,6 +15,8 @@ import {
 import { Eye, Heart, ShoppingCart } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useColorMode } from "./color-mode";
+import { useDispatch } from "react-redux";
+import { addToCart } from "@/app/services/cartSlice";
 
 interface IProps {
   product: IProduct;
@@ -44,6 +46,13 @@ export default function ProductCard({ product }: IProps) {
   } = useThemeColors();
   const { colorMode } = useColorMode();
   const isDark = colorMode === "dark";
+  const dispatch = useDispatch();
+
+  // Handle Add to Cart (functionality to be implemented)
+  function handleAddToCart(product:IProduct){
+     
+    dispatch(addToCart({product, quantity: 1}))
+  };
 
   return (
     <Card.Root
@@ -199,6 +208,7 @@ export default function ProductCard({ product }: IProps) {
               boxShadow: shadowButton,
             }}
             transition="all 0.2s ease"
+            onClick={() => handleAddToCart(product)}
           >
             <Icon as={ShoppingCart} boxSize={4} />
             Add to Cart
