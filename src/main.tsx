@@ -4,17 +4,20 @@ import { createRoot } from "react-dom/client";
 import App from "./App.tsx";
 import "./index.css";
 import { Provider } from "react-redux";
-import { store } from "./app/store.ts";
+import { persistor, store } from "./app/store.ts";
 import { Provider as ThemeProvider } from "./components/ui/provider";
+import { PersistGate } from "redux-persist/integration/react";
 const queryClient = new QueryClient();
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <QueryClientProvider client={queryClient}>
       <Provider store={store}>
-        <ThemeProvider>
-          <App />
-        </ThemeProvider>
+        <PersistGate loading={null} persistor={persistor}>
+          <ThemeProvider>
+            <App />
+          </ThemeProvider>
+        </PersistGate>
       </Provider>
     </QueryClientProvider>
   </StrictMode>
