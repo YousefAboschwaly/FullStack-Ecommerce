@@ -16,19 +16,16 @@ import {
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
-import { Link, Navigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useLoginMutation } from "../app/services/authApi";
+import { useAuth } from "@/context/AuthContext";
 
 interface IFormInput {
   identifier: string;
   password: string;
 }
-export default function Login({
-  isAuthenticated,
-}: {
-  isAuthenticated: string | undefined;
-}) {
-  console.log(isAuthenticated);
+export default function Login() {
+  const navigate = useNavigate();
   const {
     bgMain,
     bgCard,
@@ -52,8 +49,8 @@ export default function Login({
     formState: { errors },
   } = useForm<IFormInput>();
   const { email, password } = loginSchema;
-  const [login, { isLoading, data }] = useLoginMutation();
-
+  const [login, { isLoading }] = useLoginMutation();
+  const {login:loginHandler, token} = useAuth()
   const onSubmit = async (data: IFormInput) => {
     try {
       const response = await login(data).unwrap();
@@ -63,8 +60,7 @@ export default function Login({
         duration: 3000,
         closable: true,
       });
-      
-
+      loginHandler(response.jwt);
     } catch (err: any) {
       let message = "Login failed";
       if (err?.data?.error?.message) message = err.data.error.message;
@@ -78,11 +74,10 @@ export default function Login({
       });
     }
   };
-  // Handle already authenticated user
-  if (isAuthenticated || data?.jwt) {
-    console.log("Authenticated, redirecting...");
-    return <Navigate to="/" replace />;
+  if (token) {
+    navigate("/", { replace: true });
   }
+
 
   return (
     <Box

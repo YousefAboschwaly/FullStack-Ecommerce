@@ -1,25 +1,37 @@
-import { createBrowserRouter, createRoutesFromElements, Route, RouterProvider } from "react-router-dom";
+import {
+  createBrowserRouter,
+  createRoutesFromElements,
+  Route,
+  RouterProvider,
+} from "react-router-dom";
 import ErrorHandler from "./components/ui/ErrorHandler";
 import ProductDetails from "./components/ui/productDetails";
+import { Toaster } from "./components/ui/toaster";
+import { AuthProvider } from "./context/AuthContext";
 import Layout from "./Layout";
 import About from "./pages/About";
 import Login from "./pages/Login";
 import NotFound from "./pages/NotFound";
 import Products from "./pages/Products";
-import { Toaster } from "./components/ui/toaster";
-import cookieService from "./app/services/cookieService";
+import ProtectedRoute from "./Layout/ProtectedRoute";
 
 export default function App() {
-  const token = cookieService.getCookie("jwt") 
-  console.log(token);
   const router = createBrowserRouter(
     createRoutesFromElements(
       <>
         {/* Public routes */}
-        <Route path="login" element={<Login isAuthenticated={token} />} />
+        <Route path="login" element={<Login />} />
 
         {/* Main Layout */}
-        <Route path="/" element={<Layout isAuthenticated={token} />} errorElement={<ErrorHandler />}>
+        <Route
+          path="/"
+          element={
+            <ProtectedRoute>
+              <Layout />
+            </ProtectedRoute>
+          }
+          errorElement={<ErrorHandler />}
+        >
           <Route index element={<Products />} />
           <Route path="products" element={<Products />} />
           <Route path="about" element={<About />} />
@@ -32,8 +44,12 @@ export default function App() {
     )
   );
 
-  return<>
-  <Toaster/>
-   <RouterProvider router={router} />
-  </>;
+  return (
+    <>
+      <AuthProvider>
+        <Toaster />
+        <RouterProvider router={router} />
+      </AuthProvider>
+    </>
+  );
 }

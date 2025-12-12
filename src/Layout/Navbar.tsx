@@ -1,6 +1,6 @@
-import cookieService from "@/app/services/cookieService";
 import { useColorMode } from "@/components/ui/color-mode";
 import { navLinks, profileMenuItems } from "@/constants";
+import { useAuth } from "@/context/AuthContext";
 import { useThemeColors } from "@/hooks/useThemeColors";
 import {
   Box,
@@ -30,6 +30,7 @@ const Navbar = () => {
   const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
+  const {logout} = useAuth()
   const { colorMode, toggleColorMode } = useColorMode();
 
   // Use centralized theme colors
@@ -53,10 +54,7 @@ const Navbar = () => {
     return location.pathname.startsWith(path);
   };
 
-  function handleLogout() {
-    cookieService.removeCookie("jwt");
-    window.location.reload();
-  }
+
 
   return (
     <Box
@@ -282,7 +280,7 @@ const Navbar = () => {
                       color={statusError}
                       _hover={{ bg: statusErrorBg, color: statusError }}
                       w="full"
-                      onClick={handleLogout}
+                      onClick={logout}
                     >
                       <LogOut size={18} />
                       <Text fontSize="sm">Logout</Text>

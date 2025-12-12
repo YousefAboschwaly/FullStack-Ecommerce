@@ -1,18 +1,25 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable react-refresh/only-export-components */
 import cookieService from "@/app/services/cookieService";
 import { createContext, useContext, useState } from "react";
-
-const AuthContext = createContext<any>(null);
+interface IProps {
+  token: string | undefined;
+  login: (jwt:string)=>void;
+  logout: () => void;
+}
+const AuthContext = createContext<IProps>({
+  token: undefined,
+  login:()=>{},
+  logout: () => {},
+});
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [token, setToken] = useState<string | undefined>(() => {
     return cookieService.getCookie("jwt") || undefined;
   });
-  const login = (jwt: string) => {
-    cookieService.setCookie("jwt", jwt, { path: "/", expires: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000) });
+
+  const login = (jwt:string)=>{
     setToken(jwt);
-  };
+  }
 
   const logout = () => {
     cookieService.removeCookie("jwt");
@@ -20,7 +27,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   return (
-    <AuthContext.Provider value={{ token, login, logout }}>
+    <AuthContext.Provider value={{ token,login ,logout }}>
       {children}
     </AuthContext.Provider>
   );
