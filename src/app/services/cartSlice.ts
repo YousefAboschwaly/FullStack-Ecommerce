@@ -3,7 +3,7 @@ import type { IProduct } from "@/interfaces";
 import { createSlice } from "@reduxjs/toolkit";
 
 interface ICartState{
-  cartProducts: IProduct[];
+  cartProducts:  Array<{product: IProduct; quantity: number}>;
 }
 
 const initialState:ICartState = {
