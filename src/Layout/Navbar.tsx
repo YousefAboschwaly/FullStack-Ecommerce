@@ -30,8 +30,11 @@ const Navbar = () => {
   const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
-  const {logout} = useAuth()
+  const { logout } = useAuth();
   const { colorMode, toggleColorMode } = useColorMode();
+
+  // Mock cart items count - replace with your actual cart state
+  const cartItemsCount = 3;
 
   // Use centralized theme colors
   const {
@@ -42,6 +45,7 @@ const Navbar = () => {
     borderDefault,
     borderAccent,
     accentPrimary,
+    gradientButton,
     gradientLogo,
     statusError,
     statusErrorBg,
@@ -53,8 +57,6 @@ const Navbar = () => {
     }
     return location.pathname.startsWith(path);
   };
-
-
 
   return (
     <Box
@@ -156,15 +158,37 @@ const Navbar = () => {
             <Heart size={20} />
           </IconButton>
 
-          {/* Cart Icon */}
-          <IconButton
-            aria-label="Shopping Cart"
-            variant="ghost"
-            color={textMuted}
-            _hover={{ color: accentPrimary, bg: bgCardHover }}
-          >
-            <ShoppingCart size={20} />
-          </IconButton>
+          {/* Cart Icon with Badge */}
+          <Box position="relative">
+            <IconButton
+              aria-label="Shopping Cart"
+              variant="ghost"
+              color={textMuted}
+              _hover={{ color: accentPrimary, bg: bgCardHover }}
+            >
+              <ShoppingCart size={20} />
+            </IconButton>
+            {cartItemsCount > 0 && (
+              <Box
+                position="absolute"
+                top="-2px"
+                right="-2px"
+                bg={gradientButton}
+                color="white"
+                fontSize="10px"
+                fontWeight="bold"
+                borderRadius="full"
+                minW="18px"
+                h="18px"
+                display="flex"
+                alignItems="center"
+                justifyContent="center"
+                px="5px"
+              >
+                {cartItemsCount > 99 ? "99+" : cartItemsCount}
+              </Box>
+            )}
+          </Box>
 
           {/* Color Mode Toggle */}
           <IconButton
