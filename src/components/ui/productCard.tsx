@@ -1,4 +1,5 @@
-// ProductCard.tsx - with centralized theme colors
+import { addToCart, removeFromCart, selectCart } from "@/app/services/cartSlice";
+import type { RootState } from "@/app/store";
 import { useThemeColors } from "@/hooks/useThemeColors";
 import type { IProduct } from "@/interfaces";
 import {
@@ -12,11 +13,10 @@ import {
   Image,
   Text,
 } from "@chakra-ui/react";
-import { Eye, Heart, ShoppingCart } from "lucide-react";
+import {  Eye, Heart, ShoppingCart, Trash2 } from "lucide-react";
+import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import { useColorMode } from "./color-mode";
-import { useDispatch } from "react-redux";
-import { addToCart } from "@/app/services/cartSlice";
 
 interface IProps {
   product: IProduct;
@@ -27,7 +27,6 @@ const apiUrl = import.meta.env.VITE_API_URL || "";
 export default function ProductCard({ product }: IProps) {
   const { title, description, price, thumbnail, stock, category } = product;
 
-  // Use centralized theme colors
   const {
     bgCardTranslucent,
     bgOverlay,
@@ -43,16 +42,23 @@ export default function ProductCard({ product }: IProps) {
     gradientCardBg,
     gradientButton,
     gradientPrice,
+    statusError,
   } = useThemeColors();
+  
   const { colorMode } = useColorMode();
   const isDark = colorMode === "dark";
   const dispatch = useDispatch();
+  const { cartProducts } = useSelector((state: RootState) => selectCart(state));
 
-  // Handle Add to Cart (functionality to be implemented)
-  function handleAddToCart(product:IProduct){
-     
-    dispatch(addToCart(product))
-  };
+  const isInCart = cartProducts.some((item) => item.id === product.id);
+
+  function handleCartToggle() {
+    if (isInCart) {
+      dispatch(removeFromCart(product.id));
+    } else {
+      dispatch(addToCart(product));
+    }
+  }
 
   return (
     <Card.Root
@@ -109,6 +115,7 @@ export default function ProductCard({ product }: IProps) {
           <Icon as={Eye} boxSize={4} />
         </IconButton>
       </Flex>
+
       {/* Category Badge */}
       {category && (
         <Badge
@@ -127,6 +134,7 @@ export default function ProductCard({ product }: IProps) {
           {category.title}
         </Badge>
       )}
+
       {/* Image Container */}
       <Box position="relative" pt={8} pb={4} px={6} bg={gradientCardBg}>
         {thumbnail?.url ? (
@@ -150,8 +158,9 @@ export default function ProductCard({ product }: IProps) {
           >
             <Text color="gray.500">No image</Text>
           </Box>
-        )} 
+        )}
       </Box>
+
       <Card.Body px={5} pb={5} pt={3}>
         {/* Title */}
         <Text
@@ -200,18 +209,28 @@ export default function ProductCard({ product }: IProps) {
         <Flex gap={2}>
           <Button
             flex={1}
-            bg={gradientButton}
+            bg={isInCart ? statusError : gradientButton}
             color={buttonText}
             fontWeight="semibold"
             _hover={{
               transform: "translateY(-2px)",
               boxShadow: shadowButton,
+              opacity: 0.9,
             }}
             transition="all 0.2s ease"
-            onClick={() => handleAddToCart(product)}
+            onClick={handleCartToggle}
           >
-            <Icon as={ShoppingCart} boxSize={4} />
-            Add to Cart
+            {isInCart ? (
+              <>
+                <Icon as={Trash2} boxSize={4} mr={1} />
+                Remove
+              </>
+            ) : (
+              <>
+                <Icon as={ShoppingCart} boxSize={4} mr={1} />
+                Add to Cart
+              </>
+            )}
           </Button>
           <Button
             asChild
