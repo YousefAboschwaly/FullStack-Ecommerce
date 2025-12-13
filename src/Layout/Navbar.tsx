@@ -1,4 +1,5 @@
 import { selectCart } from "@/app/services/cartSlice";
+import { onOpenCart } from "@/app/services/globalSlice";
 import { useColorMode } from "@/components/ui/color-mode";
 import { navLinks, profileMenuItems } from "@/constants";
 import { useAuth } from "@/context/AuthContext";
@@ -24,7 +25,7 @@ import {
   X,
 } from "lucide-react";
 import { useState } from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 
 const Navbar = () => {
@@ -37,6 +38,9 @@ const Navbar = () => {
 
   // Mock cart items count - replace with your actual cart state
   const {cartItemsCount} = useSelector(selectCart);
+    const dispatch = useDispatch()
+  const onOpen  =()=> dispatch(onOpenCart())
+
   // Use centralized theme colors
   const {
     bgCard,
@@ -160,7 +164,7 @@ const Navbar = () => {
           </IconButton>
 
           {/* Cart Icon with Badge */}
-          <Box position="relative">
+          <Box position="relative" onClick={onOpen}>
             <IconButton
               aria-label="Shopping Cart"
               variant="ghost"

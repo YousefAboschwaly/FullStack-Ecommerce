@@ -1,6 +1,7 @@
 import { configureStore } from "@reduxjs/toolkit";
 import { authApi } from "./services/authApi";
 import cartSlice from "./services/cartSlice";
+import globalSlice from "./services/globalSlice";
 
 // Redux Persist imports
 import storage from "redux-persist/lib/storage"; // يستخدم localStorage
@@ -19,6 +20,7 @@ export const store = configureStore({
   reducer: {
     [authApi.reducerPath]: authApi.reducer,
     cart: persistedCartReducer, // استبدل cartSlice بالـ persisted version
+    global:globalSlice
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({

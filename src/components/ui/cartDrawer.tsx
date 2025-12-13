@@ -1,3 +1,4 @@
+import {  onCloseCart, selectGlobal } from "@/app/services/globalSlice";
 import { useThemeColors } from "@/hooks/useThemeColors";
 import {
   Box,
@@ -12,11 +13,9 @@ import {
   VStack,
 } from "@chakra-ui/react";
 import { Minus, Plus, ShoppingBag, Trash2 } from "lucide-react";
+import { useDispatch, useSelector } from "react-redux";
 
-interface CartDrawerProps {
-  isOpen: boolean;
-  onClose: () => void;
-}
+
 
 // Mock cart items - replace with your actual cart data
 const mockCartItems = [
@@ -43,7 +42,7 @@ const mockCartItems = [
   },
 ];
 
-const CartDrawer = ({ isOpen, onClose }: CartDrawerProps) => {
+const CartDrawer = () => {
   const {
     bgCard,
     bgCardHover,
@@ -55,6 +54,11 @@ const CartDrawer = ({ isOpen, onClose }: CartDrawerProps) => {
     buttonText,
     statusError,
   } = useThemeColors();
+
+  const dispatch = useDispatch()
+  const {isOpen} = useSelector(selectGlobal)
+  
+  const onClose  =()=> dispatch(onCloseCart())
 
   const subtotal = mockCartItems.reduce(
     (sum, item) => sum + item.price * item.quantity,
