@@ -19,16 +19,7 @@ const cartSlice = createSlice({
       );
     },
     removeFromCart(state, action: PayloadAction<number>) {
-      const itemToRemove = state.cartProducts.find(
-        (item) => item.id === action.payload
-      );
-      if (itemToRemove && itemToRemove.quantity>1) {
-        state.cartProducts = state.cartProducts.map((item) =>
-          item.id === action.payload
-            ? { ...item, quantity: item.quantity - 1 }
-            : item
-        );
-      }
+     
       state.cartProducts = removeItemFromShoppingCart(
         action.payload,
         state.cartProducts

@@ -21,6 +21,7 @@ export const addItemToShoppingCart = (cartItem: IProduct,shoppingCartItems: ICar
 
     return shoppingCartItems.map((item) =>item.id === cartItem.id ? { ...item, quantity: item.quantity + 1 } : item);
   }
+  
     toaster.success({
       title: "Added to your Cart",
       duration: 2000,
@@ -31,6 +32,10 @@ export const addItemToShoppingCart = (cartItem: IProduct,shoppingCartItems: ICar
 };
 
 export const removeItemFromShoppingCart= (id:number,shoppingCartItems: ICartItem[]): ICartItem[] => {
+   const itemToRemove = shoppingCartItems.find((item) => item.id === id);
+      if (itemToRemove && itemToRemove.quantity>1) {
+        return shoppingCartItems.map((item) =>item.id === id? { ...item, quantity: item.quantity - 1 }: item);
+      }
       toaster.success({
       title: "Removed from your Cart",
       duration: 2000,
@@ -44,3 +49,7 @@ export const cartItemsQuantity= (shoppingCartItems: ICartItem[]):number=>{
     (total, item) => total + item.quantity,
     0
   );}
+
+  export const  isItemInCart=(shoppingCartItems: ICartItem[],id:number):boolean=>{
+   return shoppingCartItems.some((item) => item.id === id);
+  }

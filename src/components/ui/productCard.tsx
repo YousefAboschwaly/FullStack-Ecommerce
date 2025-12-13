@@ -17,6 +17,7 @@ import {  Eye, Heart, ShoppingCart, Trash2 } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import { useColorMode } from "./color-mode";
+import { isItemInCart } from "@/utils";
 
 interface IProps {
   product: IProduct;
@@ -25,7 +26,7 @@ interface IProps {
 const apiUrl = import.meta.env.VITE_API_URL || "";
 
 export default function ProductCard({ product }: IProps) {
-  const { title, description, price, thumbnail, stock, category } = product;
+  const { id,title, description, price, thumbnail, stock, category } = product;
 
   const {
     bgCardTranslucent,
@@ -50,7 +51,7 @@ export default function ProductCard({ product }: IProps) {
   const dispatch = useDispatch();
   const { cartProducts } = useSelector((state: RootState) => selectCart(state));
 
-  const isInCart = cartProducts.some((item) => item.id === product.id);
+  const isInCart = isItemInCart(cartProducts,id)
 
   function handleCartToggle() {
     if (isInCart) {
