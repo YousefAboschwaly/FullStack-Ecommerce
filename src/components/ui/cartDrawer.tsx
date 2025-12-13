@@ -1,3 +1,4 @@
+import { selectCart } from "@/app/services/cartSlice";
 import {  onCloseCart, selectGlobal } from "@/app/services/globalSlice";
 import { useThemeColors } from "@/hooks/useThemeColors";
 import {
@@ -15,34 +16,14 @@ import {
 import { Minus, Plus, ShoppingBag, Trash2 } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
 
+const apiUrl = import.meta.env.VITE_API_URL || "";
 
 
-// Mock cart items - replace with your actual cart data
-const mockCartItems = [
-  {
-    id: 1,
-    name: "Wireless Headphones",
-    price: 99.99,
-    quantity: 1,
-    image: "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=80&h=80&fit=crop",
-  },
-  {
-    id: 2,
-    name: "Smart Watch",
-    price: 249.99,
-    quantity: 2,
-    image: "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=80&h=80&fit=crop",
-  },
-  {
-    id: 3,
-    name: "Laptop Stand",
-    price: 49.99,
-    quantity: 1,
-    image: "https://images.unsplash.com/photo-1527864550417-7fd91fc51a46?w=80&h=80&fit=crop",
-  },
-];
+
+
 
 const CartDrawer = () => {
+  const {cartProducts} = useSelector(selectCart);
   const {
     bgCard,
     bgCardHover,
@@ -60,8 +41,8 @@ const CartDrawer = () => {
   
   const onClose  =()=> dispatch(onCloseCart())
 
-  const subtotal = mockCartItems.reduce(
-    (sum, item) => sum + item.price * item.quantity,
+  const subtotal = cartProducts.reduce(
+    (sum, item) => sum + item.product.price * item.quantity,
     0
   );
 
@@ -104,7 +85,7 @@ const CartDrawer = () => {
                   px={2}
                   py={0.5}
                 >
-                  {mockCartItems.length}
+                  {cartProducts.length}
                 </Box>
               </HStack>
               <Drawer.CloseTrigger asChild>
@@ -120,7 +101,7 @@ const CartDrawer = () => {
             </Drawer.Header>
 
             <Drawer.Body p={4} overflowY="auto">
-              {mockCartItems.length === 0 ? (
+              {cartProducts.length === 0 ? (
                 <VStack py={12} gap={4}>
                   <ShoppingBag size={64} color={textMuted} />
                   <Text color={textMuted} fontSize="lg">
@@ -137,9 +118,9 @@ const CartDrawer = () => {
                 </VStack>
               ) : (
                 <VStack gap={4} align="stretch">
-                  {mockCartItems.map((item) => (
+                  {cartProducts.map((item) => (
                     <Box
-                      key={item.id}
+                      key={item.product.id}
                       p={3}
                       borderRadius="lg"
                       border="1px solid"
@@ -149,8 +130,8 @@ const CartDrawer = () => {
                     >
                       <HStack gap={3} align="start">
                         <Image
-                          src={item.image}
-                          alt={item.name}
+                          src={apiUrl+item.product.thumbnail.url}
+                          alt={item.product.title}
                           w="70px"
                           h="70px"
                           borderRadius="md"
@@ -163,7 +144,7 @@ const CartDrawer = () => {
                             color={textPrimary}
                             lineClamp={2}
                           >
-                            {item.name}
+                            {item.product.title}
                           </Text>
                           <Text
                             fontSize="sm"
@@ -171,7 +152,7 @@ const CartDrawer = () => {
                             color={accentPrimary}
                             mt={1}
                           >
-                            ${item.price.toFixed(2)}
+                            ${item.product.price.toFixed(2)}
                           </Text>
 
                           {/* Quantity Controls */}
@@ -229,7 +210,7 @@ const CartDrawer = () => {
               )}
             </Drawer.Body>
 
-            {mockCartItems.length > 0 && (
+            {cartProducts.length > 0 && (
               <Drawer.Footer
                 p={4}
                 borderTop="1px solid"
