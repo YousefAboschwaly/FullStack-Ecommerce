@@ -51,7 +51,7 @@ export default function ProductCard({ product }: IProps) {
   // Handle Add to Cart (functionality to be implemented)
   function handleAddToCart(product:IProduct){
      
-    dispatch(addToCart({product, quantity: 1}))
+    dispatch(addToCart(product))
   };
 
   return (
