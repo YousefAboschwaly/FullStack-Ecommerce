@@ -34,6 +34,12 @@ export const addItemToShoppingCart = (cartItem: IProduct,shoppingCartItems: ICar
 export const removeItemFromShoppingCart= (id:number,shoppingCartItems: ICartItem[]): ICartItem[] => {
    const itemToRemove = shoppingCartItems.find((item) => item.id === id);
       if (itemToRemove && itemToRemove.quantity>1) {
+    toaster.success({
+      title: "Cart updated",
+      description: "Item quantity decreased successfully.",
+      duration: 2000,
+      closable: true,
+    });
         return shoppingCartItems.map((item) =>item.id === id? { ...item, quantity: item.quantity - 1 }: item);
       }
       toaster.success({

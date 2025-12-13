@@ -1,7 +1,7 @@
 // ProductDetails.tsx - Chakra UI 3.x version with proper theming
 import useProduct from "@/hooks/useProduct";
 import useThemeColors from "@/hooks/useThemeColors";
-import type { IProduct } from "@/interfaces";
+import type { ICartItem, IProduct } from "@/interfaces";
 import {
   Badge,
   Box,
@@ -83,7 +83,11 @@ const ProductDetails = () => {
   const imageUrl = `${baseUrl}${thumbnail.url}`;
 
   const isInCart = isItemInCart(cartProducts, productId);
-  const searchedItem = searchItemInCart(cartProducts,productId)
+  const searchedItem: ICartItem | undefined = searchItemInCart(
+    cartProducts,
+    productId
+  );
+  const quantity = searchedItem ? searchedItem.quantity : 1;
   const handleCartToggle = () => {
     if (isInCart) {
       dispatch(removeFromCart(productId));
