@@ -42,7 +42,7 @@ const CartDrawer = () => {
   const onClose  =()=> dispatch(onCloseCart())
 
   const subtotal = cartProducts.reduce(
-    (sum, item) => sum + item.product.price * item.quantity,
+    (sum, item) => sum + item.price * item.quantity,
     0
   );
 
@@ -120,7 +120,7 @@ const CartDrawer = () => {
                 <VStack gap={4} align="stretch">
                   {cartProducts.map((item) => (
                     <Box
-                      key={item.product.id}
+                      key={item.id}
                       p={3}
                       borderRadius="lg"
                       border="1px solid"
@@ -130,8 +130,8 @@ const CartDrawer = () => {
                     >
                       <HStack gap={3} align="start">
                         <Image
-                          src={apiUrl+item.product.thumbnail.url}
-                          alt={item.product.title}
+                          src={apiUrl+item.thumbnail.url}
+                          alt={item.title}
                           w="70px"
                           h="70px"
                           borderRadius="md"
@@ -144,7 +144,7 @@ const CartDrawer = () => {
                             color={textPrimary}
                             lineClamp={2}
                           >
-                            {item.product.title}
+                            {item.title}
                           </Text>
                           <Text
                             fontSize="sm"
@@ -152,7 +152,7 @@ const CartDrawer = () => {
                             color={accentPrimary}
                             mt={1}
                           >
-                            ${item.product.price.toFixed(2)}
+                            ${item.price.toFixed(2)}
                           </Text>
 
                           {/* Quantity Controls */}
