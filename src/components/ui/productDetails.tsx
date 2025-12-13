@@ -14,7 +14,7 @@ import {
   IconButton,
   Image,
   Text,
-  VStack
+  VStack,
 } from "@chakra-ui/react";
 import {
   ArrowLeft,
@@ -24,19 +24,26 @@ import {
   RotateCcw,
   Shield,
   ShoppingCart,
+  Trash2,
   Truck,
 } from "lucide-react";
 import { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import ErrorHandler from "./ErrorHandler";
 import ProductDetailsSkeleton from "./productDetailsSkeleton";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  addToCart,
+  removeFromCart,
+  selectCart,
+} from "@/app/services/cartSlice";
+import { isItemInCart, searchItemInCart } from "@/utils";
 
 const baseUrl = import.meta.env.VITE_API_URL || "";
 
 const ProductDetails = () => {
   const { id } = useParams<{ id: string }>();
   const { data, isLoading, error } = useProduct(id ?? "");
-  const [quantity, setQuantity] = useState(1);
   const [isWishlisted, setIsWishlisted] = useState(false);
   const {
     bgMain,
@@ -49,7 +56,6 @@ const ProductDetails = () => {
     accentPrimary,
     accentSecondary,
     buttonPrimary,
-    buttonPrimaryHover,
     buttonText,
     badgeCategoryBg,
     badgeCategoryText,
@@ -58,11 +64,39 @@ const ProductDetails = () => {
   } = useThemeColors();
   const navigate = useNavigate();
 
-  if (isLoading) return <ProductDetailsSkeleton />;
-  if (error || !data) return <ErrorHandler error={"Failed to Fetch Product of this Id "} />;
-  const product: IProduct = data as IProduct;
+  const { cartProducts } = useSelector(selectCart);
+  const dispatch = useDispatch();
 
-  const imageUrl = `${baseUrl}${product.thumbnail.url}`;
+  if (isLoading) return <ProductDetailsSkeleton />;
+  if (error || !data)
+    return <ErrorHandler error={"Failed to Fetch Product of this Id "} />;
+  const product: IProduct = data as IProduct;
+  const {
+    id: productId,
+    category,
+    description,
+    title,
+    price,
+    stock,
+    thumbnail,
+  } = product;
+  const imageUrl = `${baseUrl}${thumbnail.url}`;
+
+  const isInCart = isItemInCart(cartProducts, productId);
+  const searchedItem = searchItemInCart(cartProducts,productId)
+  const handleCartToggle = () => {
+    if (isInCart) {
+      dispatch(removeFromCart(productId));
+    } else {
+      dispatch(addToCart(product));
+    }
+  };
+  const handleAddToCart = () => {
+    dispatch(addToCart(product));
+  };
+  const handleRemoveFromCart = () => {
+    dispatch(removeFromCart(productId));
+  };
 
   return (
     <Box bg={bgMain}>
@@ -103,7 +137,7 @@ const ProductDetails = () => {
               </IconButton>
               <Image
                 src={imageUrl}
-                alt={product.title}
+                alt={title}
                 w="full"
                 h="400px"
                 objectFit="contain"
@@ -127,40 +161,38 @@ const ProductDetails = () => {
                 fontWeight="semibold"
                 textTransform="capitalize"
                 boxShadow="0 2px 8px rgba(0,0,0,0.08)"
-                _hover={{ 
-                  transform: 'translateY(-1px)', 
-                  boxShadow: '0 4px 12px rgba(0,0,0,0.12)' 
+                _hover={{
+                  transform: "translateY(-1px)",
+                  boxShadow: "0 4px 12px rgba(0,0,0,0.12)",
                 }}
                 transition="all 0.2s ease"
                 cursor="pointer"
               >
-                {product.category.title}
+                {category.title}
               </Badge>
 
               <Heading color={textPrimary} size="2xl">
-                {product.title}
+                {title}
               </Heading>
 
               <HStack gap={4}>
                 <Text fontSize="4xl" fontWeight="bold" color={accentSecondary}>
-                  ${product.price}
+                  ${price}
                 </Text>
                 <Badge
-                  bg={product.stock > 0 ? "hsl(142, 76%, 90%)" : "hsl(0, 84%, 92%)"}
-                  color={product.stock > 0 ? "hsl(142, 76%, 30%)" : "hsl(0, 84%, 40%)"}
+                  bg={stock > 0 ? "hsl(142, 76%, 90%)" : "hsl(0, 84%, 92%)"}
+                  color={stock > 0 ? "hsl(142, 76%, 30%)" : "hsl(0, 84%, 40%)"}
                   px={3}
                   py={1}
                   borderRadius="md"
                   fontWeight="medium"
                 >
-                  {product.stock > 0
-                    ? `${product.stock} in stock`
-                    : "Out of stock"}
+                  {stock > 0 ? `${stock} in stock` : "Out of stock"}
                 </Badge>
               </HStack>
 
               <Text color={textSecondary} fontSize="lg">
-                {product.description}
+                {description}
               </Text>
 
               {/* Quantity Selector */}
@@ -177,7 +209,7 @@ const ProductDetails = () => {
                     variant="ghost"
                     color={textPrimary}
                     _hover={{ bg: bgCardHover }}
-                    onClick={() => setQuantity(Math.max(1, quantity - 1))}
+                    onClick={handleRemoveFromCart}
                   >
                     <Minus size={16} />
                   </IconButton>
@@ -189,9 +221,7 @@ const ProductDetails = () => {
                     variant="ghost"
                     color={textPrimary}
                     _hover={{ bg: bgCardHover }}
-                    onClick={() =>
-                      setQuantity(Math.min(product.stock, quantity + 1))
-                    }
+                    onClick={handleAddToCart}
                   >
                     <Plus size={16} />
                   </IconButton>
@@ -199,19 +229,34 @@ const ProductDetails = () => {
               </HStack>
 
               {/* Action Buttons */}
+
               <HStack w="full" gap={4}>
                 <Button
                   flex={1}
-                  size="lg"
-                  bg={buttonPrimary}
+                  bg={isInCart ? statusError : buttonPrimary}
                   color={buttonText}
-                  _hover={{ bg: buttonPrimaryHover }}
+                  fontWeight="semibold"
+                  _hover={{
+                    transform: "translateY(-2px)",
+                    boxShadow: "lg",
+                    opacity: 0.9,
+                  }}
+                  transition="all 0.2s ease"
+                  onClick={handleCartToggle}
                 >
-                  <>
-                    <ShoppingCart size={20} />
-                    Add to Cart
-                  </>
+                  {isInCart ? (
+                    <>
+                      <Icon as={Trash2} boxSize={4} mr={1} />
+                      Remove
+                    </>
+                  ) : (
+                    <>
+                      <Icon as={ShoppingCart} boxSize={4} mr={1} />
+                      Add to Cart
+                    </>
+                  )}
                 </Button>
+
                 <Button
                   flex={1}
                   size="lg"

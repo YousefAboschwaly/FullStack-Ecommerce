@@ -53,3 +53,6 @@ export const cartItemsQuantity= (shoppingCartItems: ICartItem[]):number=>{
   export const  isItemInCart=(shoppingCartItems: ICartItem[],id:number):boolean=>{
    return shoppingCartItems.some((item) => item.id === id);
   }
+  export const  searchItemInCart=(shoppingCartItems: ICartItem[],id:number):ICartItem| undefined =>{
+   return shoppingCartItems.find((item) => item.id === id) ;
+  }
