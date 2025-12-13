@@ -29,3 +29,13 @@ export const addItemToShoppingCart = (cartItem: IProduct,shoppingCartItems: ICar
 
   return [...shoppingCartItems, { ...cartItem, quantity: 1 }];
 };
+
+export const removeItemFromShoppingCart= (id:number,shoppingCartItems: ICartItem[]): ICartItem[] => {
+      toaster.success({
+      title: "Removed from your Cart",
+      duration: 2000,
+      closable: true,
+    });
+  return shoppingCartItems.filter(item=>item.id !== id) ;
+
+}

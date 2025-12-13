@@ -15,10 +15,8 @@ import NotFound from "./pages/NotFound";
 import Products from "./pages/Products";
 import ProtectedRoute from "./Layout/ProtectedRoute";
 import CartDrawer from "./components/ui/cartDrawer";
-import { useState } from "react";
 
 export default function App() {
-  const [isOpen,setIsOpen] = useState(true)
   const router = createBrowserRouter(
     createRoutesFromElements(
       <>
@@ -51,7 +49,7 @@ export default function App() {
     <>
       <AuthProvider>
         <Toaster />
-        <CartDrawer isOpen={isOpen} onClose={()=>{setIsOpen(false)}} />
+        <CartDrawer   />
         <RouterProvider router={router} />
       </AuthProvider>
     </>
