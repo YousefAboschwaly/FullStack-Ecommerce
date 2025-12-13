@@ -1,13 +1,11 @@
-import type { IProduct } from "@/interfaces";
+import type { ICartItem, IProduct } from "@/interfaces";
 import { addItemToShoppingCart } from "@/utils";
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 
-interface CartItem extends IProduct {
-  quantity: number;
-}
+
 
 interface ICartState {
-  cartProducts: CartItem[];
+  cartProducts: ICartItem[];
   cartItemsCount: number;
 }
 const initialState: ICartState = {
@@ -21,6 +19,7 @@ const cartSlice = createSlice({
     addToCart(state, action: PayloadAction<{ product: IProduct; quantity: number }>) {
     state.cartProducts= addItemToShoppingCart(action.payload,state.cartProducts)
   },
+},
 });
 export const { addToCart } = cartSlice.actions;
 export const selectCart = (state: { cart: ICartState }) => state.cart;

@@ -15,6 +15,10 @@ export interface IProduct{
   }
 }
 
+export interface ICartItem extends IProduct {
+  quantity: number;
+}
+
 export interface LoginResponse {
   jwt: string;
   user: {
