@@ -4,11 +4,9 @@ import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 
 interface ICartState {
   cartProducts: ICartItem[];
-  cartItemsCount: number;
 }
 const initialState: ICartState = {
   cartProducts: [],
-  cartItemsCount: 0,
 };
 const cartSlice = createSlice({
   name: "cart",
@@ -19,14 +17,17 @@ const cartSlice = createSlice({
         action.payload,
         state.cartProducts
       );
-      state.cartItemsCount += 1;
     },
     removeFromCart(state, action: PayloadAction<number>) {
       const itemToRemove = state.cartProducts.find(
         (item) => item.id === action.payload
       );
-      if (itemToRemove) {
-        state.cartItemsCount -= itemToRemove.quantity;
+      if (itemToRemove && itemToRemove.quantity>1) {
+        state.cartProducts = state.cartProducts.map((item) =>
+          item.id === action.payload
+            ? { ...item, quantity: item.quantity - 1 }
+            : item
+        );
       }
       state.cartProducts = removeItemFromShoppingCart(
         action.payload,
@@ -35,7 +36,6 @@ const cartSlice = createSlice({
     },
     clearCart(state) {
       state.cartProducts = [];
-      state.cartItemsCount = 0;
     },
   },
 });

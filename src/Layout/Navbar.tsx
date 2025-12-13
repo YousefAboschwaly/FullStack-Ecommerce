@@ -4,6 +4,7 @@ import { useColorMode } from "@/components/ui/color-mode";
 import { navLinks, profileMenuItems } from "@/constants";
 import { useAuth } from "@/context/AuthContext";
 import { useThemeColors } from "@/hooks/useThemeColors";
+import { cartItemsQuantity } from "@/utils";
 import {
   Box,
   Button,
@@ -37,7 +38,8 @@ const Navbar = () => {
   const { colorMode, toggleColorMode } = useColorMode();
 
   // Mock cart items count - replace with your actual cart state
-  const {cartItemsCount} = useSelector(selectCart);
+  const {cartProducts} = useSelector(selectCart);
+  const quantity = cartItemsQuantity(cartProducts)
     const dispatch = useDispatch()
   const onOpen  =()=> dispatch(onOpenCart())
 
@@ -173,7 +175,7 @@ const Navbar = () => {
             >
               <ShoppingCart size={20} />
             </IconButton>
-            {cartItemsCount > 0 && (
+            {quantity > 0 && (
               <Box
                 position="absolute"
                 top="-2px"
@@ -190,7 +192,7 @@ const Navbar = () => {
                 justifyContent="center"
                 px="5px"
               >
-                {cartItemsCount > 99 ? "99+" : cartItemsCount}
+                {quantity > 99 ? "99+" : quantity}
               </Box>
             )}
           </Box>
