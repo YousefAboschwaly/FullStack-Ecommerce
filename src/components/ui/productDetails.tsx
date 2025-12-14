@@ -215,6 +215,7 @@ const ProductDetails = () => {
                     color={textPrimary}
                     _hover={{ bg: bgCardHover }}
                     onClick={handleRemoveFromCart}
+                    disabled={!isInCart}
                   >
                     <Minus size={16} />
                   </IconButton>
@@ -227,6 +228,7 @@ const ProductDetails = () => {
                     color={textPrimary}
                     _hover={{ bg: bgCardHover }}
                     onClick={handleAddToCart}
+                    disabled={quantity===stock}
                   >
                     <Plus size={16} />
                   </IconButton>
