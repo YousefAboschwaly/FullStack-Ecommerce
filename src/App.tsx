@@ -15,9 +15,9 @@ import Login from "./pages/Login";
 import NotFound from "./pages/NotFound";
 import Products from "./pages/Products";
 import AdminLayout from "./Layout/AdminLayout";
-import Dashboard from "./Layout/Admin/Dashboard";
-import Categories from "./Layout/Admin/Categories";
-import AdminProducts  from './Layout/Admin/Products';
+import Dashboard from "./pages/Admin/Dashboard";
+import Categories from "./pages/Admin/Categories";
+import AdminProducts  from './pages/Admin/Products';
 
 export default function App() {
   const router = createBrowserRouter(

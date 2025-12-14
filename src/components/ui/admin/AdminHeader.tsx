@@ -15,7 +15,7 @@ import { useState } from "react";
 const AdminHeader = () => {
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const { colorMode, toggleColorMode } = useColorMode();
-  
+
   const {
     bgCard,
     bgCardHover,
@@ -31,21 +31,24 @@ const AdminHeader = () => {
       as="header"
       position="fixed"
       top={0}
-      left="220px"
+      left={{ base: 0, lg: "220px" }}
       right={0}
       h="70px"
       bg={bgCard}
       borderBottom="1px solid"
       borderColor={borderDefault}
-      zIndex={30}
+      zIndex={40}
     >
       <Flex
         h="full"
-        px={6}
+        px={{ base: 4, md: 6 }}
         align="center"
         justify="flex-end"
       >
-        <HStack gap={3}>
+        {/* Spacer for mobile menu button */}
+        <Box display={{ base: "block", lg: "none" }} w="40px" />
+
+        <HStack gap={{ base: 2, md: 3 }} ml="auto">
           {/* Color Mode Toggle */}
           <IconButton
             aria-label={`Switch to ${colorMode === "light" ? "dark" : "light"} mode`}
@@ -76,7 +79,7 @@ const AdminHeader = () => {
             onMouseLeave={() => setIsProfileOpen(false)}
           >
             <HStack
-              gap={3}
+              gap={{ base: 2, md: 3 }}
               cursor="pointer"
               p={2}
               borderRadius="lg"
@@ -85,8 +88,8 @@ const AdminHeader = () => {
               <Image
                 src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=40&h=40&fit=crop&crop=face"
                 alt="Admin Avatar"
-                w="40px"
-                h="40px"
+                w={{ base: "32px", md: "40px" }}
+                h={{ base: "32px", md: "40px" }}
                 borderRadius="full"
                 border="2px solid"
                 borderColor={borderAccent}
@@ -105,6 +108,7 @@ const AdminHeader = () => {
                 style={{
                   transform: isProfileOpen ? "rotate(180deg)" : "rotate(0deg)",
                   transition: "transform 0.2s ease",
+                  display: window.innerWidth < 768 ? "none" : "block",
                 }}
               />
             </HStack>
