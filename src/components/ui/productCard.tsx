@@ -1,7 +1,8 @@
-import { addToCart, removeFromCart, selectCart } from "@/app/services/cartSlice";
+import { addToCart, deleteSelected, selectCart } from "@/app/services/cartSlice";
 import type { RootState } from "@/app/store";
 import { useThemeColors } from "@/hooks/useThemeColors";
 import type { IProduct } from "@/interfaces";
+import { isItemInCart } from "@/utils";
 import {
   Badge,
   Box,
@@ -13,11 +14,10 @@ import {
   Image,
   Text,
 } from "@chakra-ui/react";
-import {  Eye, Heart, ShoppingCart, Trash2 } from "lucide-react";
+import { Eye, Heart, ShoppingCart, Trash2 } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import { useColorMode } from "./color-mode";
-import { isItemInCart } from "@/utils";
 
 interface IProps {
   product: IProduct;
@@ -55,7 +55,7 @@ export default function ProductCard({ product }: IProps) {
 
   function handleCartToggle() {
     if (isInCart) {
-      dispatch(removeFromCart(product.id));
+      dispatch(deleteSelected(product.id));
     } else {
       dispatch(addToCart(product));
     }

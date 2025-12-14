@@ -50,6 +50,9 @@ export const removeItemFromShoppingCart= (id:number,shoppingCartItems: ICartItem
   return shoppingCartItems.filter(item=>item.id !== id) ;
 
 }
+export const deleteSelectedItem=(id:number,shoppingCartItems: ICartItem[]): ICartItem[] => {
+  return shoppingCartItems.filter(item=>item.id !== id) ;
+}
 export const cartItemsQuantity= (shoppingCartItems: ICartItem[]):number=>{
   return shoppingCartItems.reduce(
     (total, item) => total + item.quantity,

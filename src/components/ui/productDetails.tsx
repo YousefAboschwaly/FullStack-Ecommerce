@@ -34,6 +34,7 @@ import ProductDetailsSkeleton from "./productDetailsSkeleton";
 import { useDispatch, useSelector } from "react-redux";
 import {
   addToCart,
+  deleteSelected,
   removeFromCart,
   selectCart,
 } from "@/app/services/cartSlice";
@@ -90,7 +91,7 @@ const ProductDetails = () => {
   const quantity = searchedItem ? searchedItem.quantity : 1;
   const handleCartToggle = () => {
     if (isInCart) {
-      dispatch(removeFromCart(productId));
+      dispatch(deleteSelected(productId));
     } else {
       dispatch(addToCart(product));
     }

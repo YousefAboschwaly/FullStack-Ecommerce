@@ -1,5 +1,5 @@
 import type { ICartItem, IProduct } from "@/interfaces";
-import { addItemToShoppingCart, removeItemFromShoppingCart } from "@/utils";
+import { addItemToShoppingCart, deleteSelectedItem, removeItemFromShoppingCart } from "@/utils";
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 
 interface ICartState {
@@ -25,11 +25,18 @@ const cartSlice = createSlice({
         state.cartProducts
       );
     },
+    deleteSelected(state, action: PayloadAction<number>) {
+     
+      state.cartProducts = deleteSelectedItem(
+        action.payload,
+        state.cartProducts
+      );
+    },
     clearCart(state) {
       state.cartProducts = [];
     },
   },
 });
-export const { addToCart, removeFromCart, clearCart } = cartSlice.actions;
+export const { addToCart, removeFromCart, deleteSelected,clearCart } = cartSlice.actions;
 export const selectCart = (state: { cart: ICartState }) => state.cart;
 export default cartSlice.reducer;
