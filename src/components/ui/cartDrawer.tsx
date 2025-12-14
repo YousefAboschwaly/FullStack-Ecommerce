@@ -1,6 +1,7 @@
-import { selectCart } from "@/app/services/cartSlice";
-import {  onCloseCart, selectGlobal } from "@/app/services/globalSlice";
+import { addToCart, clearCart, deleteSelected, removeFromCart, selectCart } from "@/app/services/cartSlice";
+import { onCloseCart, selectGlobal } from "@/app/services/globalSlice";
 import { useThemeColors } from "@/hooks/useThemeColors";
+import type { IProduct } from "@/interfaces";
 import {
   Box,
   Button,
@@ -18,12 +19,8 @@ import { useDispatch, useSelector } from "react-redux";
 
 const apiUrl = import.meta.env.VITE_API_URL || "";
 
-
-
-
-
 const CartDrawer = () => {
-  const {cartProducts} = useSelector(selectCart);
+  const { cartProducts } = useSelector(selectCart);
   const {
     bgCard,
     bgCardHover,
@@ -36,15 +33,31 @@ const CartDrawer = () => {
     statusError,
   } = useThemeColors();
 
-  const dispatch = useDispatch()
-  const {isOpen} = useSelector(selectGlobal)
-  
-  const onClose  =()=> dispatch(onCloseCart())
+  const dispatch = useDispatch();
+  const { isOpen } = useSelector(selectGlobal);
+
+  const onClose = () => dispatch(onCloseCart());
 
   const subtotal = cartProducts.reduce(
     (sum, item) => sum + item.price * item.quantity,
     0
   );
+
+  const handleIncrease = (product: IProduct) => {
+    dispatch(addToCart(product));
+  };
+
+  const handleDecrease = (productId: number) => {
+    dispatch(removeFromCart(productId));
+  };
+
+  const handleDelete = (productId: number) => {
+    dispatch(deleteSelected(productId));
+  };
+
+  const handleClearCart = () => {
+    dispatch(clearCart());
+  };
 
   return (
     <Drawer.Root
@@ -125,15 +138,15 @@ const CartDrawer = () => {
                       borderRadius="lg"
                       border="1px solid"
                       borderColor={borderDefault}
-                      _hover={{ borderColor: accentPrimary }}
-                      transition="border-color 0.2s"
+                      _hover={{ borderColor: accentPrimary, transform: "scale(1.02)" }}
+                      transition="all 0.2s"
                     >
                       <HStack gap={3} align="start">
                         <Image
-                          src={apiUrl+item.thumbnail.url}
+                          src={apiUrl + item.thumbnail.url}
                           alt={item.title}
-                          w="70px"
-                          h="70px"
+                          w="80px"
+                          h="80px"
                           borderRadius="md"
                           objectFit="cover"
                         />
@@ -158,17 +171,19 @@ const CartDrawer = () => {
                           {/* Quantity Controls */}
                           <HStack mt={2} justify="space-between">
                             <HStack
+                              bg={bgCardHover}
+                              borderRadius="lg"
                               border="1px solid"
                               borderColor={borderDefault}
-                              borderRadius="md"
                               p={1}
                             >
                               <IconButton
                                 aria-label="Decrease quantity"
                                 size="xs"
                                 variant="ghost"
-                                color={textMuted}
-                                _hover={{ bg: bgCardHover }}
+                                color={item.quantity <= 1 ? textMuted : textPrimary}
+                                _hover={{ bg: accentPrimary, color: buttonText }}
+                                onClick={() => handleDecrease(item.id)}
                               >
                                 <Minus size={14} />
                               </IconButton>
@@ -176,7 +191,7 @@ const CartDrawer = () => {
                                 fontSize="sm"
                                 fontWeight="600"
                                 color={textPrimary}
-                                minW="24px"
+                                minW="28px"
                                 textAlign="center"
                               >
                                 {item.quantity}
@@ -185,8 +200,10 @@ const CartDrawer = () => {
                                 aria-label="Increase quantity"
                                 size="xs"
                                 variant="ghost"
-                                color={textMuted}
-                                _hover={{ bg: bgCardHover }}
+                                color={textPrimary}
+                                _hover={{ bg: accentPrimary, color: buttonText }}
+                                onClick={() => handleIncrease(item as IProduct)}
+                                disabled={item.quantity >= item.stock}
                               >
                                 <Plus size={14} />
                               </IconButton>
@@ -197,7 +214,8 @@ const CartDrawer = () => {
                               size="sm"
                               variant="ghost"
                               color={statusError}
-                              _hover={{ bg: "red.50" }}
+                              _hover={{ bg: "red.100", color: statusError }}
+                              onClick={() => handleDelete(item.id)}
                             >
                               <Trash2 size={16} />
                             </IconButton>
@@ -253,15 +271,28 @@ const CartDrawer = () => {
                 >
                   Checkout
                 </Button>
-                <Button
-                  w="full"
-                  variant="ghost"
-                  color={textMuted}
-                  _hover={{ bg: bgCardHover }}
-                  onClick={onClose}
-                >
-                  Continue Shopping
-                </Button>
+                <HStack w="full" gap={2}>
+                  <Button
+                    flex={1}
+                    variant="ghost"
+                    color={textMuted}
+                    _hover={{ bg: bgCardHover }}
+                    onClick={onClose}
+                  >
+                    Continue Shopping
+                  </Button>
+                  <Button
+                    flex={1}
+                    variant="outline"
+                    borderColor={statusError}
+                    color={statusError}
+                    _hover={{ bg: statusError, color: buttonText }}
+                    onClick={handleClearCart}
+                  >
+                    <Trash2 size={16} />
+                    Clear Cart
+                  </Button>
+                </HStack>
               </Drawer.Footer>
             )}
           </Drawer.Content>
