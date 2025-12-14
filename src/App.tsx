@@ -14,6 +14,10 @@ import About from "./pages/About";
 import Login from "./pages/Login";
 import NotFound from "./pages/NotFound";
 import Products from "./pages/Products";
+import AdminLayout from "./Layout/AdminLayout";
+import Dashboard from "./Layout/Admin/Dashboard";
+import Categories from "./Layout/Admin/Categories";
+import AdminProducts  from './Layout/Admin/Products';
 
 export default function App() {
   const router = createBrowserRouter(
@@ -36,6 +40,13 @@ export default function App() {
           <Route path="products" element={<Products />} />
           <Route path="about" element={<About />} />
           <Route path="product/:id" element={<ProductDetails />} />
+        </Route>
+
+              {/* Admin Routes */}
+        <Route path="/admin" element={<AdminLayout />}>
+          <Route index element={<Dashboard />} />
+          <Route path="products" element={<AdminProducts />} />
+          <Route path="categories" element={<Categories />} />
         </Route>
 
         {/* Not Found */}
