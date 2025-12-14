@@ -1,3 +1,4 @@
+import { useGetProductsQuery } from "@/app/services/productApi";
 import { useThemeColors } from "@/hooks/useThemeColors";
 import {
   Box,
@@ -26,6 +27,8 @@ const Dashboard = () => {
     accentPrimary,
     statusSuccess,
   } = useThemeColors();
+  const {data,isLoading,isError} = useGetProductsQuery({page:1})
+  console.log({data,isLoading,isError})
 
   return (
     <Box>

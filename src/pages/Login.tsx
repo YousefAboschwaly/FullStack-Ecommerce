@@ -17,8 +17,8 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
 import { Link, useNavigate } from "react-router-dom";
-import { useLoginMutation } from "../app/services/authApi";
 import { useAuth } from "@/context/AuthContext";
+import { useLoginMutation } from "@/app/services/authApi";
 
 interface IFormInput {
   identifier: string;
@@ -50,7 +50,7 @@ export default function Login() {
   } = useForm<IFormInput>();
   const { email, password } = loginSchema;
   const [login, { isLoading }] = useLoginMutation();
-  const {login:loginHandler, token} = useAuth()
+  const { login: loginHandler, token } = useAuth();
   const onSubmit = async (data: IFormInput) => {
     try {
       const response = await login(data).unwrap();
@@ -77,7 +77,6 @@ export default function Login() {
   if (token) {
     navigate("/", { replace: true });
   }
-
 
   return (
     <Box

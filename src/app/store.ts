@@ -7,6 +7,7 @@ import globalSlice from "./services/globalSlice";
 import storage from "redux-persist/lib/storage"; // يستخدم localStorage
 import { persistReducer, persistStore } from "redux-persist";
 import { FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER } from 'redux-persist';
+import { productsApi } from "./services/productApi";
 
 // إعداد persist للـ cart slice
 const cartPersistConfig = {
@@ -19,6 +20,7 @@ const persistedCartReducer = persistReducer(cartPersistConfig, cartSlice);
 export const store = configureStore({
   reducer: {
     [authApi.reducerPath]: authApi.reducer,
+    [productsApi.reducerPath]: productsApi.reducer,
     cart: persistedCartReducer, // استبدل cartSlice بالـ persisted version
     global:globalSlice
   },
@@ -28,7 +30,7 @@ export const store = configureStore({
         // لتجنب مشاكل مع redux-persist
         ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
       },
-    }).concat(authApi.middleware),
+    }).concat(authApi.middleware,productsApi.middleware),
 });
 
 // persist store
