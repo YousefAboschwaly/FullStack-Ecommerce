@@ -16,7 +16,7 @@ export const productsApi = createApi({
 
     getProduct: builder.query<{data:IProduct}, string>({
       query: (id) =>
-        `/products/${id}?populate=*&fields=title,description,price,stock`,
+        `/api/products/${id}?populate=*&fields=title,description,price,stock`,
       providesTags: (_result, _error, id) => [
         { type: "Products", id },
       ],

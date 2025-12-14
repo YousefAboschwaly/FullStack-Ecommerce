@@ -1,7 +1,14 @@
 // ProductDetails.tsx - Chakra UI 3.x version with proper theming
-import useProduct from "@/hooks/useProduct";
+import {
+  addToCart,
+  deleteSelected,
+  removeFromCart,
+  selectCart,
+} from "@/app/services/cartSlice";
+import { useGetProductQuery } from "@/app/services/productApi";
 import useThemeColors from "@/hooks/useThemeColors";
 import type { ICartItem, IProduct } from "@/interfaces";
+import { isItemInCart, searchItemInCart } from "@/utils";
 import {
   Badge,
   Box,
@@ -28,23 +35,16 @@ import {
   Truck,
 } from "lucide-react";
 import { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
 import ErrorHandler from "./ErrorHandler";
 import ProductDetailsSkeleton from "./productDetailsSkeleton";
-import { useDispatch, useSelector } from "react-redux";
-import {
-  addToCart,
-  deleteSelected,
-  removeFromCart,
-  selectCart,
-} from "@/app/services/cartSlice";
-import { isItemInCart, searchItemInCart } from "@/utils";
 
 const baseUrl = import.meta.env.VITE_API_URL || "";
 
 const ProductDetails = () => {
   const { id } = useParams<{ id: string }>();
-  const { data, isLoading, error } = useProduct(id ?? "");
+  const { data, isLoading, error } = useGetProductQuery(id??"")
   const [isWishlisted, setIsWishlisted] = useState(false);
   const {
     bgMain,
@@ -71,7 +71,7 @@ const ProductDetails = () => {
   if (isLoading) return <ProductDetailsSkeleton />;
   if (error || !data)
     return <ErrorHandler error={"Failed to Fetch Product of this Id "} />;
-  const product: IProduct = data as IProduct;
+  const product: IProduct = data.data as IProduct;
   const {
     id: productId,
     category,
