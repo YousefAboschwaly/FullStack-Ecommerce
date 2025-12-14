@@ -88,7 +88,7 @@ const ProductDetails = () => {
     cartProducts,
     productId
   );
-  const quantity = searchedItem ? searchedItem.quantity : 1;
+  const quantity = searchedItem ? searchedItem.quantity : 0;
   const handleCartToggle = () => {
     if (isInCart) {
       dispatch(deleteSelected(productId));
