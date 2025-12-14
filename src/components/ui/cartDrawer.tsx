@@ -16,7 +16,7 @@ import {
 } from "@chakra-ui/react";
 import { Minus, Plus, ShoppingBag, Trash2 } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
-
+import { useNavigate } from "react-router-dom";
 const apiUrl = import.meta.env.VITE_API_URL || "";
 
 const CartDrawer = () => {
@@ -34,9 +34,15 @@ const CartDrawer = () => {
   } = useThemeColors();
 
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const { isOpen } = useSelector(selectGlobal);
 
   const onClose = () => dispatch(onCloseCart());
+
+  const handleItemClick = (documentId: string) => {
+    onClose();
+    navigate(`/product/${documentId}`);
+  };
 
   const subtotal = cartProducts.reduce(
     (sum, item) => sum + item.price * item.quantity,
@@ -149,6 +155,10 @@ const CartDrawer = () => {
                           h="80px"
                           borderRadius="md"
                           objectFit="cover"
+                          cursor="pointer"
+                          onClick={() => handleItemClick(item.documentId)}
+                          _hover={{ opacity: 0.8 }}
+                          transition="opacity 0.2s"
                         />
                         <Box flex={1}>
                           <Text
@@ -156,6 +166,10 @@ const CartDrawer = () => {
                             fontSize="sm"
                             color={textPrimary}
                             lineClamp={2}
+                            cursor="pointer"
+                            _hover={{ color: accentPrimary }}
+                            transition="color 0.2s"
+                            onClick={() => handleItemClick(item.documentId)}
                           >
                             {item.title}
                           </Text>
@@ -184,6 +198,7 @@ const CartDrawer = () => {
                                 color={item.quantity <= 1 ? textMuted : textPrimary}
                                 _hover={{ bg: accentPrimary, color: buttonText }}
                                 onClick={() => handleDecrease(item.id)}
+                                disabled={item.quantity <= 1}
                               >
                                 <Minus size={14} />
                               </IconButton>

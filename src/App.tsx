@@ -9,12 +9,11 @@ import ProductDetails from "./components/ui/productDetails";
 import { Toaster } from "./components/ui/toaster";
 import { AuthProvider } from "./context/AuthContext";
 import Layout from "./Layout";
+import ProtectedRoute from "./Layout/ProtectedRoute";
 import About from "./pages/About";
 import Login from "./pages/Login";
 import NotFound from "./pages/NotFound";
 import Products from "./pages/Products";
-import ProtectedRoute from "./Layout/ProtectedRoute";
-import CartDrawer from "./components/ui/cartDrawer";
 
 export default function App() {
   const router = createBrowserRouter(
@@ -49,7 +48,6 @@ export default function App() {
     <>
       <AuthProvider>
         <Toaster />
-        <CartDrawer   />
         <RouterProvider router={router} />
       </AuthProvider>
     </>
