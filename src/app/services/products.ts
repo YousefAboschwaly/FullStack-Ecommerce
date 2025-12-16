@@ -1,5 +1,6 @@
 import type { IProduct } from "@/interfaces";
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+import cookieService from "./cookieService";
 
 export const productsApi = createApi({
   reducerPath: "productsApi",
@@ -21,10 +22,25 @@ export const productsApi = createApi({
         { type: "Products", id },
       ],
     }),
+
+    deleteAdminProduct: builder.mutation<undefined, string>({
+      query: (id) =>{
+        return{
+          url:`/api/products/${id}`,
+          method:"DELETE",
+          headers:{
+            Authorization:`Bearer ${cookieService.getCookie("jwt")}`
+          }
+        }
+      },
+       invalidatesTags:["Products"]
+
+    }),
   }),
 });
 
 export const {
   useGetProductsQuery,
   useGetProductQuery,
+  useDeleteAdminProductMutation
 } = productsApi;

@@ -1,4 +1,4 @@
-import { useGetProductsQuery } from "@/app/services/products";
+import { useDeleteAdminProductMutation, useGetProductsQuery } from "@/app/services/products";
 import { useThemeColors } from "@/hooks/useThemeColors";
 import {
   Box,
@@ -32,6 +32,8 @@ const Products = () => {
   const navigate = useNavigate();
 
    const { data, isLoading } = useGetProductsQuery({ page: 1 });
+   const [deleteProduct,{isLoading:isDeleting,isSuccess}] = useDeleteAdminProductMutation()
+   console.log(isLoading,isDeleting,isSuccess)
 
   const handleView = (documentId: string) => {
     navigate(`/product/${documentId}`);
@@ -45,6 +47,7 @@ const Products = () => {
   const handleDelete = (documentId: string) => {
     // TODO: Implement delete functionality
     console.log("Delete product:", documentId);
+    deleteProduct(documentId)
   };
 
   const getStockStatus = (stock: number) => {
