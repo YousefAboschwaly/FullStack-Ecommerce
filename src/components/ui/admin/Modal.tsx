@@ -9,8 +9,7 @@ import {
   VStack,
 } from "@chakra-ui/react";
 import { AlertTriangle, Info, X } from "lucide-react";
-import type { ReactNode } from "react";
-
+import {  memo, type ReactNode } from "react";
 export type ModalVariant = "default" | "danger" | "info";
 
 interface GenericModalProps {
@@ -207,4 +206,4 @@ const GenericModal = ({
   );
 };
 
-export default GenericModal;
+export default memo( GenericModal);
