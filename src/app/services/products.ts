@@ -10,7 +10,7 @@ export const productsApi = createApi({
   endpoints: (builder) => ({
     getProducts: builder.query<{data:IProduct[]}, { page: number }>({
       query: ({ page }) =>
-        `/api/products?fields=title,description,price,stock&populate=*&pagination[pageSize]=10&pagination[page]=${page}`,
+        `/api/products?fields=title,description,price,stock&populate=*&pagination[pageSize]=12&pagination[page]=${page}`,
       providesTags: ["Products"],
     }),
 

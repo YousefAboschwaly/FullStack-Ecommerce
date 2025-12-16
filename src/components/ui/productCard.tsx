@@ -1,4 +1,8 @@
-import { addToCart, deleteSelected, selectCart } from "@/app/services/cartSlice";
+import {
+  addToCart,
+  deleteSelected,
+  selectCart,
+} from "@/app/services/cartSlice";
 import type { RootState } from "@/app/store";
 import { useThemeColors } from "@/hooks/useThemeColors";
 import type { IProduct } from "@/interfaces";
@@ -17,7 +21,6 @@ import {
 import { Eye, Heart, ShoppingCart, Trash2 } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
-import { useColorMode } from "./color-mode";
 
 interface IProps {
   product: IProduct;
@@ -26,11 +29,12 @@ interface IProps {
 const apiUrl = import.meta.env.VITE_API_URL || "";
 
 export default function ProductCard({ product }: IProps) {
-  const { id,title, description, price, thumbnail, stock, category } = product;
+  const { id, title, description, price, thumbnail, stock, category } = product;
 
   const {
     bgCardTranslucent,
     bgOverlay,
+    bgCard,
     textPrimary,
     textMuted,
     borderDefault,
@@ -45,13 +49,12 @@ export default function ProductCard({ product }: IProps) {
     gradientPrice,
     statusError,
   } = useThemeColors();
+
   
-  const { colorMode } = useColorMode();
-  const isDark = colorMode === "dark";
   const dispatch = useDispatch();
   const { cartProducts } = useSelector((state: RootState) => selectCart(state));
 
-  const isInCart = isItemInCart(cartProducts,id)
+  const isInCart = isItemInCart(cartProducts, id);
 
   function handleCartToggle() {
     if (isInCart) {
@@ -84,7 +87,7 @@ export default function ProductCard({ product }: IProps) {
         right={4}
         zIndex={10}
         gap={2}
-        opacity={0}
+        hidden
         transform="translateX(10px)"
         transition="all 0.3s ease"
         _groupHover={{ opacity: 1, transform: "translateX(0)" }}
@@ -102,62 +105,75 @@ export default function ProductCard({ product }: IProps) {
         >
           <Icon as={Heart} boxSize={4} />
         </IconButton>
-        <IconButton
-          aria-label="Quick view"
-          size="sm"
-          rounded="full"
-          bg={bgOverlay}
-          color={accentSecondary}
-          _hover={{
-            bg: accentPrimary,
-            color: buttonText,
-          }}
-        >
-          <Icon as={Eye} boxSize={4} />
-        </IconButton>
+
       </Flex>
 
-      {/* Category Badge */}
+      {/* Category Badge - Ribbon style at top-left corner */}
       {category && (
-        <Badge
+        <Box
           position="absolute"
-          top={4}
-          left={4}
-          bg={isDark ? "rgba(212, 175, 55, 0.2)" : "purple.100"}
-          color={accentSecondary}
-          px={3}
-          py={1}
-          borderRadius="full"
-          fontSize="xs"
-          fontWeight="semibold"
-          textTransform="capitalize"
+          top={0}
+          left={"-10px"}
+          zIndex={10}
+          overflow="hidden"
+          w="180px"
+          h="300px"
+          pointerEvents="none"
+
         >
-          {category.title}
-        </Badge>
+          <Badge
+          as={"div"}
+            position="absolute"
+            top="35px"
+            left="-35px"
+            w="180px"
+            transform="rotate(-45deg)"
+            bg={accentPrimary}
+            color={buttonText}
+            py={1.5}
+            fontSize="xs"
+            fontWeight="bold"
+            textTransform="uppercase"
+            letterSpacing="wide"
+            boxShadow="0 3px 10px rgba(0,0,0,0.2)"
+          >
+           <Box as={"span"} mx={"auto"} > {category.title} </Box>
+          </Badge>
+        </Box>
       )}
 
       {/* Image Container */}
-      <Box position="relative" pt={8} pb={4} px={6} bg={gradientCardBg}>
+      <Box
+        position="relative"
+        px={8}
+        pt={6}
+        pb={4}
+        display="flex"
+        justifyContent="center"
+        alignItems="center"
+        bg={gradientCardBg}
+        minH="280px"
+      >
         {thumbnail?.url ? (
           <Image
             src={`${apiUrl}${thumbnail.url.startsWith("/") ? "" : "/"}${thumbnail.url}`}
             alt={title}
-            boxSize="180px"
-            mx="auto"
+            w={"full"}
             objectFit="contain"
+            borderRadius="lg"
             transition="transform 0.3s ease"
             _groupHover={{ transform: "scale(1.05)" }}
           />
         ) : (
           <Box
-            boxSize="180px"
-            mx="auto"
-            bg="gray.200"
+            boxSize="250px"
+            bg={bgCard}
             display="flex"
             alignItems="center"
             justifyContent="center"
+            borderRadius="lg"
           >
-            <Text color="gray.500">No image</Text>
+            <Text color={textMuted}>No image</Text>
           </Box>
         )}
       </Box>

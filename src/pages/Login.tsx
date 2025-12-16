@@ -18,7 +18,7 @@ import { useForm } from "react-hook-form";
 import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
-import { useLoginMutation } from "@/app/services/authApi";
+import { useLoginMutation } from "@/app/services/Auth";
 
 interface IFormInput {
   identifier: string;

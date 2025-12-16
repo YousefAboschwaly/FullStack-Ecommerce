@@ -5,7 +5,7 @@ import {
   removeFromCart,
   selectCart,
 } from "@/app/services/cartSlice";
-import { useGetProductQuery } from "@/app/services/productApi";
+import { useGetProductQuery } from "@/app/services/products";
 import useThemeColors from "@/hooks/useThemeColors";
 import type { ICartItem, IProduct } from "@/interfaces";
 import { isItemInCart, searchItemInCart } from "@/utils";
@@ -44,7 +44,7 @@ const baseUrl = import.meta.env.VITE_API_URL || "";
 
 const ProductDetails = () => {
   const { id } = useParams<{ id: string }>();
-  const { data, isLoading, error } = useGetProductQuery(id??"")
+  const { data, isLoading, error } = useGetProductQuery(id ?? "");
   const [isWishlisted, setIsWishlisted] = useState(false);
   const {
     bgMain,
@@ -228,7 +228,7 @@ const ProductDetails = () => {
                     color={textPrimary}
                     _hover={{ bg: bgCardHover }}
                     onClick={handleAddToCart}
-                    disabled={quantity===stock}
+                    disabled={quantity === stock}
                   >
                     <Plus size={16} />
                   </IconButton>

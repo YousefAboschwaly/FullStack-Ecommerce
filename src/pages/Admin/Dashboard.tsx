@@ -1,20 +1,37 @@
-import { useGetProductsQuery } from "@/app/services/productApi";
+import { useGetProductsQuery } from "@/app/services/products";
 import { useThemeColors } from "@/hooks/useThemeColors";
-import {
-  Box,
-  Flex,
-  Grid,
-  HStack,
-  Icon,
-  Text,
-} from "@chakra-ui/react";
+import { Box, Flex, Grid, HStack, Icon, Text } from "@chakra-ui/react";
 import { DollarSign, Package, ShoppingCart, Users } from "lucide-react";
 
 const statsData = [
-  { label: "Total Revenue", value: "$45,231.89", change: "+20.1%", icon: DollarSign, positive: true },
-  { label: "Orders", value: "2,350", change: "+15.2%", icon: ShoppingCart, positive: true },
-  { label: "Products", value: "1,234", change: "+8.4%", icon: Package, positive: true },
-  { label: "Customers", value: "573", change: "+12.5%", icon: Users, positive: true },
+  {
+    label: "Total Revenue",
+    value: "$45,231.89",
+    change: "+20.1%",
+    icon: DollarSign,
+    positive: true,
+  },
+  {
+    label: "Orders",
+    value: "2,350",
+    change: "+15.2%",
+    icon: ShoppingCart,
+    positive: true,
+  },
+  {
+    label: "Products",
+    value: "1,234",
+    change: "+8.4%",
+    icon: Package,
+    positive: true,
+  },
+  {
+    label: "Customers",
+    value: "573",
+    change: "+12.5%",
+    icon: Users,
+    positive: true,
+  },
 ];
 
 const Dashboard = () => {
@@ -27,8 +44,8 @@ const Dashboard = () => {
     accentPrimary,
     statusSuccess,
   } = useThemeColors();
-  const {data,isLoading,isError} = useGetProductsQuery({page:1})
-  console.log({data,isLoading,isError})
+  const { data, isLoading, isError } = useGetProductsQuery({ page: 1 });
+  console.log({ data, isLoading, isError });
 
   return (
     <Box>
@@ -38,7 +55,11 @@ const Dashboard = () => {
 
       {/* Stats Grid */}
       <Grid
-        templateColumns={{ base: "1fr", sm: "repeat(2, 1fr)", lg: "repeat(4, 1fr)" }}
+        templateColumns={{
+          base: "1fr",
+          sm: "repeat(2, 1fr)",
+          lg: "repeat(4, 1fr)",
+        }}
         gap={6}
         mb={8}
       >
@@ -51,17 +72,16 @@ const Dashboard = () => {
             border="1px solid"
             borderColor={borderDefault}
             transition="all 0.2s"
-            _hover={{ borderColor: accentPrimary, transform: "translateY(-2px)" }}
+            _hover={{
+              borderColor: accentPrimary,
+              transform: "translateY(-2px)",
+            }}
           >
             <Flex justify="space-between" align="start" mb={4}>
               <Text fontSize="sm" color={textMuted} fontWeight="500">
                 {stat.label}
               </Text>
-              <Box
-                p={2}
-                bg={bgCardHover}
-                borderRadius="lg"
-              >
+              <Box p={2} bg={bgCardHover} borderRadius="lg">
                 <Icon as={stat.icon} boxSize={5} color={accentPrimary} />
               </Box>
             </Flex>
@@ -96,9 +116,7 @@ const Dashboard = () => {
         <Text fontSize="lg" fontWeight="600" color={textPrimary} mb={4}>
           Recent Activity
         </Text>
-        <Text color={textMuted}>
-          Dashboard content will appear here...
-        </Text>
+        <Text color={textMuted}>Dashboard content will appear here...</Text>
       </Box>
     </Box>
   );
