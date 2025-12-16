@@ -9,4 +9,10 @@ export default defineConfig({
       '@': path.resolve(__dirname, './src'),
     },
   },
+    server: {
+    allowedHosts: [
+      "ea195634-8125-4a04-89f1-78ad0a6188de-00-16j1q39120bwy.janeway.replit.dev",
+    ],
+  },
+
 })
