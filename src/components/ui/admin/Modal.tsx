@@ -9,7 +9,7 @@ import {
   VStack,
 } from "@chakra-ui/react";
 import { AlertTriangle, Info, X } from "lucide-react";
-import {  memo, type ReactNode } from "react";
+import { memo, type ReactNode } from "react";
 export type ModalVariant = "default" | "danger" | "info";
 
 interface GenericModalProps {
@@ -49,8 +49,6 @@ const GenericModal = ({
     statusError,
   } = useThemeColors();
 
-  
-
   const getVariantStyles = () => {
     switch (variant) {
       case "danger":
@@ -82,17 +80,6 @@ const GenericModal = ({
 
   const variantStyles = getVariantStyles();
 
-
-  if (!isOpen) return <Box
-  position="fixed"
-  inset={0}
-  zIndex={1000}
-  display={isOpen ? "flex" : "none"}
-  alignItems="center"
-  justifyContent="center"
-  px={4}
-/>
-
   return (
     <Box
       position="fixed"
@@ -101,7 +88,7 @@ const GenericModal = ({
       right={0}
       bottom={0}
       zIndex={1000}
-      display="flex"
+      display={isOpen ? "flex" : "none"}
       alignItems="center"
       justifyContent="center"
       px={4}
@@ -113,9 +100,9 @@ const GenericModal = ({
         left={0}
         right={0}
         bottom={0}
-        bg={bgOverlay}
         onClick={onClose}
-        animation="fade-in 0.2s ease-out"
+        bg={bgOverlay}
+  backdropFilter="blur(2px)"
       />
 
       {/* Modal Content */}
@@ -128,8 +115,6 @@ const GenericModal = ({
         maxW="450px"
         w="100%"
         overflow="hidden"
-        animation="scale-in 0.2s ease-out"
-        boxShadow="0 25px 50px -12px rgba(0, 0, 0, 0.25)"
       >
         {/* Close Button */}
         <Button
@@ -159,14 +144,28 @@ const GenericModal = ({
               align="center"
               justify="center"
             >
-              <Icon as={variantStyles.icon} boxSize={7} color={variantStyles.iconColor} />
+              <Icon
+                as={variantStyles.icon}
+                boxSize={7}
+                color={variantStyles.iconColor}
+              />
             </Flex>
           )}
-          <Text fontSize="xl" fontWeight="700" color={textPrimary} textAlign="center">
+          <Text
+            fontSize="xl"
+            fontWeight="700"
+            color={textPrimary}
+            textAlign="center"
+          >
             {title}
           </Text>
           {description && (
-            <Text fontSize="sm" color={textMuted} textAlign="center" maxW="350px">
+            <Text
+              fontSize="sm"
+              color={textMuted}
+              textAlign="center"
+              maxW="350px"
+            >
               {description}
             </Text>
           )}
@@ -217,4 +216,4 @@ const GenericModal = ({
   );
 };
 
-export default memo( GenericModal);
+export default memo(GenericModal);
