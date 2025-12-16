@@ -21,6 +21,7 @@ import {
 import GenericModal from "@/components/ui/admin/Modal";
 import ProductsTableSkeleton from "@/components/ui/admin/productsTableSkeleton";
 import { useCallback, useState } from "react";
+import type { IProduct } from "@/interfaces";
 
 const apiUrl = import.meta.env.VITE_API_URL || "";
 
@@ -39,24 +40,24 @@ const Products = () => {
   const navigate = useNavigate();
 
 
-  const [selectedProduct, setSelectedProduct] = useState<string>("")
+  const [selectedProduct, setSelectedProduct] = useState<IProduct>()
   const { onOpen, open, onClose } = useDisclosure();
   const { data, isLoading } = useGetProductsQuery({ page: 1 });
   const [deleteProduct, { isLoading: isDeleting, isSuccess }] =
     useDeleteAdminProductMutation();
   console.log(isLoading, isDeleting, isSuccess);
 
-  const handleView = (documentId: string) => {
-    navigate(`/product/${documentId}`);
+  const handleView = (product: IProduct) => {
+    navigate(`/product/${product}`);
   };
 
-  const handleEdit = (documentId: string) => {
+  const handleEdit = (product: IProduct) => {
     // TODO: Implement edit functionality
-    console.log("Edit product:", documentId);
+    console.log("Edit product:", product);
   };
 
-const handleDelete = useCallback((documentId: string) => {
-  setSelectedProduct(documentId);
+const handleDelete = useCallback((product: IProduct) => {
+  setSelectedProduct(product);
   onOpen();
 }, [onOpen]);
 
@@ -256,7 +257,7 @@ const handleDelete = useCallback((documentId: string) => {
                             borderRadius="lg"
                             color={textMuted}
                             _hover={{ bg: bgCardHover, color: accentPrimary }}
-                            onClick={() => handleView(product.documentId)}
+                            onClick={() => handleView(product)}
                           >
                             <Eye size={18} />
                           </IconButton>
@@ -267,7 +268,7 @@ const handleDelete = useCallback((documentId: string) => {
                             borderRadius="lg"
                             color={textMuted}
                             _hover={{ bg: bgCardHover, color: accentPrimary }}
-                            onClick={() => handleEdit(product.documentId)}
+                            onClick={() => handleEdit(product)}
                           >
                             <Edit size={18} />
                           </IconButton>
@@ -278,7 +279,7 @@ const handleDelete = useCallback((documentId: string) => {
                             borderRadius="lg"
                             color={textMuted}
                             _hover={{ bg: "red.50", color: statusError }}
-                            onClick={() => handleDelete(product.documentId)}
+                            onClick={() => handleDelete(product)}
                           >
                             <Trash2 size={18} />
                           </IconButton>
@@ -386,7 +387,7 @@ const handleDelete = useCallback((documentId: string) => {
                         color: accentPrimary,
                         borderColor: accentPrimary,
                       }}
-                      onClick={() => handleView(product.documentId)}
+                      onClick={() => handleView(product)}
                     >
                       <Eye size={16} />
                     </IconButton>
@@ -402,7 +403,7 @@ const handleDelete = useCallback((documentId: string) => {
                         color: accentPrimary,
                         borderColor: accentPrimary,
                       }}
-                      onClick={() => handleEdit(product.documentId)}
+                      onClick={() => handleEdit(product)}
                     >
                       <Edit size={16} />
                     </IconButton>
@@ -418,7 +419,7 @@ const handleDelete = useCallback((documentId: string) => {
                         color: statusError,
                         borderColor: statusError,
                       }}
-                      onClick={() => handleDelete(product.documentId)}
+                      onClick={() => handleDelete(product)}
                     >
                       <Trash2 size={16} />
                     </IconButton>
@@ -434,9 +435,9 @@ const handleDelete = useCallback((documentId: string) => {
       <GenericModal
         isOpen={open}
         onClose={onClose}
-        onConfirm={()=> deleteProduct(selectedProduct)}
+        onConfirm={()=> deleteProduct(selectedProduct?.documentId ??"")}
         title="Delete Product"
-        description={`Are you sure you want to delete ? This action cannot be undone.`}
+        description={`Are you sure you want to delete "${selectedProduct?.title}" ? This action cannot be undone.`}
         confirmText="Delete"
         cancelText="Cancel"
         variant="danger"
