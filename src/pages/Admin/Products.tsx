@@ -1,27 +1,27 @@
-import { useThemeColors } from "@/hooks/useThemeColors";
-import {
-  Box,
-  Flex,
-  HStack,
-  Icon,
-  IconButton,
-  Image,
-  Text,
-  Badge,
-  Table,
-  Stack,
-  useDisclosure,
-} from "@chakra-ui/react";
-import { Edit, Eye, Package, Plus, Trash2 } from "lucide-react";
-import { useNavigate } from "react-router-dom";
 import {
   useDeleteAdminProductMutation,
   useGetProductsQuery,
 } from "@/app/services/products";
 import GenericModal from "@/components/ui/admin/Modal";
 import ProductsTableSkeleton from "@/components/ui/admin/productsTableSkeleton";
-import { useCallback, useState } from "react";
+import { useThemeColors } from "@/hooks/useThemeColors";
 import type { IProduct } from "@/interfaces";
+import {
+  Badge,
+  Box,
+  Flex,
+  HStack,
+  Icon,
+  IconButton,
+  Image,
+  Stack,
+  Table,
+  Text,
+  useDisclosure,
+} from "@chakra-ui/react";
+import { Edit, Eye, Package, Plus, Trash2 } from "lucide-react";
+import { useCallback, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 const apiUrl = import.meta.env.VITE_API_URL || "";
 
@@ -40,21 +40,35 @@ const Products = () => {
   const navigate = useNavigate();
 
 
-  const [selectedProduct, setSelectedProduct] = useState<IProduct>()
+  const [selectedProduct, setSelectedProduct] = useState<IProduct|undefined>()
   const { onOpen, open, onClose } = useDisclosure();
   const { data, isLoading } = useGetProductsQuery({ page: 1 });
-  const [deleteProduct, { isLoading: isDeleting, isSuccess }] =
+  const [deleteProduct, { isLoading: isDeleting }] =
     useDeleteAdminProductMutation();
-  console.log(isLoading, isDeleting, isSuccess);
+
+
 
   const handleView = (product: IProduct) => {
-    navigate(`/product/${product}`);
+    navigate(`/product/${product.documentId}`);
   };
 
   const handleEdit = (product: IProduct) => {
     // TODO: Implement edit functionality
     console.log("Edit product:", product);
   };
+
+  const handleConfirmDelete = async () => {
+  if (!selectedProduct) return;
+
+  try {
+    await deleteProduct(selectedProduct.documentId).unwrap();
+    setSelectedProduct(undefined);
+    onClose();
+  } catch (error) {
+    console.error(error);
+  }
+};
+
 
 const handleDelete = useCallback((product: IProduct) => {
   setSelectedProduct(product);
@@ -435,7 +449,7 @@ const handleDelete = useCallback((product: IProduct) => {
       <GenericModal
         isOpen={open}
         onClose={onClose}
-        onConfirm={()=> deleteProduct(selectedProduct?.documentId ??"")}
+        onConfirm={handleConfirmDelete}
         title="Delete Product"
         description={`Are you sure you want to delete "${selectedProduct?.title}" ? This action cannot be undone.`}
         confirmText="Delete"
