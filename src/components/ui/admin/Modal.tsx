@@ -49,7 +49,7 @@ const GenericModal = ({
     statusError,
   } = useThemeColors();
 
-  if (!isOpen) return null;
+  
 
   const getVariantStyles = () => {
     switch (variant) {
@@ -81,6 +81,17 @@ const GenericModal = ({
   };
 
   const variantStyles = getVariantStyles();
+
+
+  if (!isOpen) return <Box
+  position="fixed"
+  inset={0}
+  zIndex={1000}
+  display={isOpen ? "flex" : "none"}
+  alignItems="center"
+  justifyContent="center"
+  px={4}
+/>
 
   return (
     <Box

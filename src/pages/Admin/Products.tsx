@@ -20,7 +20,7 @@ import {
 } from "@/app/services/products";
 import GenericModal from "@/components/ui/admin/Modal";
 import ProductsTableSkeleton from "@/components/ui/admin/productsTableSkeleton";
-import { useState } from "react";
+import { useCallback, useState } from "react";
 
 const apiUrl = import.meta.env.VITE_API_URL || "";
 
@@ -55,10 +55,11 @@ const Products = () => {
     console.log("Edit product:", documentId);
   };
 
-  const handleDelete = (documentId: string) => {
-    onOpen();
-    setSelectedProduct(documentId)
-  };
+const handleDelete = useCallback((documentId: string) => {
+  setSelectedProduct(documentId);
+  onOpen();
+}, [onOpen]);
+
 
   const getStockStatus = (stock: number) => {
     if (stock === 0) return { label: "Out of Stock", color: statusError };
