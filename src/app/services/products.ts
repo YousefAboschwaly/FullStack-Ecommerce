@@ -33,7 +33,6 @@ export const productsApi = createApi({
     }),
 
     // EDIT Product
-
     editAdminProduct: builder.mutation<undefined,{ id: string; body: ProductFormData }>({
       query: ({ id, body }) => ({
         url: `/api/products/${id}`,
@@ -43,6 +42,38 @@ export const productsApi = createApi({
         },
         body,
       }),
+
+      async onQueryStarted({ id, body }, { dispatch, queryFulfilled }) {
+        // 1️⃣ Optimistic update for product list
+        const patchList = dispatch(
+          productsApi.util.updateQueryData(
+            "getProducts",
+            { page: 1 },
+            (draft) => {
+              const product = draft.data.find((p) => p.documentId === id);
+              if (product) {
+                Object.assign(product, body);
+              }
+            }
+          )
+        );
+
+        // 2️⃣ Optimistic update for product details
+        const patchSingle = dispatch(
+          productsApi.util.updateQueryData("getProduct", id, (draft) => {
+            Object.assign(draft.data, body);
+          })
+        );
+
+        try {
+          await queryFulfilled;
+        } catch {
+          // ❌ rollback if failed
+          patchList.undo();
+          patchSingle.undo();
+        }
+      },
+
       invalidatesTags: (_result, _error, { id }) => [
         { type: "Products", id },
         { type: "Products", id: "LIST" },
@@ -60,7 +91,7 @@ export const productsApi = createApi({
           },
         };
       },
-       invalidatesTags: (_result, _error, { id }) => [
+      invalidatesTags: (_result, _error, { id }) => [
         { type: "Products", id },
         { type: "Products", id: "LIST" },
       ],
