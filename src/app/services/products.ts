@@ -12,7 +12,7 @@ export const productsApi = createApi({
     // GET All Products
     getProducts: builder.query<{ data: IProduct[] }, { page: number }>({
       query: ({ page }) =>
-        `/api/products?fields=title,description,price,stock&populate=*&pagination[pageSize]=12&pagination[page]=${page}`,
+        `/api/products?fields=title,description,price,stock&populate=*&pagination[pageSize]=15&pagination[page]=${page}`,
       providesTags: (result) =>
         result
           ? [
@@ -32,9 +32,8 @@ export const productsApi = createApi({
       providesTags: (_result, _error, id) => [{ type: "Products", id }],
     }),
 
-    
     // CREATE Product
-    createAdminProduct: builder.mutation<{ data: IProduct },ProductFormData>({
+    createAdminProduct: builder.mutation<{ data: IProduct }, ProductFormData>({
       query: (body) => ({
         url: "/api/products",
         method: "POST",
@@ -46,50 +45,41 @@ export const productsApi = createApi({
       invalidatesTags: [{ type: "Products", id: "LIST" }],
     }),
 
-
     // EDIT Product
-    editAdminProduct: builder.mutation<undefined,{ id: string; body: ProductFormData }>({
+    editAdminProduct: builder.mutation<{ data: IProduct },{ id: string; body: { data: Partial<IProduct> } }>({
       query: ({ id, body }) => ({
         url: `/api/products/${id}`,
         method: "PUT",
         headers: {
           Authorization: `Bearer ${cookieService.getCookie("jwt")}`,
+          "Content-Type": "application/json",
         },
         body,
       }),
 
       async onQueryStarted({ id, body }, { dispatch, queryFulfilled }) {
-        // 1️⃣ Optimistic update for product list
-        const patchList = dispatch(
+        // ✅ Optimistic update
+        const patch = dispatch(
           productsApi.util.updateQueryData(
             "getProducts",
             { page: 1 },
             (draft) => {
               const product = draft.data.find((p) => p.documentId === id);
               if (product) {
-                Object.assign(product, body);
+                Object.assign(product, body.data);
               }
             }
           )
         );
 
-        // 2️⃣ Optimistic update for product details
-        const patchSingle = dispatch(
-          productsApi.util.updateQueryData("getProduct", id, (draft) => {
-            Object.assign(draft.data, body);
-          })
-        );
-
         try {
           await queryFulfilled;
         } catch {
-          // ❌ rollback if failed
-          patchList.undo();
-          patchSingle.undo();
+          patch.undo();
         }
       },
 
-      invalidatesTags: (_result, _error, { id }) => [
+      invalidatesTags: (_res, _err, { id }) => [
         { type: "Products", id },
         { type: "Products", id: "LIST" },
       ],
@@ -106,7 +96,7 @@ export const productsApi = createApi({
           },
         };
       },
-      invalidatesTags: (_result, _error, { id }) => [
+      invalidatesTags: (_result, _error, id) => [
         { type: "Products", id },
         { type: "Products", id: "LIST" },
       ],
@@ -117,5 +107,7 @@ export const productsApi = createApi({
 export const {
   useGetProductsQuery,
   useGetProductQuery,
+  useCreateAdminProductMutation,
+  useEditAdminProductMutation,
   useDeleteAdminProductMutation,
 } = productsApi;

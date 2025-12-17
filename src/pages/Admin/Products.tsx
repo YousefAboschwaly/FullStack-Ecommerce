@@ -1,5 +1,6 @@
 import {
   useDeleteAdminProductMutation,
+  useEditAdminProductMutation,
   useGetProductsQuery,
 } from "@/app/services/products";
 import GenericModal from "@/components/ui/admin/Modal";
@@ -17,7 +18,7 @@ import {
   Stack,
   Table,
   Text,
-  useDisclosure
+  useDisclosure,
 } from "@chakra-ui/react";
 import { Plus } from "lucide-react";
 import { useCallback, useState } from "react";
@@ -41,20 +42,24 @@ const Products = () => {
 
   const { onOpen, open, onClose } = useDisclosure();
   const { data, isLoading } = useGetProductsQuery({ page: 1 });
-  const [deleteProduct, { isLoading: isDeleting }] =useDeleteAdminProductMutation();
+  const [deleteProduct, { isLoading: isDeleting }] =
+    useDeleteAdminProductMutation();
 
-
-
-  const [selectedProduct, setSelectedProduct] = useState<IProduct | undefined>();
+  const [selectedProduct, setSelectedProduct] = useState<
+    IProduct | undefined
+  >();
   const [createModalOpen, setCreateModalOpen] = useState(false);
   const [editModalOpen, setEditModalOpen] = useState(false);
+
+  const [editProduct, { isLoading: isEditing }] = useEditAdminProductMutation();
 
   const handleView = (product: IProduct) => {
     navigate(`/product/${product.documentId}`);
   };
-  const handleCreateProduct =  () => {
+
+  const handleConfirmCreateProduct = (data: ProductFormData) => {
     console.log("Create product:", data);
-    setCreateModalOpen(true);
+    setCreateModalOpen(false);
   };
 
   const handleEdit = (product: IProduct) => {
@@ -62,7 +67,23 @@ const Products = () => {
     setEditModalOpen(true);
   };
 
-  const handleConfirmEdit =  (data:ProductFormData) => {
+  const handleConfirmEdit = (data: ProductFormData) => {
+    if (!selectedProduct) return;
+
+    const payload = {
+      data: {
+        title: data.title,
+        description: data.description,
+        price: data.price,
+        stock: data.stock,
+      },
+    };
+
+    editProduct({
+      id: selectedProduct.documentId,
+      body: payload,
+    });
+
     console.log("Update product:", data);
     setEditModalOpen(false);
   };
@@ -117,7 +138,7 @@ const Products = () => {
           fontSize="sm"
           transition="all 0.2s"
           _hover={{ opacity: 0.9, transform: "translateY(-1px)" }}
-          onClick={handleCreateProduct}
+          onClick={() => setCreateModalOpen(true)}
         >
           <Icon as={Plus} boxSize={4} />
           <Text>Add Product</Text>
@@ -188,6 +209,7 @@ const Products = () => {
                   const stockStatus = getStockStatus(product.stock);
                   return (
                     <ProductTableRow
+                      key={product.id}
                       product={product}
                       apiUrl={apiUrl}
                       stockStatus={stockStatus}
@@ -207,6 +229,7 @@ const Products = () => {
               const stockStatus = getStockStatus(product.stock);
               return (
                 <ProductMobileCard
+                  key={product.id}
                   product={product}
                   apiUrl={apiUrl}
                   stockStatus={stockStatus}
@@ -235,7 +258,7 @@ const Products = () => {
       <ProductFormModal
         isOpen={createModalOpen}
         onClose={() => setCreateModalOpen(false)}
-        onSubmit={() => handleCreateProduct()}
+        onSubmit={(data) => handleConfirmCreateProduct(data)}
         mode="create"
         isLoading={false}
       />
@@ -252,7 +275,7 @@ const Products = () => {
           stock: selectedProduct?.stock,
           thumbnail: apiUrl + selectedProduct?.thumbnail?.url,
         }}
-        isLoading={false}
+        isLoading={isEditing}
       />
     </Box>
   );

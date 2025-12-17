@@ -501,7 +501,6 @@ const ProductFormModal = ({
             _hover={{ bg: accentPrimaryHover }}
             transition="all 0.2s"
             loading={isLoading}
-            disabled={isLoading}
           >
             {mode === "create" ? "Create Product" : "Save Changes"}
           </Button>
