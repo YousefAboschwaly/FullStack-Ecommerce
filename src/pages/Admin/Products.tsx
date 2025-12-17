@@ -3,6 +3,8 @@ import {
   useGetProductsQuery,
 } from "@/app/services/products";
 import GenericModal from "@/components/ui/admin/Modal";
+import ProductFormModal from "@/components/ui/admin/ProductFormModal";
+import ProductMobileCard from "@/components/ui/admin/ProductMobileCard";
 import ProductsTableSkeleton from "@/components/ui/admin/productsTableSkeleton";
 import { useThemeColors } from "@/hooks/useThemeColors";
 import type { IProduct } from "@/interfaces";
@@ -39,42 +41,55 @@ const Products = () => {
   } = useThemeColors();
   const navigate = useNavigate();
 
-
-  const [selectedProduct, setSelectedProduct] = useState<IProduct|undefined>()
+  const [selectedProduct, setSelectedProduct] = useState<
+    IProduct | undefined
+  >();
   const { onOpen, open, onClose } = useDisclosure();
   const { data, isLoading } = useGetProductsQuery({ page: 1 });
   const [deleteProduct, { isLoading: isDeleting }] =
     useDeleteAdminProductMutation();
-
+    const [createModalOpen, setCreateModalOpen] = useState(false);
+const [editModalOpen, setEditModalOpen] = useState(false);
 
 
   const handleView = (product: IProduct) => {
     navigate(`/product/${product.documentId}`);
   };
 
-  const handleEdit = (product: IProduct) => {
-    // TODO: Implement edit functionality
-    console.log("Edit product:", product);
-  };
+const handleEdit = (product: IProduct) => {
+  setSelectedProduct(product);
+  setEditModalOpen(true);
+};
+const handleCreateProduct = async (data: any) => {
+  console.log("Create product:", data);
+  setCreateModalOpen(true);
+};
 
-  const handleConfirmDelete = async () => {
-  if (!selectedProduct) return;
-
-  try {
-    await deleteProduct(selectedProduct.documentId).unwrap();
-    setSelectedProduct(undefined);
-    onClose();
-  } catch (error) {
-    console.error(error);
-  }
+const handleUpdateProduct = async (data: any) => {
+  console.log("Update product:", data);
+  setEditModalOpen(true);
 };
 
 
-const handleDelete = useCallback((product: IProduct) => {
-  setSelectedProduct(product);
-  onOpen();
-}, [onOpen]);
+  const handleConfirmDelete = async () => {
+    if (!selectedProduct) return;
 
+    try {
+      await deleteProduct(selectedProduct.documentId).unwrap();
+      setSelectedProduct(undefined);
+      onClose();
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const handleDelete = useCallback(
+    (product: IProduct) => {
+      setSelectedProduct(product);
+      onOpen();
+    },
+    [onOpen]
+  );
 
   const getStockStatus = (stock: number) => {
     if (stock === 0) return { label: "Out of Stock", color: statusError };
@@ -106,12 +121,12 @@ const handleDelete = useCallback((product: IProduct) => {
           fontSize="sm"
           transition="all 0.2s"
           _hover={{ opacity: 0.9, transform: "translateY(-1px)" }}
+          onClick={handleCreateProduct}
         >
           <Icon as={Plus} boxSize={4} />
           <Text>Add Product</Text>
         </HStack>
       </Flex>
-
       {/* Show skeleton when loading */}
       {isLoading ? (
         <ProductsTableSkeleton rows={5} />
@@ -311,140 +326,12 @@ const handleDelete = useCallback((product: IProduct) => {
             {data?.data.map((product) => {
               const stockStatus = getStockStatus(product.stock);
               return (
-                <Box
-                  key={product.id}
-                  p={4}
-                  bg={bgCard}
-                  borderRadius="xl"
-                  border="1px solid"
-                  borderColor={borderDefault}
-                  transition="all 0.2s"
-                  _hover={{ borderColor: accentPrimary }}
-                >
-                  <Flex gap={4} mb={4}>
-                    <Box
-                      w="70px"
-                      h="70px"
-                      borderRadius="lg"
-                      overflow="hidden"
-                      bg={bgCardHover}
-                      flexShrink={0}
-                    >
-                      {product.thumbnail?.url ? (
-                        <Image
-                          src={apiUrl + product.thumbnail.url}
-                          alt={product.title}
-                          w="100%"
-                          h="100%"
-                          objectFit="cover"
-                        />
-                      ) : (
-                        <Flex w="100%" h="100%" align="center" justify="center">
-                          <Icon as={Package} boxSize={6} color={textMuted} />
-                        </Flex>
-                      )}
-                    </Box>
-                    <Box flex={1}>
-                      <Text fontWeight="600" color={textPrimary} mb={1}>
-                        {product.title}
-                      </Text>
-                      <Badge
-                        px={2}
-                        py={0.5}
-                        borderRadius="full"
-                        bg={bgCardHover}
-                        color={textPrimary}
-                        fontWeight="500"
-                        fontSize="xs"
-                        mb={2}
-                      >
-                        {product.category?.title || "Uncategorized"}
-                      </Badge>
-                      <Flex justify="space-between" align="center">
-                        <Text
-                          fontWeight="700"
-                          color={accentPrimary}
-                          fontSize="lg"
-                        >
-                          ${product.price.toFixed(2)}
-                        </Text>
-                        <HStack gap={1}>
-                          <Box
-                            w={2}
-                            h={2}
-                            borderRadius="full"
-                            bg={stockStatus.color}
-                          />
-                          <Text fontSize="xs" color={textMuted}>
-                            {product.stock} units
-                          </Text>
-                        </HStack>
-                      </Flex>
-                    </Box>
-                  </Flex>
-                  <Flex
-                    justify="flex-end"
-                    gap={2}
-                    borderTop="1px solid"
-                    borderColor={borderDefault}
-                    pt={3}
-                  >
-                    <IconButton
-                      aria-label="View product"
-                      size="sm"
-                      variant="outline"
-                      borderRadius="lg"
-                      color={textMuted}
-                      borderColor={borderDefault}
-                      _hover={{
-                        bg: bgCardHover,
-                        color: accentPrimary,
-                        borderColor: accentPrimary,
-                      }}
-                      onClick={() => handleView(product)}
-                    >
-                      <Eye size={16} />
-                    </IconButton>
-                    <IconButton
-                      aria-label="Edit product"
-                      size="sm"
-                      variant="outline"
-                      borderRadius="lg"
-                      color={textMuted}
-                      borderColor={borderDefault}
-                      _hover={{
-                        bg: bgCardHover,
-                        color: accentPrimary,
-                        borderColor: accentPrimary,
-                      }}
-                      onClick={() => handleEdit(product)}
-                    >
-                      <Edit size={16} />
-                    </IconButton>
-                    <IconButton
-                      aria-label="Delete product"
-                      size="sm"
-                      variant="outline"
-                      borderRadius="lg"
-                      color={textMuted}
-                      borderColor={borderDefault}
-                      _hover={{
-                        bg: "red.50",
-                        color: statusError,
-                        borderColor: statusError,
-                      }}
-                      onClick={() => handleDelete(product)}
-                    >
-                      <Trash2 size={16} />
-                    </IconButton>
-                  </Flex>
-                </Box>
+                <ProductMobileCard product={product} apiUrl={apiUrl} stockStatus={stockStatus} handleView={handleView} handleEdit={handleEdit} handleDelete={handleDelete} />
               );
             })}
           </Stack>
         </>
       )}
-
       {/* Delete Confirmation Modal */}
       <GenericModal
         isOpen={open}
@@ -456,6 +343,29 @@ const handleDelete = useCallback((product: IProduct) => {
         cancelText="Cancel"
         variant="danger"
         isLoading={isDeleting}
+      />
+      {/* // Create mode */}
+      <ProductFormModal
+        isOpen={createModalOpen}
+        onClose={() => setCreateModalOpen(false)}
+        onSubmit={(data) => handleCreateProduct(data)}
+        mode="create"
+        isLoading={false}
+      />
+      {/* // Edit mode */}
+      <ProductFormModal
+        isOpen={editModalOpen}
+        onClose={() => setEditModalOpen(false)}
+        onSubmit={(data) => handleUpdateProduct(data)}
+        mode="edit"
+        initialData={{
+          title: selectedProduct?.title,
+          description: selectedProduct?.description,
+          price: selectedProduct?.price,
+          stock: selectedProduct?.stock,
+          thumbnail: apiUrl + selectedProduct?.thumbnail?.url,
+        }}
+        isLoading={false}
       />
     </Box>
   );
