@@ -2,6 +2,7 @@ import {
   useDeleteAdminProductMutation,
   useEditAdminProductMutation,
   useGetProductsQuery,
+  useUploadProductImageMutation,
 } from "@/app/services/products";
 import GenericModal from "@/components/ui/admin/Modal";
 import ProductFormModal from "@/components/ui/admin/ProductFormModal";
@@ -52,6 +53,7 @@ const Products = () => {
   const [editModalOpen, setEditModalOpen] = useState(false);
 
   const [editProduct, { isLoading: isEditing }] = useEditAdminProductMutation();
+  const [uploadImage] = useUploadProductImageMutation();
 
   const handleView = (product: IProduct) => {
     navigate(`/product/${product.documentId}`);
@@ -67,7 +69,7 @@ const Products = () => {
     setEditModalOpen(true);
   };
 
-  const handleConfirmEdit = (data: ProductFormData) => {
+  const handleConfirmEdit = async(data: ProductFormData) => {
     if (!selectedProduct) return;
 
     const payload = {
@@ -79,10 +81,18 @@ const Products = () => {
       },
     };
 
-    editProduct({
+   await editProduct({
       id: selectedProduct.documentId,
       body: payload,
     });
+      // 2️⃣ Upload image ( if the image changed )
+  if (data.thumbnail instanceof File) {
+    await  uploadImage({
+      productId: selectedProduct.documentId,
+      file: data.thumbnail,
+    }).unwrap();
+  }
+
 
     console.log("Update product:", data);
     setEditModalOpen(false);

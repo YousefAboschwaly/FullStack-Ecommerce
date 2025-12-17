@@ -135,6 +135,7 @@ export const {
   useGetProductsQuery,
   useGetProductQuery,
   useCreateAdminProductMutation,
+  useUploadProductImageMutation,
   useEditAdminProductMutation,
   useDeleteAdminProductMutation,
 } = productsApi;
