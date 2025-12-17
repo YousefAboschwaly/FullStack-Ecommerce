@@ -74,7 +74,7 @@ export default function ProductTableRow({ product,apiUrl,stockStatus, handleView
           fontWeight="500"
           fontSize="xs"
         >
-          {product.category?.title || "Uncategorized"}
+          {product.category?.title || "UnCategorized"}
         </Badge>
       </Table.Cell>
       <Table.Cell py={4} px={6}>

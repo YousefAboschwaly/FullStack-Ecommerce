@@ -71,7 +71,7 @@ export default function ProductMobileCard({ product,apiUrl,stockStatus, handleVi
             fontSize="xs"
             mb={2}
           >
-            {product.category?.title || "Uncategorized"}
+            {product.category?.title || "UnCategorized"}
           </Badge>
           <Flex justify="space-between" align="center">
             <Text fontWeight="700" color={accentPrimary} fontSize="lg">

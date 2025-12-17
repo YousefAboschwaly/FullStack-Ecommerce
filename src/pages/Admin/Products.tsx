@@ -6,22 +6,20 @@ import GenericModal from "@/components/ui/admin/Modal";
 import ProductFormModal from "@/components/ui/admin/ProductFormModal";
 import ProductMobileCard from "@/components/ui/admin/ProductMobileCard";
 import ProductsTableSkeleton from "@/components/ui/admin/productsTableSkeleton";
+import ProductTableRow from "@/components/ui/admin/ProductTableRow";
 import { useThemeColors } from "@/hooks/useThemeColors";
 import type { IProduct } from "@/interfaces";
 import {
-  Badge,
   Box,
   Flex,
   HStack,
   Icon,
-  IconButton,
-  Image,
   Stack,
   Table,
   Text,
-  useDisclosure,
+  useDisclosure
 } from "@chakra-ui/react";
-import { Edit, Eye, Package, Plus, Trash2 } from "lucide-react";
+import { Plus } from "lucide-react";
 import { useCallback, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
@@ -48,28 +46,26 @@ const Products = () => {
   const { data, isLoading } = useGetProductsQuery({ page: 1 });
   const [deleteProduct, { isLoading: isDeleting }] =
     useDeleteAdminProductMutation();
-    const [createModalOpen, setCreateModalOpen] = useState(false);
-const [editModalOpen, setEditModalOpen] = useState(false);
-
+  const [createModalOpen, setCreateModalOpen] = useState(false);
+  const [editModalOpen, setEditModalOpen] = useState(false);
 
   const handleView = (product: IProduct) => {
     navigate(`/product/${product.documentId}`);
   };
 
-const handleEdit = (product: IProduct) => {
-  setSelectedProduct(product);
-  setEditModalOpen(true);
-};
-const handleCreateProduct = async (data: any) => {
-  console.log("Create product:", data);
-  setCreateModalOpen(true);
-};
+  const handleEdit = (product: IProduct) => {
+    setSelectedProduct(product);
+    setEditModalOpen(true);
+  };
+  const handleCreateProduct = async (data: any) => {
+    console.log("Create product:", data);
+    setCreateModalOpen(true);
+  };
 
-const handleUpdateProduct = async (data: any) => {
-  console.log("Update product:", data);
-  setEditModalOpen(true);
-};
-
+  const handleUpdateProduct = async (data: any) => {
+    console.log("Update product:", data);
+    setEditModalOpen(true);
+  };
 
   const handleConfirmDelete = async () => {
     if (!selectedProduct) return;
@@ -191,8 +187,14 @@ const handleUpdateProduct = async (data: any) => {
                 {data?.data.map((product) => {
                   const stockStatus = getStockStatus(product.stock);
                   return (
-                                    <ProductMobileCard product={product} apiUrl={apiUrl} stockStatus={stockStatus} handleView={handleView} handleEdit={handleEdit} handleDelete={handleDelete} />
-              );
+                    <ProductTableRow
+                      product={product}
+                      apiUrl={apiUrl}
+                      stockStatus={stockStatus}
+                      handleView={handleView}
+                      handleEdit={handleEdit}
+                      handleDelete={handleDelete}
+                    />
                   );
                 })}
               </Table.Body>
@@ -204,7 +206,14 @@ const handleUpdateProduct = async (data: any) => {
             {data?.data.map((product) => {
               const stockStatus = getStockStatus(product.stock);
               return (
-                <ProductMobileCard product={product} apiUrl={apiUrl} stockStatus={stockStatus} handleView={handleView} handleEdit={handleEdit} handleDelete={handleDelete} />
+                <ProductMobileCard
+                  product={product}
+                  apiUrl={apiUrl}
+                  stockStatus={stockStatus}
+                  handleView={handleView}
+                  handleEdit={handleEdit}
+                  handleDelete={handleDelete}
+                />
               );
             })}
           </Stack>
