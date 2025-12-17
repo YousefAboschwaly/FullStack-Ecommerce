@@ -1,7 +1,9 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { useThemeColors } from "@/hooks/useThemeColors";
 import {
   Box,
   Button,
+  Field,
   Flex,
   HStack,
   Icon,
@@ -13,6 +15,7 @@ import {
 } from "@chakra-ui/react";
 import { ImagePlus, Package, X } from "lucide-react";
 import { memo, useEffect, useState, type ChangeEvent } from "react";
+import { useForm } from "react-hook-form";
 
 export interface ProductFormData {
   title: string;
@@ -31,6 +34,30 @@ interface ProductFormModalProps {
   isLoading?: boolean;
 }
 
+// Validation rules
+const productValidation = {
+  title: {
+    required: "Title is required",
+    minLength: { value: 3, message: "Title must be at least 3 characters" },
+    maxLength: { value: 100, message: "Title must be less than 100 characters" },
+  },
+  description: {
+    required: "Description is required",
+    minLength: { value: 10, message: "Description must be at least 10 characters" },
+    maxLength: { value: 500, message: "Description must be less than 500 characters" },
+  },
+  price: {
+    required: "Price is required",
+    min: { value: 0.01, message: "Price must be greater than 0" },
+    max: { value: 999999, message: "Price must be less than 999999" },
+  },
+  stock: {
+    required: "Stock is required",
+    min: { value: 0, message: "Stock cannot be negative" },
+    max: { value: 999999, message: "Stock must be less than 999999" },
+  },
+};
+
 const ProductFormModal = ({
   isOpen,
   onClose,
@@ -46,27 +73,27 @@ const ProductFormModal = ({
     textPrimary,
     textMuted,
     borderDefault,
-    borderHover,
     accentPrimary,
+    accentPrimaryHover,
+    buttonText,
     statusError,
   } = useThemeColors();
 
-  const [formData, setFormData] = useState<ProductFormData>({
-    title: "",
-    description: "",
-    price: 0,
-    stock: 0,
-    thumbnail: null,
-  });
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = useForm<ProductFormData>();
 
   const [thumbnailPreview, setThumbnailPreview] = useState<string | null>(null);
-  const [errors, setErrors] = useState<Partial<Record<keyof ProductFormData, string>>>({});
+  const [thumbnailFile, setThumbnailFile] = useState<File | null>(null);
 
   // Reset form when modal opens or initialData changes
   useEffect(() => {
     if (isOpen) {
       if (initialData) {
-        setFormData({
+        reset({
           title: initialData.title || "",
           description: initialData.description || "",
           price: initialData.price || 0,
@@ -77,7 +104,7 @@ const ProductFormModal = ({
           setThumbnailPreview(initialData.thumbnail);
         }
       } else {
-        setFormData({
+        reset({
           title: "",
           description: "",
           price: 0,
@@ -85,73 +112,37 @@ const ProductFormModal = ({
           thumbnail: null,
         });
         setThumbnailPreview(null);
+        setThumbnailFile(null);
       }
-      setErrors({});
     }
   }, [isOpen, initialData]);
-
-  const handleInputChange = (
-    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => {
-    const { name, value, type } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: type === "number" ? parseFloat(value) || 0 : value,
-    }));
-    // Clear error when user types
-    if (errors[name as keyof ProductFormData]) {
-      setErrors((prev) => ({ ...prev, [name]: undefined }));
-    }
-  };
 
   const handleThumbnailChange = (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      setFormData((prev) => ({ ...prev, thumbnail: file }));
+      setThumbnailFile(file);
       const reader = new FileReader();
       reader.onloadend = () => {
         setThumbnailPreview(reader.result as string);
       };
       reader.readAsDataURL(file);
-      if (errors.thumbnail) {
-        setErrors((prev) => ({ ...prev, thumbnail: undefined }));
-      }
     }
   };
 
   const removeThumbnail = () => {
-    setFormData((prev) => ({ ...prev, thumbnail: null }));
+    setThumbnailFile(null);
     setThumbnailPreview(null);
   };
 
-  const validate = (): boolean => {
-    const newErrors: Partial<Record<keyof ProductFormData, string>> = {};
-
-    if (!formData.title.trim()) {
-      newErrors.title = "Title is required";
-    }
-    if (!formData.description.trim()) {
-      newErrors.description = "Description is required";
-    }
-    if (formData.price <= 0) {
-      newErrors.price = "Price must be greater than 0";
-    }
-    if (formData.stock < 0) {
-      newErrors.stock = "Stock cannot be negative";
-    }
-
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
-
-  const handleSubmit = () => {
-    if (validate()) {
-      onSubmit(formData);
-    }
+  const onFormSubmit = (data: ProductFormData) => {
+    onSubmit({
+      ...data,
+      thumbnail: thumbnailFile || initialData?.thumbnail || null,
+    });
   };
 
   const handleClose = () => {
-    setFormData({
+    reset({
       title: "",
       description: "",
       price: 0,
@@ -159,9 +150,11 @@ const ProductFormModal = ({
       thumbnail: null,
     });
     setThumbnailPreview(null);
-    setErrors({});
+    setThumbnailFile(null);
     onClose();
   };
+
+  if (!isOpen) return null;
 
   return (
     <Box
@@ -171,7 +164,7 @@ const ProductFormModal = ({
       right={0}
       bottom={0}
       zIndex={1000}
-      display={isOpen ? "flex" : "none"}
+      display="flex"
       alignItems="center"
       justifyContent="center"
       px={4}
@@ -192,7 +185,7 @@ const ProductFormModal = ({
       <Box
         position="relative"
         bg={bgCard}
-        borderRadius="2xl"
+        borderRadius="xl"
         border="1px solid"
         borderColor={borderDefault}
         maxW="550px"
@@ -249,7 +242,13 @@ const ProductFormModal = ({
 
         {/* Body - Scrollable */}
         <Box flex={1} overflowY="auto" px={6} py={5}>
-          <VStack gap={5} align="stretch">
+          <VStack
+            as="form"
+            gap={6}
+            align="stretch"
+            onSubmit={handleSubmit(onFormSubmit)}
+            id="product-form"
+          >
             {/* Thumbnail Upload */}
             <Box>
               <Text fontSize="sm" fontWeight="600" color={textPrimary} mb={2}>
@@ -259,7 +258,7 @@ const ProductFormModal = ({
                 {thumbnailPreview ? (
                   <Box
                     position="relative"
-                    borderRadius="xl"
+                    borderRadius="lg"
                     overflow="hidden"
                     border="2px solid"
                     borderColor={borderDefault}
@@ -298,13 +297,16 @@ const ProductFormModal = ({
                     justifyContent="center"
                     w="100%"
                     h="180px"
-                    borderRadius="xl"
+                    borderRadius="lg"
                     border="2px dashed"
-                    borderColor={errors.thumbnail ? statusError : borderDefault}
+                    borderColor={borderDefault}
                     bg={bgCardHover}
                     cursor="pointer"
                     transition="all 0.2s"
-                    _hover={{ borderColor: accentPrimary, bg: `${accentPrimary}08` }}
+                    _hover={{
+                      borderColor: accentPrimary,
+                      bg: `${accentPrimary}08`,
+                    }}
                   >
                     <Flex
                       w="50px"
@@ -336,125 +338,130 @@ const ProductFormModal = ({
             </Box>
 
             {/* Title */}
-            <Box>
-              <Text fontSize="sm" fontWeight="600" color={textPrimary} mb={2}>
-                Title <Text as="span" color={statusError}>*</Text>
-              </Text>
+            <Field.Root invalid={!!errors.title}>
+              <Field.Label>
+                Title <Field.RequiredIndicator />
+              </Field.Label>
               <Input
-                name="title"
-                value={formData.title}
-                onChange={handleInputChange}
+                {...register("title", productValidation.title)}
                 placeholder="Enter product title"
                 bg={bgCardHover}
-                border="1px solid"
+                border="2px solid"
                 borderColor={errors.title ? statusError : borderDefault}
-                borderRadius="xl"
-                px={4}
-                py={3}
-                color={textPrimary}
                 _placeholder={{ color: textMuted }}
-                _hover={{ borderColor: borderHover }}
-                _focus={{ borderColor: accentPrimary, boxShadow: `0 0 0 1px ${accentPrimary}` }}
+                color={textPrimary}
+                _hover={{
+                  borderColor: errors.title ? statusError : accentPrimary,
+                }}
+                _focus={{
+                  borderColor: errors.title ? statusError : accentPrimary,
+                  boxShadow: `0 0 0 1px ${errors.title ? statusError : accentPrimary}`,
+                }}
+                h="48px"
+                borderRadius="lg"
               />
               {errors.title && (
-                <Text fontSize="xs" color={statusError} mt={1}>
-                  {errors.title}
-                </Text>
+                <Field.ErrorText>{errors.title.message}</Field.ErrorText>
               )}
-            </Box>
+            </Field.Root>
 
             {/* Description */}
-            <Box>
-              <Text fontSize="sm" fontWeight="600" color={textPrimary} mb={2}>
-                Description <Text as="span" color={statusError}>*</Text>
-              </Text>
+            <Field.Root invalid={!!errors.description}>
+              <Field.Label>
+                Description <Field.RequiredIndicator />
+              </Field.Label>
               <Textarea
-                name="description"
-                value={formData.description}
-                onChange={handleInputChange}
+                {...register("description", productValidation.description)}
                 placeholder="Enter product description"
                 bg={bgCardHover}
-                border="1px solid"
+                border="2px solid"
                 borderColor={errors.description ? statusError : borderDefault}
-                borderRadius="xl"
-                px={4}
-                py={3}
-                color={textPrimary}
                 _placeholder={{ color: textMuted }}
-                _hover={{ borderColor: borderHover }}
-                _focus={{ borderColor: accentPrimary, boxShadow: `0 0 0 1px ${accentPrimary}` }}
+                color={textPrimary}
+                _hover={{
+                  borderColor: errors.description ? statusError : accentPrimary,
+                }}
+                _focus={{
+                  borderColor: errors.description ? statusError : accentPrimary,
+                  boxShadow: `0 0 0 1px ${errors.description ? statusError : accentPrimary}`,
+                }}
                 minH="100px"
+                borderRadius="lg"
                 resize="vertical"
               />
               {errors.description && (
-                <Text fontSize="xs" color={statusError} mt={1}>
-                  {errors.description}
-                </Text>
+                <Field.ErrorText>{errors.description.message}</Field.ErrorText>
               )}
-            </Box>
+            </Field.Root>
 
             {/* Price & Stock Row */}
             <HStack gap={4}>
               {/* Price */}
-              <Box flex={1}>
-                <Text fontSize="sm" fontWeight="600" color={textPrimary} mb={2}>
-                  Price ($) <Text as="span" color={statusError}>*</Text>
-                </Text>
+              <Field.Root invalid={!!errors.price} flex={1}>
+                <Field.Label>
+                  Price ($) <Field.RequiredIndicator />
+                </Field.Label>
                 <Input
-                  name="price"
+                  {...register("price", {
+                    ...productValidation.price,
+                    valueAsNumber: true,
+                  })}
                   type="number"
                   step="0.01"
                   min="0"
-                  value={formData.price}
-                  onChange={handleInputChange}
                   placeholder="0.00"
                   bg={bgCardHover}
-                  border="1px solid"
+                  border="2px solid"
                   borderColor={errors.price ? statusError : borderDefault}
-                  borderRadius="xl"
-                  px={4}
-                  py={3}
-                  color={textPrimary}
                   _placeholder={{ color: textMuted }}
-                  _hover={{ borderColor: borderHover }}
-                  _focus={{ borderColor: accentPrimary, boxShadow: `0 0 0 1px ${accentPrimary}` }}
+                  color={textPrimary}
+                  _hover={{
+                    borderColor: errors.price ? statusError : accentPrimary,
+                  }}
+                  _focus={{
+                    borderColor: errors.price ? statusError : accentPrimary,
+                    boxShadow: `0 0 0 1px ${errors.price ? statusError : accentPrimary}`,
+                  }}
+                  h="48px"
+                  borderRadius="lg"
                 />
                 {errors.price && (
-                  <Text fontSize="xs" color={statusError} mt={1}>
-                    {errors.price}
-                  </Text>
+                  <Field.ErrorText>{errors.price.message}</Field.ErrorText>
                 )}
-              </Box>
+              </Field.Root>
 
               {/* Stock */}
-              <Box flex={1}>
-                <Text fontSize="sm" fontWeight="600" color={textPrimary} mb={2}>
-                  Stock <Text as="span" color={statusError}>*</Text>
-                </Text>
+              <Field.Root invalid={!!errors.stock} flex={1}>
+                <Field.Label>
+                  Stock <Field.RequiredIndicator />
+                </Field.Label>
                 <Input
-                  name="stock"
+                  {...register("stock", {
+                    ...productValidation.stock,
+                    valueAsNumber: true,
+                  })}
                   type="number"
                   min="0"
-                  value={formData.stock}
-                  onChange={handleInputChange}
                   placeholder="0"
                   bg={bgCardHover}
-                  border="1px solid"
+                  border="2px solid"
                   borderColor={errors.stock ? statusError : borderDefault}
-                  borderRadius="xl"
-                  px={4}
-                  py={3}
-                  color={textPrimary}
                   _placeholder={{ color: textMuted }}
-                  _hover={{ borderColor: borderHover }}
-                  _focus={{ borderColor: accentPrimary, boxShadow: `0 0 0 1px ${accentPrimary}` }}
+                  color={textPrimary}
+                  _hover={{
+                    borderColor: errors.stock ? statusError : accentPrimary,
+                  }}
+                  _focus={{
+                    borderColor: errors.stock ? statusError : accentPrimary,
+                    boxShadow: `0 0 0 1px ${errors.stock ? statusError : accentPrimary}`,
+                  }}
+                  h="48px"
+                  borderRadius="lg"
                 />
                 {errors.stock && (
-                  <Text fontSize="xs" color={statusError} mt={1}>
-                    {errors.stock}
-                  </Text>
+                  <Field.ErrorText>{errors.stock.message}</Field.ErrorText>
                 )}
-              </Box>
+              </Field.Root>
             </HStack>
           </VStack>
         </Box>
@@ -470,27 +477,29 @@ const ProductFormModal = ({
         >
           <Button
             variant="outline"
-            borderRadius="xl"
+            borderRadius="lg"
             borderColor={borderDefault}
             color={textPrimary}
-            fontWeight="600"
+            fontWeight="semibold"
+            h="48px"
             px={6}
-            py={5}
-            _hover={{ bg: borderDefault }}
+            _hover={{ bg: bgCardHover }}
             onClick={handleClose}
             disabled={isLoading}
           >
             Cancel
           </Button>
           <Button
-            borderRadius="xl"
+            type="submit"
+            form="product-form"
+            borderRadius="lg"
             bg={accentPrimary}
-            color="white"
-            fontWeight="600"
+            color={buttonText}
+            fontWeight="semibold"
+            h="48px"
             px={6}
-            py={5}
-            _hover={{ opacity: 0.9 }}
-            onClick={handleSubmit}
+            _hover={{ bg: accentPrimaryHover }}
+            transition="all 0.2s"
             loading={isLoading}
             disabled={isLoading}
           >

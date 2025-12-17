@@ -15,6 +15,15 @@ export interface IProduct{
   }
 }
 
+export interface ProductFormData {
+  title: string;
+  description: string;
+  price: number;
+  stock: number;
+  thumbnail: File | string | null;
+}
+
+
 export interface ICartItem extends IProduct {
   quantity: number;
 }

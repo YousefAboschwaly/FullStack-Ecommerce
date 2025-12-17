@@ -8,7 +8,7 @@ import ProductMobileCard from "@/components/ui/admin/ProductMobileCard";
 import ProductsTableSkeleton from "@/components/ui/admin/productsTableSkeleton";
 import ProductTableRow from "@/components/ui/admin/ProductTableRow";
 import { useThemeColors } from "@/hooks/useThemeColors";
-import type { IProduct } from "@/interfaces";
+import type { IProduct, ProductFormData } from "@/interfaces";
 import {
   Box,
   Flex,
@@ -39,32 +39,32 @@ const Products = () => {
   } = useThemeColors();
   const navigate = useNavigate();
 
-  const [selectedProduct, setSelectedProduct] = useState<
-    IProduct | undefined
-  >();
   const { onOpen, open, onClose } = useDisclosure();
   const { data, isLoading } = useGetProductsQuery({ page: 1 });
-  const [deleteProduct, { isLoading: isDeleting }] =
-    useDeleteAdminProductMutation();
+  const [deleteProduct, { isLoading: isDeleting }] =useDeleteAdminProductMutation();
+
+
+
+  const [selectedProduct, setSelectedProduct] = useState<IProduct | undefined>();
   const [createModalOpen, setCreateModalOpen] = useState(false);
   const [editModalOpen, setEditModalOpen] = useState(false);
 
   const handleView = (product: IProduct) => {
     navigate(`/product/${product.documentId}`);
   };
+  const handleCreateProduct =  () => {
+    console.log("Create product:", data);
+    setCreateModalOpen(true);
+  };
 
   const handleEdit = (product: IProduct) => {
     setSelectedProduct(product);
     setEditModalOpen(true);
   };
-  const handleCreateProduct = async (data: any) => {
-    console.log("Create product:", data);
-    setCreateModalOpen(true);
-  };
 
-  const handleUpdateProduct = async (data: any) => {
+  const handleConfirmEdit =  (data:ProductFormData) => {
     console.log("Update product:", data);
-    setEditModalOpen(true);
+    setEditModalOpen(false);
   };
 
   const handleConfirmDelete = async () => {
@@ -235,7 +235,7 @@ const Products = () => {
       <ProductFormModal
         isOpen={createModalOpen}
         onClose={() => setCreateModalOpen(false)}
-        onSubmit={(data) => handleCreateProduct(data)}
+        onSubmit={() => handleCreateProduct()}
         mode="create"
         isLoading={false}
       />
@@ -243,7 +243,7 @@ const Products = () => {
       <ProductFormModal
         isOpen={editModalOpen}
         onClose={() => setEditModalOpen(false)}
-        onSubmit={(data) => handleUpdateProduct(data)}
+        onSubmit={(data) => handleConfirmEdit(data)}
         mode="edit"
         initialData={{
           title: selectedProduct?.title,
