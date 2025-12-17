@@ -32,6 +32,21 @@ export const productsApi = createApi({
       providesTags: (_result, _error, id) => [{ type: "Products", id }],
     }),
 
+    
+    // CREATE Product
+    createAdminProduct: builder.mutation<{ data: IProduct },ProductFormData>({
+      query: (body) => ({
+        url: "/api/products",
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${cookieService.getCookie("jwt")}`,
+        },
+        body,
+      }),
+      invalidatesTags: [{ type: "Products", id: "LIST" }],
+    }),
+
+
     // EDIT Product
     editAdminProduct: builder.mutation<undefined,{ id: string; body: ProductFormData }>({
       query: ({ id, body }) => ({
