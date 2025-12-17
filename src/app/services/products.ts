@@ -45,6 +45,33 @@ export const productsApi = createApi({
       invalidatesTags: [{ type: "Products", id: "LIST" }],
     }),
 
+    // UPLOAD Image
+    uploadProductImage: builder.mutation<Partial<IProduct>,{ productId: string; file: File }>({
+    query: ({ productId, file }) => {
+      const formData = new FormData();
+
+      formData.append("files", file);
+      formData.append("ref", "api::product.product");
+      formData.append("refId", productId);
+      formData.append("field", "thumbnail");
+
+      return {
+        url: "/api/upload",
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${cookieService.getCookie("jwt")}`,
+        },
+        body: formData,
+      };
+    },
+
+    invalidatesTags: (_r, _e, { productId }) => [
+      { type: "Products", id: productId },
+      { type: "Products", id: "LIST" },
+    ],
+  }),
+
+
     // EDIT Product
     editAdminProduct: builder.mutation<{ data: IProduct },{ id: string; body: { data: Partial<IProduct> } }>({
       query: ({ id, body }) => ({
