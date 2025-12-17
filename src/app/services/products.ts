@@ -60,7 +60,10 @@ export const productsApi = createApi({
           },
         };
       },
-      invalidatesTags: ["Products"],
+       invalidatesTags: (_result, _error, { id }) => [
+        { type: "Products", id },
+        { type: "Products", id: "LIST" },
+      ],
     }),
   }),
 });
