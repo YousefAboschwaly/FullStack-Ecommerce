@@ -1,4 +1,4 @@
-import type { IProduct } from "@/interfaces";
+import type { IProduct, ProductFormData } from "@/interfaces";
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import cookieService from "./cookieService";
 
@@ -9,12 +9,24 @@ export const productsApi = createApi({
     baseUrl: import.meta.env.VITE_API_URL,
   }),
   endpoints: (builder) => ({
-    getProducts: builder.query<{data:IProduct[]}, { page: number }>({
-      query: ({ page }) =>
-        `/api/products?fields=title,description,price,stock&populate=*&pagination[pageSize]=12&pagination[page]=${page}`,
-      providesTags: ["Products"],
-    }),
+    // GET All Products
+getProducts: builder.query<{ data: IProduct[] }, { page: number }>({
+  query: ({ page }) =>
+    `/api/products?fields=title,description,price,stock&populate=*&pagination[pageSize]=12&pagination[page]=${page}`,
+  providesTags: (result) =>
+    result
+      ? [
+          { type: "Products", id: "LIST" },
+          ...result.data.map((product) => ({
+            type: "Products" as const,
+            id: product.documentId,
+          })),
+        ]
+      : [{ type: "Products", id: "LIST" }],
+}),
 
+
+    // GET Product Details 
     getProduct: builder.query<{data:IProduct}, string>({
       query: (id) =>
         `/api/products/${id}?populate=*&fields=title,description,price,stock`,
@@ -22,7 +34,9 @@ export const productsApi = createApi({
         { type: "Products", id },
       ],
     }),
+    
 
+    // DELETE Product 
     deleteAdminProduct: builder.mutation<undefined, string>({
       query: (id) =>{
         return{
