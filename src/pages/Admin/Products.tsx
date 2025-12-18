@@ -59,8 +59,7 @@ const Products = () => {
   const [editModalOpen, setEditModalOpen] = useState(false);
 
   const [editProduct, { isLoading: isEditing }] = useEditAdminProductMutation();
-  const [createProduct, { isLoading: isCreating }] =
-    useCreateAdminProductMutation();
+  const [createProduct, { isLoading: isCreating }] =useCreateAdminProductMutation();
   const [uploadImage] = useUploadProductImageMutation();
 
   const pagination = data?.meta.pagination;
