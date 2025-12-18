@@ -54,8 +54,22 @@ const Products = () => {
   const [createModalOpen, setCreateModalOpen] = useState(false);
   const [editModalOpen, setEditModalOpen] = useState(false);
 
-  const [editProduct, { isLoading: isEditing }] = useEditAdminProductMutation();
-  const [createProduct, { isLoading: isCreating,isSuccess:isCreatingSuccess , isError:isCreatingError }] = useCreateAdminProductMutation();
+  const [
+    editProduct,
+    {
+      isLoading: isEditing,
+      isSuccess: isEditingSuccess,
+      isError: isEditingError,
+    },
+  ] = useEditAdminProductMutation();
+  const [
+    createProduct,
+    {
+      isLoading: isCreating,
+      isSuccess: isCreatingSuccess,
+      isError: isCreatingError,
+    },
+  ] = useCreateAdminProductMutation();
   const [uploadImage] = useUploadProductImageMutation();
 
   const handleView = (product: IProduct) => {
@@ -82,21 +96,21 @@ const Products = () => {
         file: data.thumbnail,
       }).unwrap();
     }
-    if(isCreatingSuccess){
-      console.log("Create successfully")
-            toaster.success({
-              title: "Product created successfully",
-              duration: 3000,
-              closable: true,
-            });
+    if (isCreatingSuccess) {
+      console.log("Create successfully");
+      toaster.success({
+        title: "Product created successfully",
+        duration: 3000,
+        closable: true,
+      });
     }
-    if(isCreatingError){
-            toaster.error({
-              title: "Product doesn't created",
-              description:"There is problem in creating product",
-              duration: 3000,
-              closable: true,
-            });
+    if (isCreatingError) {
+      toaster.error({
+        title: "Product doesn't created",
+        description: "There is problem in creating product",
+        duration: 3000,
+        closable: true,
+      });
     }
     setCreateModalOpen(false);
   };
@@ -107,6 +121,7 @@ const Products = () => {
   };
 
   const handleConfirmEdit = async (data: ProductFormData) => {
+    console.log("Update product:", data);
     if (!selectedProduct) return;
 
     const payload = {
@@ -129,8 +144,21 @@ const Products = () => {
         file: data.thumbnail,
       }).unwrap();
     }
-
-    console.log("Update product:", data);
+    if (isEditingSuccess) {
+      toaster.success({
+        title: "Product edited successfully",
+        duration: 3000,
+        closable: true,
+      });
+    }
+    if (isEditingError) {
+      toaster.error({
+        title: "Product doesn't edited",
+        description: "There is problem in editing product",
+        duration: 3000,
+        closable: true,
+      });
+    }
     setEditModalOpen(false);
   };
 
