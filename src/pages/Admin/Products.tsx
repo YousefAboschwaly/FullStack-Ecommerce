@@ -10,23 +10,21 @@ import ProductFormModal from "@/components/ui/admin/ProductFormModal";
 import ProductMobileCard from "@/components/ui/admin/ProductMobileCard";
 import ProductsTableSkeleton from "@/components/ui/admin/productsTableSkeleton";
 import ProductTableRow from "@/components/ui/admin/ProductTableRow";
+import Pagination from "@/components/ui/Pagination";
 import { toaster } from "@/components/ui/toaster";
 import { useThemeColors } from "@/hooks/useThemeColors";
 import type { IProduct, ProductFormData } from "@/interfaces";
 import {
   Box,
-  Button,
-  Center,
   Flex,
   HStack,
   Icon,
-  IconButton,
   Stack,
   Table,
   Text,
-  useDisclosure,
+  useDisclosure
 } from "@chakra-ui/react";
-import { ChevronLeft, ChevronRight, Plus } from "lucide-react";
+import { Plus } from "lucide-react";
 import { useCallback, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
@@ -49,21 +47,17 @@ const Products = () => {
 
   const { onOpen, open, onClose } = useDisclosure();
   const { data, isLoading } = useGetProductsQuery({ page: currentPage });
-  const [deleteProduct, { isLoading: isDeleting }] =
-    useDeleteAdminProductMutation();
-
-  const [selectedProduct, setSelectedProduct] = useState<
-    IProduct | undefined
-  >();
+  
+  const [selectedProduct, setSelectedProduct] = useState<IProduct | undefined>();
   const [createModalOpen, setCreateModalOpen] = useState(false);
   const [editModalOpen, setEditModalOpen] = useState(false);
-
-  const [editProduct, { isLoading: isEditing }] = useEditAdminProductMutation();
+  
   const [createProduct, { isLoading: isCreating }] =useCreateAdminProductMutation();
+  const [editProduct, { isLoading: isEditing }] = useEditAdminProductMutation();
+  const [deleteProduct, { isLoading: isDeleting }] =useDeleteAdminProductMutation();
   const [uploadImage] = useUploadProductImageMutation();
 
   const pagination = data?.meta.pagination;
-
   const totalPages = pagination?.pageCount || 1;
   const pageSize = pagination?.pageSize || 15;
 
@@ -182,39 +176,7 @@ const Products = () => {
     return { label: "In Stock", color: statusSuccess };
   };
 
-  // Pagination helpers
-  const getPageNumbers = () => {
-    const pages = [];
-    const maxVisible = 5;
 
-    if (totalPages <= maxVisible) {
-      for (let i = 1; i <= totalPages; i++) pages.push(i);
-    } else {
-      if (currentPage <= 3) {
-        pages.push(1, 2, 3, 4, "...", totalPages);
-      } else if (currentPage >= totalPages - 2) {
-        pages.push(
-          1,
-          "...",
-          totalPages - 3,
-          totalPages - 2,
-          totalPages - 1,
-          totalPages
-        );
-      } else {
-        pages.push(
-          1,
-          "...",
-          currentPage - 1,
-          currentPage,
-          currentPage + 1,
-          "...",
-          totalPages
-        );
-      }
-    }
-    return pages;
-  };
   return (
     <Box>
       {/* Header */}
@@ -345,60 +307,15 @@ const Products = () => {
       )}
 
       {/* Pagination */}
-      {totalPages > 1 && (
-        <Center mt={8}>
-          <HStack spacing={2}>
-            <IconButton
-              aria-label="Previous page"
-              icon={<ChevronLeft />}
-              onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
-              isDisabled={currentPage === 1 || isLoading}
-              variant="outline"
-              size="sm"
-            />
-
-            {getPageNumbers().map((page, index) =>
-              page === "..." ? (
-                <Text key={index} px={3} color={textMuted}>
-                  ...
-                </Text>
-              ) : (
-                <Button
-                  key={index}
-                  onClick={() => setCurrentPage(page as number)}
-                  isActive={currentPage === page}
-                  variant={currentPage === page ? "solid" : "outline"}
-                  colorScheme={currentPage === page ? "blue" : "gray"}
-                  size="sm"
-                  minW="36px"
-                  isLoading={isLoading && currentPage === page}
-                >
-                  {page}
-                </Button>
-              )
-            )}
-
-            <IconButton
-              aria-label="Next page"
-              icon={<ChevronRight />}
-              onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
-              isDisabled={currentPage === totalPages || isLoading}
-              variant="outline"
-              size="sm"
-            />
-          </HStack>
-        </Center>
-      )}
-
-      {/* Optional: Show current range */}
-      <Center mt={4}>
-        <Text fontSize="sm" color={textMuted}>
-          Showing {(currentPage - 1) * pageSize + 1} to{" "}
-          {Math.min(currentPage * pageSize, pagination?.total || 0)} of{" "}
-          {pagination?.total} products
-        </Text>
-      </Center>
-
+    <Pagination
+      currentPage={currentPage}
+      totalPages={totalPages}
+      onPageChange={setCurrentPage}
+      isLoading={isLoading}
+      totalItems={pagination?.total || 0}
+      pageSize={pageSize}
+      showInfo={true}
+    />
       {/* Delete Confirmation Modal */}
       <GenericModal
         isOpen={open}
