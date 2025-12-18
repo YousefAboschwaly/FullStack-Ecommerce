@@ -44,7 +44,9 @@ const baseUrl = import.meta.env.VITE_API_URL || "";
 
 const ProductDetails = () => {
   const { id } = useParams<{ id: string }>();
+  console.log(id)
   const { data, isLoading, error } = useGetProductQuery(id ?? "");
+  console.log(data,isLoading,error)
   const [isWishlisted, setIsWishlisted] = useState(false);
   const {
     bgMain,
@@ -154,7 +156,7 @@ const ProductDetails = () => {
           <GridItem>
             <VStack align="start" gap={6}>
               {/* Beautiful Category Badge */}
-              <Badge
+             {category?.title&& <Badge
                 bg={badgeCategoryBg}
                 color={badgeCategoryText}
                 border="1px solid"
@@ -174,7 +176,7 @@ const ProductDetails = () => {
                 cursor="pointer"
               >
                 {category.title}
-              </Badge>
+              </Badge>}
 
               <Heading color={textPrimary} size="2xl">
                 {title}
