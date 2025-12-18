@@ -1,19 +1,46 @@
-import { useGetProductsQuery } from "@/app/services/products";
+import { useGetProductsQuery, useProductsPrefetch } from "@/app/services/products";
 import ErrorHandler from "@/components/ui/ErrorHandler";
 import ProductSkeleton from "@/components/ui/productCardSkeleton";
 import { Grid } from "@chakra-ui/react";
 import ProductCard from "../components/ui/productCard";
 import type { IProduct } from "@/interfaces";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Pagination from "@/components/ui/Pagination";
 
 export default function Products() {
     const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState<number>(12);
   const { data, isLoading , error } = useGetProductsQuery({ page: currentPage , pageSize:pageSize });
+    const prefetchProducts = useProductsPrefetch("getProducts");
+  
   
     const pagination = data?.meta.pagination;
   const totalPages = pagination?.pageCount || 1;
+
+    useEffect(() => {
+      if (!pagination) return;
+  
+      // ✅ Prefetch next page
+      if (currentPage < pagination.total/pageSize) {
+        console.log(currentPage ,  pagination.pageCount,pageSize,pagination.total/pageSize)
+        prefetchProducts(
+          {
+            page: currentPage + 1,
+            pageSize,
+          },
+          { ifOlderThan: 60 }
+        );
+      }
+  
+      //  Prefetch previous page
+      if (currentPage > 1) {
+        prefetchProducts({
+          page: currentPage - 1,
+          pageSize,
+        });
+      }
+    }, [currentPage, pageSize, pagination, prefetchProducts]);
+  
 
   if (isLoading)
     return (

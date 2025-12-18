@@ -3,6 +3,7 @@ import {
   useDeleteAdminProductMutation,
   useEditAdminProductMutation,
   useGetProductsQuery,
+  useProductsPrefetch,
   useUploadProductImageMutation,
 } from "@/app/services/products";
 import GenericModal from "@/components/ui/admin/Modal";
@@ -22,10 +23,10 @@ import {
   Stack,
   Table,
   Text,
-  useDisclosure
+  useDisclosure,
 } from "@chakra-ui/react";
 import { Plus } from "lucide-react";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 const apiUrl = import.meta.env.VITE_API_URL || "";
@@ -47,19 +48,51 @@ const Products = () => {
   const [pageSize, setPageSize] = useState<number>(10);
 
   const { onOpen, open, onClose } = useDisclosure();
-  const { data, isLoading } = useGetProductsQuery({ page: currentPage , pageSize:pageSize });
-  
-  const [selectedProduct, setSelectedProduct] = useState<IProduct | undefined>();
+  const { data, isLoading } = useGetProductsQuery({
+    page: currentPage,
+    pageSize: pageSize,
+  });
+
+  const [selectedProduct, setSelectedProduct] = useState<
+    IProduct | undefined
+  >();
   const [createModalOpen, setCreateModalOpen] = useState(false);
   const [editModalOpen, setEditModalOpen] = useState(false);
-  
-  const [createProduct, { isLoading: isCreating }] =useCreateAdminProductMutation();
+
+  const [createProduct, { isLoading: isCreating }] =
+    useCreateAdminProductMutation();
   const [editProduct, { isLoading: isEditing }] = useEditAdminProductMutation();
-  const [deleteProduct, { isLoading: isDeleting }] =useDeleteAdminProductMutation();
+  const [deleteProduct, { isLoading: isDeleting }] =
+    useDeleteAdminProductMutation();
   const [uploadImage] = useUploadProductImageMutation();
+  const prefetchProducts = useProductsPrefetch("getProducts");
 
   const pagination = data?.meta.pagination;
   const totalPages = pagination?.pageCount || 1;
+
+  useEffect(() => {
+    if (!pagination) return;
+
+    // ✅ Prefetch next page
+    if (currentPage < pagination.total/pageSize) {
+      console.log(currentPage ,  pagination.pageCount,pageSize,pagination.total/pageSize)
+      prefetchProducts(
+        {
+          page: currentPage + 1,
+          pageSize,
+        },
+        { ifOlderThan: 60 }
+      );
+    }
+
+    //  Prefetch previous page
+    if (currentPage > 1) {
+      prefetchProducts({
+        page: currentPage - 1,
+        pageSize,
+      });
+    }
+  }, [currentPage, pageSize, pagination, prefetchProducts]);
 
   const handleView = (product: IProduct) => {
     navigate(`/product/${product.documentId}`);
@@ -116,7 +149,7 @@ const Products = () => {
           stock: data.stock,
         },
       };
-      console.log(data)
+      console.log(data);
 
       // 1️⃣ edit
       const res = await editProduct({
@@ -124,7 +157,7 @@ const Products = () => {
         body: payload,
       }).unwrap();
 
-            console.log(res)
+      console.log(res);
 
       // 2️⃣ upload image
       if (data.thumbnail instanceof File) {
@@ -176,7 +209,6 @@ const Products = () => {
     if (stock < 20) return { label: "Low Stock", color: statusWarning };
     return { label: "In Stock", color: statusSuccess };
   };
-
 
   return (
     <Box>
@@ -308,22 +340,21 @@ const Products = () => {
       )}
 
       {/* Pagination */}
-    <Pagination
-      currentPage={currentPage}
-      totalPages={totalPages}
-      onPageChange={setCurrentPage}
-      isLoading={isLoading}
-      totalItems={pagination?.total || 0}
-      pageSize={pageSize}
-      showInfo={true}
-      currentPageSize={pageSize} // or use state: const [pageSize, setPageSize] = useState(15)
-      onPageSizeChange={(newSize) => {
-        setPageSize(newSize);
-        setCurrentPage(1); // reset to page 1 when size changes
-      }}
-      pageSizeOptions={[10, 20, 50, 100]}
-
-    />
+      <Pagination
+        currentPage={currentPage}
+        totalPages={totalPages}
+        onPageChange={setCurrentPage}
+        isLoading={isLoading}
+        totalItems={pagination?.total || 0}
+        pageSize={pageSize}
+        showInfo={true}
+        currentPageSize={pageSize} // or use state: const [pageSize, setPageSize] = useState(15)
+        onPageSizeChange={(newSize) => {
+          setPageSize(newSize);
+          setCurrentPage(1); // reset to page 1 when size changes
+        }}
+        pageSizeOptions={[10, 20, 50, 100]}
+      />
       {/* Delete Confirmation Modal */}
       <GenericModal
         isOpen={open}

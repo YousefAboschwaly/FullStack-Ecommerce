@@ -13,7 +13,7 @@ export const productsApi = createApi({
     getProducts: builder.query<IResponse, { page: number , pageSize:number}>({
       query: ({ page,pageSize }) =>
         `/api/products?fields=title,description,price,stock&populate=*&sort=createdAt:Desc&pagination[pageSize]=${pageSize}&pagination[page]=${page}`,
-      providesTags: (result) =>
+           providesTags: (result) =>
         result
           ? [
               { type: "Products", id: "LIST" },
@@ -24,7 +24,6 @@ export const productsApi = createApi({
             ]
           : [{ type: "Products", id: "LIST" }],
     }),
-
     // GET Product Details
     getProduct: builder.query<{ data: IProduct }, string>({
       query: (id) =>
@@ -85,28 +84,6 @@ export const productsApi = createApi({
         body,
       }),
 
-      async onQueryStarted({ id, body }, { dispatch, queryFulfilled }) {
-        // ✅ Optimistic update
-        const patch = dispatch(
-          productsApi.util.updateQueryData(
-            "getProducts",
-            { page: 1 ,pageSize:10},
-            (draft) => {
-              const product = draft.data.find((p) => p.documentId === id);
-              if (product) {
-                Object.assign(product, body.data);
-              }
-            }
-          )
-        );
-
-        try {
-          await queryFulfilled;
-        } catch {
-          patch.undo();
-        }
-      },
-
       invalidatesTags: (_res, _err, { id }) => [
         { type: "Products", id },
         { type: "Products", id: "LIST" },
@@ -134,6 +111,7 @@ export const productsApi = createApi({
 
 export const {
   useGetProductsQuery,
+  usePrefetch: useProductsPrefetch,
   useGetProductQuery,
   useCreateAdminProductMutation,
   useUploadProductImageMutation,
