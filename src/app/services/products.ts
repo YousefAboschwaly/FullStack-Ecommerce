@@ -1,4 +1,4 @@
-import type { IProduct, ProductFormData } from "@/interfaces";
+import type { IProduct } from "@/interfaces";
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import cookieService from "./cookieService";
 
@@ -33,12 +33,13 @@ export const productsApi = createApi({
     }),
 
     // CREATE Product
-    createAdminProduct: builder.mutation<{ data: IProduct }, ProductFormData>({
+    createAdminProduct: builder.mutation<{ data: IProduct }, { data: Partial<IProduct> }>({
       query: (body) => ({
         url: "/api/products",
         method: "POST",
         headers: {
           Authorization: `Bearer ${cookieService.getCookie("jwt")}`,
+          "Content-Type": "application/json",
         },
         body,
       }),

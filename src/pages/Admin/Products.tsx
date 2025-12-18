@@ -1,4 +1,5 @@
 import {
+  useCreateAdminProductMutation,
   useDeleteAdminProductMutation,
   useEditAdminProductMutation,
   useGetProductsQuery,
@@ -9,6 +10,7 @@ import ProductFormModal from "@/components/ui/admin/ProductFormModal";
 import ProductMobileCard from "@/components/ui/admin/ProductMobileCard";
 import ProductsTableSkeleton from "@/components/ui/admin/productsTableSkeleton";
 import ProductTableRow from "@/components/ui/admin/ProductTableRow";
+import { toaster } from "@/components/ui/toaster";
 import { useThemeColors } from "@/hooks/useThemeColors";
 import type { IProduct, ProductFormData } from "@/interfaces";
 import {
@@ -53,14 +55,49 @@ const Products = () => {
   const [editModalOpen, setEditModalOpen] = useState(false);
 
   const [editProduct, { isLoading: isEditing }] = useEditAdminProductMutation();
+  const [createProduct, { isLoading: isCreating,isSuccess:isCreatingSuccess , isError:isCreatingError }] = useCreateAdminProductMutation();
   const [uploadImage] = useUploadProductImageMutation();
 
   const handleView = (product: IProduct) => {
     navigate(`/product/${product.documentId}`);
   };
 
-  const handleConfirmCreateProduct = (data: ProductFormData) => {
+  const handleConfirmCreateProduct = async (data: ProductFormData) => {
     console.log("Create product:", data);
+
+    const payload = {
+      data: {
+        title: data.title,
+        description: data.description,
+        price: data.price,
+        stock: data.stock,
+      },
+    };
+
+    const { data: createdData } = await createProduct(payload);
+    // 2️⃣ Upload image ( if the image changed )
+    if (data.thumbnail instanceof File) {
+      await uploadImage({
+        productId: `${createdData?.data.id}`,
+        file: data.thumbnail,
+      }).unwrap();
+    }
+    if(isCreatingSuccess){
+      console.log("Create successfully")
+            toaster.success({
+              title: "Product created successfully",
+              duration: 3000,
+              closable: true,
+            });
+    }
+    if(isCreatingError){
+            toaster.error({
+              title: "Product doesn't created",
+              description:"There is problem in creating product",
+              duration: 3000,
+              closable: true,
+            });
+    }
     setCreateModalOpen(false);
   };
 
@@ -69,7 +106,7 @@ const Products = () => {
     setEditModalOpen(true);
   };
 
-  const handleConfirmEdit = async(data: ProductFormData) => {
+  const handleConfirmEdit = async (data: ProductFormData) => {
     if (!selectedProduct) return;
 
     const payload = {
@@ -81,18 +118,17 @@ const Products = () => {
       },
     };
 
-  const {data:editedData} = await editProduct({
+    const { data: editedData } = await editProduct({
       id: selectedProduct.documentId,
       body: payload,
     });
-      // 2️⃣ Upload image ( if the image changed )
-  if (data.thumbnail instanceof File) {
-    await  uploadImage({
-      productId: `${editedData?.data.id}` ,
-      file: data.thumbnail,
-    }).unwrap();
-  }
-
+    // 2️⃣ Upload image ( if the image changed )
+    if (data.thumbnail instanceof File) {
+      await uploadImage({
+        productId: `${editedData?.data.id}`,
+        file: data.thumbnail,
+      }).unwrap();
+    }
 
     console.log("Update product:", data);
     setEditModalOpen(false);
@@ -270,7 +306,7 @@ const Products = () => {
         onClose={() => setCreateModalOpen(false)}
         onSubmit={(data) => handleConfirmCreateProduct(data)}
         mode="create"
-        isLoading={false}
+        isLoading={isCreating}
       />
       {/* // Edit mode */}
       <ProductFormModal
