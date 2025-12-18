@@ -81,14 +81,14 @@ const Products = () => {
       },
     };
 
-   await editProduct({
+  const {data:editedData} = await editProduct({
       id: selectedProduct.documentId,
       body: payload,
     });
       // 2️⃣ Upload image ( if the image changed )
   if (data.thumbnail instanceof File) {
     await  uploadImage({
-      productId: selectedProduct.documentId,
+      productId: `${editedData?.data.id}` ,
       file: data.thumbnail,
     }).unwrap();
   }
