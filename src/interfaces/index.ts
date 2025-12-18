@@ -15,6 +15,17 @@ export interface IProduct{
   }
 }
 
+export interface IResponse{
+  data:IProduct[],
+  meta:{
+      pagination: {
+            page: number,
+            pageSize: number,
+            pageCount: number,
+            total: number
+        }
+  }
+}
 export interface ProductFormData {
   title: string;
   description: string;

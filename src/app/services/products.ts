@@ -1,4 +1,4 @@
-import type { IProduct } from "@/interfaces";
+import type { IProduct, IResponse } from "@/interfaces";
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import cookieService from "./cookieService";
 
@@ -10,7 +10,7 @@ export const productsApi = createApi({
   }),
   endpoints: (builder) => ({
     // GET All Products
-    getProducts: builder.query<{ data: IProduct[] }, { page: number }>({
+    getProducts: builder.query<IResponse, { page: number }>({
       query: ({ page }) =>
         `/api/products?fields=title,description,price,stock&populate=*&sort=createdAt:Desc&pagination[pageSize]=15&pagination[page]=${page}`,
       providesTags: (result) =>
