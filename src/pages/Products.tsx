@@ -4,9 +4,17 @@ import ProductSkeleton from "@/components/ui/productCardSkeleton";
 import { Grid } from "@chakra-ui/react";
 import ProductCard from "../components/ui/productCard";
 import type { IProduct } from "@/interfaces";
+import { useState } from "react";
+import Pagination from "@/components/ui/Pagination";
 
 export default function Products() {
-  const { data, isLoading, error } = useGetProductsQuery({ page: 1 });
+    const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState<number>(12);
+  const { data, isLoading , error } = useGetProductsQuery({ page: currentPage , pageSize:pageSize });
+  
+    const pagination = data?.meta.pagination;
+  const totalPages = pagination?.pageCount || 1;
+
   if (isLoading)
     return (
       <Grid
@@ -22,10 +30,29 @@ export default function Products() {
   if (error) return <ErrorHandler error={"Failed to fetch Products"} />;
 
   return (
+    <>
     <Grid templateColumns={"repeat(auto-fill , minmax(300px,1fr))"} gap={6}>
       {data?.data.map((product: IProduct) => (
         <ProductCard product={product} key={product.id} />
       ))}
     </Grid>
+    
+      {/* Pagination */}
+    <Pagination
+      currentPage={currentPage}
+      totalPages={totalPages}
+      onPageChange={setCurrentPage}
+      isLoading={isLoading}
+      totalItems={pagination?.total || 0}
+      pageSize={pageSize}
+      showInfo={true}
+      currentPageSize={pageSize} // or use state: const [pageSize, setPageSize] = useState(15)
+      onPageSizeChange={(newSize) => {
+        setPageSize(newSize);
+        setCurrentPage(1); // reset to page 1 when size changes
+      }}
+      pageSizeOptions={[12, 24, 50, 100]}
+      />
+    </>
   );
 }

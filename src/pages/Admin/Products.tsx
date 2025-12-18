@@ -75,9 +75,7 @@ const Products = () => {
           stock: data.stock,
         },
       };
-
       const res = await createProduct(payload).unwrap();
-
       if (data.thumbnail instanceof File) {
         await uploadImage({
           productId: String(res.data.id),
@@ -118,12 +116,15 @@ const Products = () => {
           stock: data.stock,
         },
       };
+      console.log(data)
 
       // 1️⃣ edit
       const res = await editProduct({
         id: selectedProduct.documentId,
         body: payload,
       }).unwrap();
+
+            console.log(res)
 
       // 2️⃣ upload image
       if (data.thumbnail instanceof File) {
