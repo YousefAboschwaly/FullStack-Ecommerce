@@ -59,14 +59,8 @@ const Products = () => {
   const [editModalOpen, setEditModalOpen] = useState(false);
 
   const [editProduct, { isLoading: isEditing }] = useEditAdminProductMutation();
-  const [
-    createProduct,
-    {
-      isLoading: isCreating,
-      isSuccess: isCreatingSuccess,
-      isError: isCreatingError,
-    },
-  ] = useCreateAdminProductMutation();
+  const [createProduct, { isLoading: isCreating }] =
+    useCreateAdminProductMutation();
   const [uploadImage] = useUploadProductImageMutation();
 
   const pagination = data?.meta.pagination;
@@ -79,43 +73,39 @@ const Products = () => {
   };
 
   const handleConfirmCreateProduct = async (data: ProductFormData) => {
-    console.log("Create product:", data);
+    try {
+      const payload = {
+        data: {
+          title: data.title,
+          description: data.description,
+          price: data.price,
+          stock: data.stock,
+        },
+      };
 
-    const payload = {
-      data: {
-        title: data.title,
-        description: data.description,
-        price: data.price,
-        stock: data.stock,
-      },
-    };
+      const res = await createProduct(payload).unwrap();
 
-    const { data: createdData } = await createProduct(payload);
-    console.log(createdData);
-    // 2️⃣ Upload image ( if the image changed )
-    if (data.thumbnail instanceof File) {
-      await uploadImage({
-        productId: `${createdData?.data.id}`,
-        file: data.thumbnail,
-      }).unwrap();
-    }
-    if (isCreatingSuccess) {
-      console.log("Create successfully");
+      if (data.thumbnail instanceof File) {
+        await uploadImage({
+          productId: String(res.data.id),
+          file: data.thumbnail,
+        }).unwrap();
+      }
+
       toaster.success({
         title: "Product created successfully",
-        duration: 3000,
-        closable: true,
-      });
-    }
-    if (isCreatingError) {
-      toaster.error({
-        title: "Product doesn't created",
         description: "There is problem in creating product",
         duration: 3000,
         closable: true,
       });
+
+      setCreateModalOpen(false);
+    } catch {
+      toaster.error({
+        title: "Failed to create product",
+        duration: 3000,
+      });
     }
-    setCreateModalOpen(false);
   };
 
   const handleEdit = (product: IProduct) => {
