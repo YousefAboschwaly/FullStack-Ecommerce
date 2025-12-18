@@ -10,9 +10,9 @@ export const productsApi = createApi({
   }),
   endpoints: (builder) => ({
     // GET All Products
-    getProducts: builder.query<IResponse, { page: number }>({
-      query: ({ page }) =>
-        `/api/products?fields=title,description,price,stock&populate=*&sort=createdAt:Desc&pagination[pageSize]=15&pagination[page]=${page}`,
+    getProducts: builder.query<IResponse, { page: number , pageSize:number}>({
+      query: ({ page,pageSize }) =>
+        `/api/products?fields=title,description,price,stock&populate=*&sort=createdAt:Desc&pagination[pageSize]=${pageSize}&pagination[page]=${page}`,
       providesTags: (result) =>
         result
           ? [
@@ -90,7 +90,7 @@ export const productsApi = createApi({
         const patch = dispatch(
           productsApi.util.updateQueryData(
             "getProducts",
-            { page: 1 },
+            { page: 1 ,pageSize:10},
             (draft) => {
               const product = draft.data.find((p) => p.documentId === id);
               if (product) {

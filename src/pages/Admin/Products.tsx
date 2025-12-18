@@ -44,9 +44,10 @@ const Products = () => {
   } = useThemeColors();
   const navigate = useNavigate();
   const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState<number>(10);
 
   const { onOpen, open, onClose } = useDisclosure();
-  const { data, isLoading } = useGetProductsQuery({ page: currentPage });
+  const { data, isLoading } = useGetProductsQuery({ page: currentPage , pageSize:pageSize });
   
   const [selectedProduct, setSelectedProduct] = useState<IProduct | undefined>();
   const [createModalOpen, setCreateModalOpen] = useState(false);
@@ -59,7 +60,6 @@ const Products = () => {
 
   const pagination = data?.meta.pagination;
   const totalPages = pagination?.pageCount || 1;
-  const pageSize = pagination?.pageSize || 15;
 
   const handleView = (product: IProduct) => {
     navigate(`/product/${product.documentId}`);
@@ -315,6 +315,13 @@ const Products = () => {
       totalItems={pagination?.total || 0}
       pageSize={pageSize}
       showInfo={true}
+      currentPageSize={pageSize} // or use state: const [pageSize, setPageSize] = useState(15)
+      onPageSizeChange={(newSize) => {
+        setPageSize(newSize);
+        setCurrentPage(1); // reset to page 1 when size changes
+      }}
+      pageSizeOptions={[10, 20, 50, 100]}
+
     />
       {/* Delete Confirmation Modal */}
       <GenericModal
