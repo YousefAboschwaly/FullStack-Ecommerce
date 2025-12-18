@@ -58,14 +58,7 @@ const Products = () => {
   const [createModalOpen, setCreateModalOpen] = useState(false);
   const [editModalOpen, setEditModalOpen] = useState(false);
 
-  const [
-    editProduct,
-    {
-      isLoading: isEditing,
-      isSuccess: isEditingSuccess,
-      isError: isEditingError,
-    },
-  ] = useEditAdminProductMutation();
+  const [editProduct, { isLoading: isEditing }] = useEditAdminProductMutation();
   const [
     createProduct,
     {
@@ -75,7 +68,6 @@ const Products = () => {
     },
   ] = useCreateAdminProductMutation();
   const [uploadImage] = useUploadProductImageMutation();
-
 
   const pagination = data?.meta.pagination;
 
@@ -99,7 +91,7 @@ const Products = () => {
     };
 
     const { data: createdData } = await createProduct(payload);
-    console.log(createdData)
+    console.log(createdData);
     // 2️⃣ Upload image ( if the image changed )
     if (data.thumbnail instanceof File) {
       await uploadImage({
@@ -132,45 +124,47 @@ const Products = () => {
   };
 
   const handleConfirmEdit = async (data: ProductFormData) => {
-    console.log("Update product:", data);
     if (!selectedProduct) return;
 
-    const payload = {
-      data: {
-        title: data.title,
-        description: data.description,
-        price: data.price,
-        stock: data.stock,
-      },
-    };
+    try {
+      const payload = {
+        data: {
+          title: data.title,
+          description: data.description,
+          price: data.price,
+          stock: data.stock,
+        },
+      };
 
-    const { data: editedData } = await editProduct({
-      id: selectedProduct.documentId,
-      body: payload,
-    });
-    // 2️⃣ Upload image ( if the image changed )
-    if (data.thumbnail instanceof File) {
-      await uploadImage({
-        productId: `${editedData?.data.id}`,
-        file: data.thumbnail,
+      // 1️⃣ edit
+      const res = await editProduct({
+        id: selectedProduct.documentId,
+        body: payload,
       }).unwrap();
-    }
-    if (isEditingSuccess) {
+
+      // 2️⃣ upload image
+      if (data.thumbnail instanceof File) {
+        await uploadImage({
+          productId: String(res.data.id),
+          file: data.thumbnail,
+        }).unwrap();
+      }
+
       toaster.success({
         title: "Product edited successfully",
         duration: 3000,
         closable: true,
       });
-    }
-    if (isEditingError) {
+
+      setEditModalOpen(false);
+    } catch {
       toaster.error({
-        title: "Product doesn't edited",
+        title: "Failed to update product",
         description: "There is problem in editing product",
         duration: 3000,
         closable: true,
       });
     }
-    setEditModalOpen(false);
   };
 
   const handleConfirmDelete = async () => {
@@ -210,9 +204,24 @@ const Products = () => {
       if (currentPage <= 3) {
         pages.push(1, 2, 3, 4, "...", totalPages);
       } else if (currentPage >= totalPages - 2) {
-        pages.push(1, "...", totalPages - 3, totalPages - 2, totalPages - 1, totalPages);
+        pages.push(
+          1,
+          "...",
+          totalPages - 3,
+          totalPages - 2,
+          totalPages - 1,
+          totalPages
+        );
       } else {
-        pages.push(1, "...", currentPage - 1, currentPage, currentPage + 1, "...", totalPages);
+        pages.push(
+          1,
+          "...",
+          currentPage - 1,
+          currentPage,
+          currentPage + 1,
+          "...",
+          totalPages
+        );
       }
     }
     return pages;
@@ -347,61 +356,59 @@ const Products = () => {
       )}
 
       {/* Pagination */}
-          {totalPages > 1 && (
-            <Center mt={8}>
-              <HStack spacing={2}>
-                <IconButton
-                  aria-label="Previous page"
-                  icon={<ChevronLeft />}
-                  onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
-                  isDisabled={currentPage === 1 || isLoading}
-                  variant="outline"
+      {totalPages > 1 && (
+        <Center mt={8}>
+          <HStack spacing={2}>
+            <IconButton
+              aria-label="Previous page"
+              icon={<ChevronLeft />}
+              onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+              isDisabled={currentPage === 1 || isLoading}
+              variant="outline"
+              size="sm"
+            />
+
+            {getPageNumbers().map((page, index) =>
+              page === "..." ? (
+                <Text key={index} px={3} color={textMuted}>
+                  ...
+                </Text>
+              ) : (
+                <Button
+                  key={index}
+                  onClick={() => setCurrentPage(page as number)}
+                  isActive={currentPage === page}
+                  variant={currentPage === page ? "solid" : "outline"}
+                  colorScheme={currentPage === page ? "blue" : "gray"}
                   size="sm"
-                />
+                  minW="36px"
+                  isLoading={isLoading && currentPage === page}
+                >
+                  {page}
+                </Button>
+              )
+            )}
 
-                {getPageNumbers().map((page, index) =>
-                  page === "..." ? (
-                    <Text key={index} px={3} color={textMuted}>
-                      ...
-                    </Text>
-                  ) : (
-                    <Button
-                      key={index}
-                      onClick={() => setCurrentPage(page as number)}
-                      isActive={currentPage === page}
-                      variant={currentPage === page ? "solid" : "outline"}
-                      colorScheme={currentPage === page ? "blue" : "gray"}
-                      size="sm"
-                      minW="36px"
-                      isLoading={isLoading && currentPage === page}
-                    >
-                      {page}
-                    </Button>
-                  )
-                )}
+            <IconButton
+              aria-label="Next page"
+              icon={<ChevronRight />}
+              onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+              isDisabled={currentPage === totalPages || isLoading}
+              variant="outline"
+              size="sm"
+            />
+          </HStack>
+        </Center>
+      )}
 
-                <IconButton
-                  aria-label="Next page"
-                  icon={<ChevronRight />}
-                  onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
-                  isDisabled={currentPage === totalPages || isLoading}
-                  variant="outline"
-                  size="sm"
-                />
-              </HStack>
-            </Center>
-          )}
-
-          {/* Optional: Show current range */}
-          <Center mt={4}>
-            <Text fontSize="sm" color={textMuted}>
-              Showing {(currentPage - 1) * pageSize + 1} to{" "}
-              {Math.min(currentPage * pageSize, pagination?.total || 0)} of {pagination?.total} products
-            </Text>
-          </Center>
-      
-    
-
+      {/* Optional: Show current range */}
+      <Center mt={4}>
+        <Text fontSize="sm" color={textMuted}>
+          Showing {(currentPage - 1) * pageSize + 1} to{" "}
+          {Math.min(currentPage * pageSize, pagination?.total || 0)} of{" "}
+          {pagination?.total} products
+        </Text>
+      </Center>
 
       {/* Delete Confirmation Modal */}
       <GenericModal
