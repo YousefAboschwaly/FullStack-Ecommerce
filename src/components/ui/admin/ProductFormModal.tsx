@@ -83,7 +83,6 @@ const ProductFormModal = ({
   useEffect(() => {
     if (isOpen) {
       if (initialData) {
-        console.log(initialData);
         reset({
           title: initialData.title || "",
           description: initialData.description || "",

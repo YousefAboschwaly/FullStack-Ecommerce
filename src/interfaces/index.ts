@@ -31,6 +31,8 @@ export interface ICategory{
     id: number;
     documentId: string;
     title: string;
+    products?: IProduct [];
+
   }
 export interface ICategories {
   data: ICategory[];
@@ -43,6 +45,8 @@ export interface ICategories {
     };
   };
 }
+
+
 export interface ProductFormData {
   title: string;
   description: string;
