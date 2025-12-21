@@ -32,8 +32,6 @@ interface ProductFormModalProps {
   isLoading?: boolean;
 }
 
-
-
 const ProductFormModal = ({
   isOpen,
   onClose,
@@ -63,15 +61,20 @@ const ProductFormModal = ({
     formState: { errors },
     control,
   } = useForm<ProductFormData>();
-  const { data: categoriesData, isLoading: isCategoriesLoading, isError: isCategoriesError } = useGetCategoriesQuery();
+  const {
+    data: categoriesData,
+    isLoading: isCategoriesLoading,
+    isError: isCategoriesError,
+  } = useGetCategoriesQuery();
 
   const [thumbnailPreview, setThumbnailPreview] = useState<string | null>(null);
   const [thumbnailFile, setThumbnailFile] = useState<File | null>(null);
-  const categoriesItems = categoriesData?.data?.map((category: ICategory) => ({
-    label: category.title,
-    value: String(category.id),
-  })) ?? [];
-  
+  const categoriesItems =
+    categoriesData?.data?.map((category: ICategory) => ({
+      label: category.title,
+      value: String(category.id),
+    })) ?? [];
+
   const categoriesCollection = createListCollection({
     items: categoriesItems,
   });
@@ -80,7 +83,7 @@ const ProductFormModal = ({
   useEffect(() => {
     if (isOpen) {
       if (initialData) {
-        console.log(initialData)
+        console.log(initialData);
         reset({
           title: initialData.title || "",
           description: initialData.description || "",
@@ -132,10 +135,15 @@ const ProductFormModal = ({
   };
 
   const onFormSubmit = (data: ProductFormData) => {
-    onSubmit({
+    const payload: ProductFormData = {
       ...data,
-      thumbnail: thumbnailFile || initialData?.thumbnail || null,
-    });
+    };
+
+    if (thumbnailFile) {
+      payload.thumbnail = thumbnailFile;
+    }
+
+    onSubmit(payload);
   };
 
   const handleClose = () => {
@@ -286,7 +294,10 @@ const ProductFormModal = ({
                     </Button>
                   </Box>
                 ) : (
-                  <label htmlFor="thumbnail-upload" style={{ cursor: "pointer" }}>
+                  <label
+                    htmlFor="thumbnail-upload"
+                    style={{ cursor: "pointer" }}
+                  >
                     <Box
                       display="flex"
                       flexDirection="column"
@@ -314,7 +325,11 @@ const ProductFormModal = ({
                         justify="center"
                         mb={3}
                       >
-                        <Icon as={ImagePlus} boxSize={6} color={accentPrimary} />
+                        <Icon
+                          as={ImagePlus}
+                          boxSize={6}
+                          color={accentPrimary}
+                        />
                       </Flex>
                       <Text
                         fontSize="sm"

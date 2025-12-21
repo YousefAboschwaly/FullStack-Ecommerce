@@ -10,14 +10,15 @@ export const categoriesApi = createApi({
   endpoints: (builder) => ({
     // GET All Categories
     getCategories: builder.query<ICategories, void>({
-      query:()=> `/api/categories`,
-      providesTags:["Categories"]
-   
-     
+      query: () => `/api/categories`,
+      providesTags: ["Categories"],
+    }),
+
+      // Get Categories with Product 
+    getCategoriesWithProducts: builder.query({
+      query: () => `/api/categories?populate=products`,
     }),
   }),
 });
 
-export const {
- useGetCategoriesQuery
-} = categoriesApi;
+export const { useGetCategoriesQuery , useGetCategoriesWithProductsQuery } = categoriesApi;

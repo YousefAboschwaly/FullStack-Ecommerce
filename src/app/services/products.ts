@@ -10,10 +10,10 @@ export const productsApi = createApi({
   }),
   endpoints: (builder) => ({
     // GET All Products
-    getProducts: builder.query<IResponse, { page: number , pageSize:number}>({
-      query: ({ page,pageSize }) =>
+    getProducts: builder.query<IResponse, { page: number; pageSize: number }>({
+      query: ({ page, pageSize }) =>
         `/api/products?fields=title,description,price,stock&populate=*&sort=createdAt:Desc&pagination[pageSize]=${pageSize}&pagination[page]=${page}`,
-           providesTags: (result) =>
+      providesTags: (result) =>
         result
           ? [
               { type: "Products", id: "LIST" },
@@ -24,6 +24,7 @@ export const productsApi = createApi({
             ]
           : [{ type: "Products", id: "LIST" }],
     }),
+
     // GET Product Details
     getProduct: builder.query<{ data: IProduct }, string>({
       query: (id) =>
@@ -32,7 +33,7 @@ export const productsApi = createApi({
     }),
 
     // CREATE Product
-    createAdminProduct: builder.mutation<{ data: IProduct }, { data: Partial<ProductFormData> }>({
+    createAdminProduct: builder.mutation<{ data: IProduct },{ data: Partial<ProductFormData> }>({
       query: (body) => ({
         url: "/api/products",
         method: "POST",
@@ -47,30 +48,29 @@ export const productsApi = createApi({
 
     // UPLOAD Image
     uploadProductImage: builder.mutation<Partial<IProduct>,{ productId: string; file: File }>({
-    query: ({ productId, file }) => {
-      const formData = new FormData();
+      query: ({ productId, file }) => {
+        const formData = new FormData();
 
-      formData.append("files", file);
-      formData.append("ref", "api::product.product");
-      formData.append("refId", productId);
-      formData.append("field", "thumbnail");
+        formData.append("files", file);
+        formData.append("ref", "api::product.product");
+        formData.append("refId", productId);
+        formData.append("field", "thumbnail");
 
-      return {
-        url: "/api/upload",
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${cookieService.getCookie("jwt")}`,
-        },
-        body: formData,
-      };
-    },
+        return {
+          url: "/api/upload",
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${cookieService.getCookie("jwt")}`,
+          },
+          body: formData,
+        };
+      },
 
-    invalidatesTags: (_r, _e, { productId }) => [
-      { type: "Products", id: productId },
-      { type: "Products", id: "LIST" },
-    ],
-  }),
-
+      invalidatesTags: (_r, _e, { productId }) => [
+        { type: "Products", id: productId },
+        { type: "Products", id: "LIST" },
+      ],
+    }),
 
     // EDIT Product
     editAdminProduct: builder.mutation<{ data: IProduct },{ id: string; body: { data: Partial<ProductFormData> } }>({

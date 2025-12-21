@@ -390,7 +390,7 @@ const Products = () => {
           description: selectedProduct?.description,
           price: selectedProduct?.price,
           stock: selectedProduct?.stock,
-          category:selectedProduct?.category.id,
+          category:selectedProduct?.category?.id,
           thumbnail: apiUrl + selectedProduct?.thumbnail?.url,
         }}
         isLoading={isEditing}
