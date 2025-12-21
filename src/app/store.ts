@@ -15,6 +15,7 @@ import {
   REGISTER,
 } from "redux-persist";
 import { productsApi } from "./services/products";
+import { categoriesApi } from "./services/categories";
 
 // إعداد persist للـ cart slice
 const cartPersistConfig = {
@@ -28,7 +29,8 @@ export const store = configureStore({
   reducer: {
     [authApi.reducerPath]: authApi.reducer,
     [productsApi.reducerPath]: productsApi.reducer,
-    cart: persistedCartReducer, // استبدل cartSlice بالـ persisted version
+    [categoriesApi.reducerPath]: categoriesApi.reducer,
+    cart: persistedCartReducer, //   persisted version
     global: globalSlice,
   },
   middleware: (getDefaultMiddleware) =>
