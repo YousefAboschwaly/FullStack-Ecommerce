@@ -25,6 +25,12 @@ export const productsApi = createApi({
           : [{ type: "Products", id: "LIST" }],
     }),
 
+    // Get Products of Category
+    getProductsByCategory: builder.query({
+      query: ({ categoryId, page, pageSize }) =>
+        `/api/products?fields=title,description,price,stock&populate=*&sort=createdAt:Desc&pagination[pageSize]=${pageSize}&pagination[page]=${page}&filters[category][id][$eq]=${categoryId}`,
+    }),
+
     // GET Product Details
     getProduct: builder.query<{ data: IProduct }, string>({
       query: (id) =>
@@ -33,7 +39,10 @@ export const productsApi = createApi({
     }),
 
     // CREATE Product
-    createAdminProduct: builder.mutation<{ data: IProduct },{ data: Partial<ProductFormData> }>({
+    createAdminProduct: builder.mutation<
+      { data: IProduct },
+      { data: Partial<ProductFormData> }
+    >({
       query: (body) => ({
         url: "/api/products",
         method: "POST",
@@ -47,7 +56,10 @@ export const productsApi = createApi({
     }),
 
     // UPLOAD Image
-    uploadProductImage: builder.mutation<Partial<IProduct>,{ productId: string; file: File }>({
+    uploadProductImage: builder.mutation<
+      Partial<IProduct>,
+      { productId: string; file: File }
+    >({
       query: ({ productId, file }) => {
         const formData = new FormData();
 
@@ -73,7 +85,10 @@ export const productsApi = createApi({
     }),
 
     // EDIT Product
-    editAdminProduct: builder.mutation<{ data: IProduct },{ id: string; body: { data: Partial<ProductFormData> } }>({
+    editAdminProduct: builder.mutation<
+      { data: IProduct },
+      { id: string; body: { data: Partial<ProductFormData> } }
+    >({
       query: ({ id, body }) => ({
         url: `/api/products/${id}`,
         method: "PUT",
