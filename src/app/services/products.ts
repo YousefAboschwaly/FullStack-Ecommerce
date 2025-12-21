@@ -9,10 +9,49 @@ export const productsApi = createApi({
     baseUrl: import.meta.env.VITE_API_URL,
   }),
   endpoints: (builder) => ({
-    // GET All Products
-    getProducts: builder.query<IResponse, { page: number; pageSize: number }>({
-      query: ({ page, pageSize }) =>
-        `/api/products?fields=title,description,price,stock&populate=*&sort=createdAt:Desc&pagination[pageSize]=${pageSize}&pagination[page]=${page}`,
+    // GET All Products and filter products if there is filter 
+    getProducts: builder.query<
+      IResponse,
+      {
+        page: number;
+        pageSize: number;
+        categoryId?: number;
+        search?: string;
+        minPrice?: number;
+        maxPrice?: number;
+      }
+    >({
+      query: ({ page, pageSize, categoryId, search, minPrice, maxPrice }) => {
+        let baseUrl =
+          `/api/products?fields=title,description,price,stock` +
+          `&populate=*` +
+          `&sort=createdAt:desc` +
+          `&pagination[pageSize]=${pageSize}` +
+          `&pagination[page]=${page}`;
+
+        // filter with category
+          if (categoryId) {
+          baseUrl += `&filters[category][id][$eq]=${categoryId}`;
+        }
+
+        // filter with title
+        if (search) {
+          baseUrl += `&filters[title][$containsi]=${search}`;
+        }
+
+        // filter with minimum price
+        if (minPrice !== undefined) {
+          baseUrl += `&filters[price][$gte]=${minPrice}`;
+        }
+
+        // filter with maximum price
+        if (maxPrice !== undefined) {
+          baseUrl += `&filters[price][$lte]=${maxPrice}`;
+        }
+
+        return baseUrl;
+      },
+
       providesTags: (result) =>
         result
           ? [
@@ -23,12 +62,6 @@ export const productsApi = createApi({
               })),
             ]
           : [{ type: "Products", id: "LIST" }],
-    }),
-
-    // Get Products of Category
-    getProductsByCategory: builder.query({
-      query: ({ categoryId, page, pageSize }) =>
-        `/api/products?fields=title,description,price,stock&populate=*&sort=createdAt:Desc&pagination[pageSize]=${pageSize}&pagination[page]=${page}&filters[category][id][$eq]=${categoryId}`,
     }),
 
     // GET Product Details
