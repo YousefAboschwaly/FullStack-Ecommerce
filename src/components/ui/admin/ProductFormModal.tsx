@@ -1,29 +1,27 @@
-/* eslint-disable react-hooks/exhaustive-deps */
+/* eslint-disable react-hooks/set-state-in-effect */
+import { useGetCategoriesQuery } from "@/app/services/categories";
 import { useThemeColors } from "@/hooks/useThemeColors";
+import type { ICategory, ProductFormData } from "@/interfaces";
+import { productValidation } from "@/validation";
 import {
   Box,
   Button,
+  createListCollection,
   Field,
   Flex,
   HStack,
   Icon,
   Image,
   Input,
+  Portal,
+  Select,
   Text,
   Textarea,
   VStack,
 } from "@chakra-ui/react";
 import { ImagePlus, Package, X } from "lucide-react";
 import { memo, useEffect, useState, type ChangeEvent } from "react";
-import { useForm } from "react-hook-form";
-
-export interface ProductFormData {
-  title: string;
-  description: string;
-  price: number;
-  stock: number;
-  thumbnail: File | string | null;
-}
+import { Controller, useForm } from "react-hook-form";
 
 interface ProductFormModalProps {
   isOpen: boolean;
@@ -34,29 +32,7 @@ interface ProductFormModalProps {
   isLoading?: boolean;
 }
 
-// Validation rules
-const productValidation = {
-  title: {
-    required: "Title is required",
-    minLength: { value: 3, message: "Title must be at least 3 characters" },
-    maxLength: { value: 100, message: "Title must be less than 100 characters" },
-  },
-  description: {
-    required: "Description is required",
-    minLength: { value: 10, message: "Description must be at least 10 characters" },
-    maxLength: { value: 500, message: "Description must be less than 500 characters" },
-  },
-  price: {
-    required: "Price is required",
-    min: { value: 0.01, message: "Price must be greater than 0" },
-    max: { value: 999999, message: "Price must be less than 999999" },
-  },
-  stock: {
-    required: "Stock is required",
-    min: { value: 0, message: "Stock cannot be negative" },
-    max: { value: 999999, message: "Stock must be less than 999999" },
-  },
-};
+
 
 const ProductFormModal = ({
   isOpen,
@@ -83,21 +59,34 @@ const ProductFormModal = ({
     register,
     handleSubmit,
     reset,
+    setValue,
     formState: { errors },
+    control,
   } = useForm<ProductFormData>();
+  const { data: categoriesData, isLoading: isCategoriesLoading, isError: isCategoriesError } = useGetCategoriesQuery();
 
   const [thumbnailPreview, setThumbnailPreview] = useState<string | null>(null);
   const [thumbnailFile, setThumbnailFile] = useState<File | null>(null);
+  const categoriesItems = categoriesData?.data?.map((category: ICategory) => ({
+    label: category.title,
+    value: String(category.id),
+  })) ?? [];
+  
+  const categoriesCollection = createListCollection({
+    items: categoriesItems,
+  });
 
   // Reset form when modal opens or initialData changes
   useEffect(() => {
     if (isOpen) {
       if (initialData) {
+        console.log(initialData)
         reset({
           title: initialData.title || "",
           description: initialData.description || "",
           price: initialData.price || 0,
           stock: initialData.stock || 0,
+          category: initialData.category ?? undefined,
           thumbnail: initialData.thumbnail || null,
         });
         if (typeof initialData.thumbnail === "string") {
@@ -109,13 +98,21 @@ const ProductFormModal = ({
           description: "",
           price: 0,
           stock: 0,
+          category: undefined,
           thumbnail: null,
         });
         setThumbnailPreview(null);
         setThumbnailFile(null);
       }
     }
-  }, [isOpen, initialData]);
+  }, [isOpen, initialData, reset]);
+
+  // Set category value when categories load and we have initialData
+  useEffect(() => {
+    if (isOpen && initialData?.category && categoriesItems.length > 0) {
+      setValue("category", initialData.category);
+    }
+  }, [isOpen, initialData?.category, categoriesItems.length, setValue]);
 
   const handleThumbnailChange = (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -147,6 +144,7 @@ const ProductFormModal = ({
       description: "",
       price: 0,
       stock: 0,
+      category: undefined,
       thumbnail: null,
     });
     setThumbnailPreview(null);
@@ -288,44 +286,49 @@ const ProductFormModal = ({
                     </Button>
                   </Box>
                 ) : (
-                  <Box
-                    as="label"
-                    htmlFor="thumbnail-upload"
-                    display="flex"
-                    flexDirection="column"
-                    alignItems="center"
-                    justifyContent="center"
-                    w="100%"
-                    h="180px"
-                    borderRadius="lg"
-                    border="2px dashed"
-                    borderColor={borderDefault}
-                    bg={bgCardHover}
-                    cursor="pointer"
-                    transition="all 0.2s"
-                    _hover={{
-                      borderColor: accentPrimary,
-                      bg: `${accentPrimary}08`,
-                    }}
-                  >
-                    <Flex
-                      w="50px"
-                      h="50px"
-                      borderRadius="full"
-                      bg={`${accentPrimary}15`}
-                      align="center"
-                      justify="center"
-                      mb={3}
+                  <label htmlFor="thumbnail-upload" style={{ cursor: "pointer" }}>
+                    <Box
+                      display="flex"
+                      flexDirection="column"
+                      alignItems="center"
+                      justifyContent="center"
+                      w="100%"
+                      h="180px"
+                      borderRadius="lg"
+                      border="2px dashed"
+                      borderColor={borderDefault}
+                      bg={bgCardHover}
+                      cursor="pointer"
+                      transition="all 0.2s"
+                      _hover={{
+                        borderColor: accentPrimary,
+                        bg: `${accentPrimary}08`,
+                      }}
                     >
-                      <Icon as={ImagePlus} boxSize={6} color={accentPrimary} />
-                    </Flex>
-                    <Text fontSize="sm" fontWeight="600" color={textPrimary} mb={1}>
-                      Click to upload image
-                    </Text>
-                    <Text fontSize="xs" color={textMuted}>
-                      PNG, JPG, WEBP up to 5MB
-                    </Text>
-                  </Box>
+                      <Flex
+                        w="50px"
+                        h="50px"
+                        borderRadius="full"
+                        bg={`${accentPrimary}15`}
+                        align="center"
+                        justify="center"
+                        mb={3}
+                      >
+                        <Icon as={ImagePlus} boxSize={6} color={accentPrimary} />
+                      </Flex>
+                      <Text
+                        fontSize="sm"
+                        fontWeight="600"
+                        color={textPrimary}
+                        mb={1}
+                      >
+                        Click to upload image
+                      </Text>
+                      <Text fontSize="xs" color={textMuted}>
+                        PNG, JPG, WEBP up to 5MB
+                      </Text>
+                    </Box>
+                  </label>
                 )}
                 <Input
                   id="thumbnail-upload"
@@ -355,7 +358,9 @@ const ProductFormModal = ({
                 }}
                 _focus={{
                   borderColor: errors.title ? statusError : accentPrimary,
-                  boxShadow: `0 0 0 1px ${errors.title ? statusError : accentPrimary}`,
+                  boxShadow: `0 0 0 1px ${
+                    errors.title ? statusError : accentPrimary
+                  }`,
                 }}
                 h="48px"
                 borderRadius="lg"
@@ -383,7 +388,9 @@ const ProductFormModal = ({
                 }}
                 _focus={{
                   borderColor: errors.description ? statusError : accentPrimary,
-                  boxShadow: `0 0 0 1px ${errors.description ? statusError : accentPrimary}`,
+                  boxShadow: `0 0 0 1px ${
+                    errors.description ? statusError : accentPrimary
+                  }`,
                 }}
                 minH="100px"
                 borderRadius="lg"
@@ -391,6 +398,91 @@ const ProductFormModal = ({
               />
               {errors.description && (
                 <Field.ErrorText>{errors.description.message}</Field.ErrorText>
+              )}
+            </Field.Root>
+
+            {/* Category */}
+            <Field.Root invalid={!!errors.category}>
+              <Field.Label>
+                Category <Field.RequiredIndicator />
+              </Field.Label>
+
+              {isCategoriesError ? (
+                <Box
+                  p={3}
+                  borderRadius="lg"
+                  bg={`${statusError}15`}
+                  border="1px solid"
+                  borderColor={statusError}
+                >
+                  <Text fontSize="sm" color={statusError}>
+                    Failed to load categories. Please try again.
+                  </Text>
+                </Box>
+              ) : isCategoriesLoading ? (
+                <Box
+                  h="48px"
+                  bg={bgCardHover}
+                  borderRadius="lg"
+                  border="2px solid"
+                  borderColor={borderDefault}
+                  display="flex"
+                  alignItems="center"
+                  px={4}
+                >
+                  <Text fontSize="sm" color={textMuted}>
+                    Loading categories...
+                  </Text>
+                </Box>
+              ) : (
+                <Controller
+                  name="category"
+                  control={control}
+                  rules={{ required: "Category is required" }}
+                  render={({ field }) => (
+                    <Select.Root
+                      collection={categoriesCollection}
+                      value={field.value ? [String(field.value)] : []}
+                      onValueChange={(e) => field.onChange(Number(e.value[0]))}
+                    >
+                      <Select.HiddenSelect />
+
+                      <Select.Control
+                        h="48px"
+                        bg={bgCardHover}
+                        borderRadius="lg"
+                        border="2px solid"
+                        borderColor={
+                          errors.category ? statusError : borderDefault
+                        }
+                      >
+                        <Select.Trigger border={0}>
+                          <Select.ValueText placeholder="Select Category" />
+                        </Select.Trigger>
+                        <Select.IndicatorGroup>
+                          <Select.Indicator />
+                        </Select.IndicatorGroup>
+                      </Select.Control>
+
+                      <Portal>
+                        <Select.Positioner>
+                          <Select.Content>
+                            {categoriesItems.map((item) => (
+                              <Select.Item key={item.value} item={item}>
+                                {item.label}
+                                <Select.ItemIndicator />
+                              </Select.Item>
+                            ))}
+                          </Select.Content>
+                        </Select.Positioner>
+                      </Portal>
+                    </Select.Root>
+                  )}
+                />
+              )}
+
+              {errors.category && (
+                <Field.ErrorText>{errors.category.message}</Field.ErrorText>
               )}
             </Field.Root>
 
@@ -420,7 +512,9 @@ const ProductFormModal = ({
                   }}
                   _focus={{
                     borderColor: errors.price ? statusError : accentPrimary,
-                    boxShadow: `0 0 0 1px ${errors.price ? statusError : accentPrimary}`,
+                    boxShadow: `0 0 0 1px ${
+                      errors.price ? statusError : accentPrimary
+                    }`,
                   }}
                   h="48px"
                   borderRadius="lg"
@@ -453,7 +547,9 @@ const ProductFormModal = ({
                   }}
                   _focus={{
                     borderColor: errors.stock ? statusError : accentPrimary,
-                    boxShadow: `0 0 0 1px ${errors.stock ? statusError : accentPrimary}`,
+                    boxShadow: `0 0 0 1px ${
+                      errors.stock ? statusError : accentPrimary
+                    }`,
                   }}
                   h="48px"
                   borderRadius="lg"

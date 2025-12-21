@@ -39,7 +39,7 @@ export const store = configureStore({
         // لتجنب مشاكل مع redux-persist
         ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
       },
-    }).concat(authApi.middleware, productsApi.middleware),
+    }).concat(authApi.middleware, productsApi.middleware, categoriesApi.middleware),
 });
 
 // persist store

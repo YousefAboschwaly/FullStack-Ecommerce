@@ -1,39 +1,56 @@
-export interface IProduct{
-  id:number;
+export interface IProduct {
+  id: number;
   documentId: string;
-  title:string;
-  description:string;
-  price:number;
-  stock:number;
-  thumbnail:{
-    url:string;
+  title: string;
+  description: string;
+  price: number;
+  stock: number;
+  thumbnail: {
+    url: string;
   };
-  category:{
-    id:number;
-    documentId:string;
-    title:string;
-  }
+  category: {
+    id: number;
+    documentId: string;
+    title: string;
+  };
 }
 
-export interface IResponse{
-  data:IProduct[],
-  meta:{
-      pagination: {
-            page: number,
-            pageSize: number,
-            pageCount: number,
-            total: number
-        }
+export interface IResponse {
+  data: IProduct[];
+  meta: {
+    pagination: {
+      page: number;
+      pageSize: number;
+      pageCount: number;
+      total: number;
+    };
+  };
+}
+
+export interface ICategory{
+    id: number;
+    documentId: string;
+    title: string;
   }
+export interface ICategories {
+  data: ICategory[];
+  meta: {
+    pagination: {
+      page: number;
+      pageSize: number;
+      pageCount: number;
+      total: number;
+    };
+  };
 }
 export interface ProductFormData {
   title: string;
   description: string;
   price: number;
   stock: number;
+  category: number;
   thumbnail: File | string | null;
 }
-
 
 export interface ICartItem extends IProduct {
   quantity: number;
@@ -42,9 +59,9 @@ export interface ICartItem extends IProduct {
 export interface LoginResponse {
   jwt: string;
   user: {
-  id:number;
-  documentId:string;
-  username:string;
-  email:string;
-}
+    id: number;
+    documentId: string;
+    username: string;
+    email: string;
+  };
 }

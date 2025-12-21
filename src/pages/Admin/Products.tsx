@@ -106,8 +106,11 @@ const Products = () => {
           description: data.description,
           price: data.price,
           stock: data.stock,
+          category:data.category
         },
       };
+            console.log(payload);
+
       const res = await createProduct(payload).unwrap();
       if (data.thumbnail instanceof File) {
         await uploadImage({
@@ -147,9 +150,10 @@ const Products = () => {
           description: data.description,
           price: data.price,
           stock: data.stock,
+          category:data.category
         },
       };
-      console.log(data);
+      console.log(payload);
 
       // 1️⃣ edit
       const res = await editProduct({
@@ -386,6 +390,7 @@ const Products = () => {
           description: selectedProduct?.description,
           price: selectedProduct?.price,
           stock: selectedProduct?.stock,
+          category:selectedProduct?.category.id,
           thumbnail: apiUrl + selectedProduct?.thumbnail?.url,
         }}
         isLoading={isEditing}
