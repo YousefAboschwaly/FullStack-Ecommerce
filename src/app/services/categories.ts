@@ -52,6 +52,35 @@ export const categoriesApi = createApi({
         { type: "Categories_with_Products", id: "LIST" },
       ],
     }),
+
+    // EDIT Category
+    editCategory: builder.mutation<
+      ICategory,
+      { id: string; body: { data: { title: string; description?: string } } }
+    >({
+      query: ({ id, body }) => ({
+        url: `/api/categories/${id}`,
+        method: "PUT",
+        body,
+      }),
+      invalidatesTags: (_res, _err, { id }) => [
+        { type: "Categories", id },
+        { type: "Categories", id: "LIST" },
+        { type: "Categories_with_Products", id: "LIST" },
+      ],
+    }),
+
+    // DELETE Category
+    deleteCategory: builder.mutation<void, string>({
+      query: (id) => ({
+        url: `/api/categories/${id}`,
+        method: "DELETE",
+      }),
+      invalidatesTags: [
+        { type: "Categories", id: "LIST" },
+        { type: "Categories_with_Products", id: "LIST" },
+      ],
+    }),
   }),
 });
 
@@ -59,4 +88,6 @@ export const {
   useGetCategoriesQuery,
   useGetCategoriesWithProductsQuery,
   useCreateCategoryMutation,
+  useEditCategoryMutation,
+  useDeleteCategoryMutation,
 } = categoriesApi;

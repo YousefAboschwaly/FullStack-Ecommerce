@@ -1,7 +1,8 @@
+import { ChevronDown, Search, SlidersHorizontal, X } from "lucide-react";
 import { useState } from "react";
-import { Search, SlidersHorizontal, X, ChevronDown } from "lucide-react";
 
 import { useGetCategoriesQuery } from "@/app/services/categories";
+import type { ICategory } from "@/interfaces";
 import {
   Button,
   Collapsible,
@@ -9,12 +10,8 @@ import {
   Field,
   Input,
   Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValueText,
+  SelectValueText
 } from "@chakra-ui/react";
-import type { ICategory } from "@/interfaces";
 
 interface ProductFiltersProps {
   search: string;
@@ -164,8 +161,8 @@ const ProductFilters = ({
                 Category
               </Field.Label>
               <Select.Root collection={categoriesCollection}  value={categoryId ? [String(categoryId)] : []}
-                      onValueChange={(e) => field.onChange(Number(e.value[0]))} onValueChange={onCategoryChange}>
-                <SelectTrigger
+                     onValueChange={onCategoryChange}>
+                <Select.Trigger
                   id="category"
                   className="bg-background border-border focus:border-primary focus:ring-primary"
                 >
@@ -174,15 +171,15 @@ const ProductFilters = ({
                       isCategoriesLoading ? "Loading..." : "All Categories"
                     }
                   />
-                </SelectTrigger>
-                <SelectContent className="bg-popover border-border">
-                  <SelectItem value="all">All Categories</SelectItem>
+                </Select.Trigger>
+                <Select.Content className="bg-popover border-border">
+                  <Select.Item value="all">All Categories</Select.Item>
                   {categories.map((category) => (
-                    <SelectItem key={category.id} value={String(category.id)}>
+                    <Select.Item key={category.id} value={String(category.id)}>
                       {category.title}
-                    </SelectItem>
+                    </Select.Item>
                   ))}
-                </SelectContent>
+                </Select.Content>
               </Select.Root>
             </Field.Root>
           </div>
