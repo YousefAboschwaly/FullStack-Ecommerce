@@ -32,6 +32,8 @@ export interface ICategory{
     documentId: string;
     title: string;
     products?: IProduct [];
+    createdAt:string;
+    updatedAt:string
 
   }
 export interface ICategories {

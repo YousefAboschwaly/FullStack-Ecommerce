@@ -1,7 +1,7 @@
 
 import type { ICategory } from "@/interfaces"
 import { Box, SimpleGrid, Text } from "@chakra-ui/react"
-import CategoryCard from "./category-card"
+import CategoryCard from "./CategoryCard"
 
 interface CategoriesGridProps {
   categories: ICategory[]
@@ -25,7 +25,7 @@ export default function CategoriesGrid({ categories, onDelete }: CategoriesGridP
   return (
     <SimpleGrid 
       columns={{ base: 1, md: 2, lg: 3 }} 
-      spacing={6}
+      gap={6}
       autoRows="max-content"
     >
       {categories.map((category) => (
