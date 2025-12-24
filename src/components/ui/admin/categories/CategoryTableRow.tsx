@@ -1,19 +1,29 @@
-"use client"
+"use client";
 
-import useThemeColors from "@/hooks/useThemeColors"
-import type { ICategory } from "@/interfaces"
-import { Badge, Box, Flex, HStack, Icon, IconButton, Table, Text } from "@chakra-ui/react"
-import { Edit, Eye, FolderOpen, Trash2 } from "lucide-react"
+import useThemeColors from "@/hooks/useThemeColors";
+import type { ICategory } from "@/interfaces";
+import {
+  Badge,
+  Box,
+  Flex,
+  HStack,
+  Icon,
+  IconButton,
+  Image,
+  Table,
+  Text,
+} from "@chakra-ui/react";
+import { Edit, Eye, FolderOpen, Trash2 } from "lucide-react";
 
 interface IProps {
-  category: ICategory
-  productCountStatus: { label: string; color: string }
-  priceRange: string
-  handleView: (category: ICategory) => void
-  handleEdit: (category: ICategory) => void
-  handleDelete: (category: ICategory) => void
+  category: ICategory;
+  productCountStatus: { label: string; color: string };
+  priceRange: string;
+  handleView: (category: ICategory) => void;
+  handleEdit: (category: ICategory) => void;
+  handleDelete: (category: ICategory) => void;
 }
-
+const baseUrl = import.meta.env.VITE_API_URL;
 export default function CategoryTableRow({
   category,
   productCountStatus,
@@ -22,8 +32,16 @@ export default function CategoryTableRow({
   handleEdit,
   handleDelete,
 }: IProps) {
-  const { textPrimary, textMuted, bgCardHover, borderDefault, accentPrimary, statusError } = useThemeColors()
+  const {
+    textPrimary,
+    textMuted,
+    bgCardHover,
+    borderDefault,
+    accentPrimary,
+    statusError,
+  } = useThemeColors();
 
+  console.log(category.products?.at(0));
   return (
     <Table.Row
       key={category.id}
@@ -35,15 +53,24 @@ export default function CategoryTableRow({
       <Table.Cell py={4} px={6}>
         <HStack gap={4}>
           <Flex
-            w="50px"
-            h="50px"
+            w="64px"
+            h="64px"
             borderRadius="lg"
             bg={`${accentPrimary}15`}
             align="center"
             justify="center"
             flexShrink={0}
           >
-            <Icon as={FolderOpen} boxSize={6} color={accentPrimary} />
+            {category.products?.at(0)?.thumbnail ? (
+              <Image
+                src={baseUrl + category.products.at(0)?.thumbnail?.url}
+                alt={category.title}
+                objectFit="cover"
+                borderRadius="lg"
+              />
+            ) : (
+              <Icon as={FolderOpen} boxSize={6} color={accentPrimary} />
+            )}
           </Flex>
           <Box>
             <Text fontWeight="600" color={textPrimary} mb={0.5}>
@@ -64,7 +91,15 @@ export default function CategoryTableRow({
         </HStack>
       </Table.Cell>
       <Table.Cell py={4} px={6}>
-        <Badge px={3} py={1} borderRadius="full" bg={bgCardHover} color={textPrimary} fontWeight="600" fontSize="sm">
+        <Badge
+          px={3}
+          py={1}
+          borderRadius="full"
+          bg={bgCardHover}
+          color={textPrimary}
+          fontWeight="600"
+          fontSize="sm"
+        >
           {priceRange}
         </Badge>
       </Table.Cell>
@@ -106,5 +141,5 @@ export default function CategoryTableRow({
         </HStack>
       </Table.Cell>
     </Table.Row>
-  )
+  );
 }

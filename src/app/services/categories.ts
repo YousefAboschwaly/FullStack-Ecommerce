@@ -25,7 +25,7 @@ export const categoriesApi = createApi({
 
     // GET Categories with Products
     getCategoriesWithProducts: builder.query<ICategories, void>({
-      query: () => `/api/categories?populate=products`,
+      query: () => `/api/categories?populate[products][populate]=thumbnail`,
       providesTags: (result) =>
         result
           ? [
