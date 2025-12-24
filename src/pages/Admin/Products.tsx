@@ -7,10 +7,10 @@ import {
   useUploadProductImageMutation,
 } from "@/app/services/products";
 import GenericModal from "@/components/ui/admin/Modal";
-import ProductFormModal from "@/components/ui/admin/ProductFormModal";
-import ProductMobileCard from "@/components/ui/admin/ProductMobileCard";
-import ProductsTableSkeleton from "@/components/ui/admin/productsTableSkeleton";
-import ProductTableRow from "@/components/ui/admin/ProductTableRow";
+import ProductFormModal from "@/components/ui/admin/products/ProductFormModal";
+import ProductMobileCard from "@/components/ui/admin/products/ProductMobileCard";
+import ProductsTableSkeleton from "@/components/ui/admin/products/productsTableSkeleton";
+import ProductTableRow from "@/components/ui/admin/products/ProductTableRow";
 import Pagination from "@/components/ui/Pagination";
 import { toaster } from "@/components/ui/toaster";
 import { useThemeColors } from "@/hooks/useThemeColors";

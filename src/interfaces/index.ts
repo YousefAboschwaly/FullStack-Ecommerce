@@ -69,3 +69,11 @@ export interface LoginResponse {
     email: string;
   };
 }
+
+export interface FilterState {
+  search: string;
+  minPrice: number | undefined;
+  maxPrice: number | undefined;
+  categoryId: number | undefined;
+  categoryName: string | undefined;
+}
