@@ -1,135 +1,165 @@
-
-import GenericModal from "@/components/ui/admin/Modal"
-import CategoryFormModal from "@/components/ui/admin/categories/CategoryFormModal"
-import CategoryMobileCard from "@/components/ui/admin/categories/CategoryMobileCard"
-import CategoriesTableSkeleton from "@/components/ui/admin/categories/categoriesTableSkeleton"
-import CategoryTableRow from "@/components/ui/admin/categories/CategoryTableRow"
-import { toaster } from "@/components/ui/toaster"
-import { useThemeColors } from "@/hooks/useThemeColors"
-import type { ICategory } from "@/interfaces"
-import { Box, Flex, HStack, Icon, Stack, Table, Text, useDisclosure } from "@chakra-ui/react"
-import { Plus } from "lucide-react"
-import { useCallback, useState } from "react"
-import { useGetCategoriesWithProductsQuery } from "@/app/services/categories"
+import GenericModal from "@/components/ui/admin/Modal";
+import CategoryFormModal from "@/components/ui/admin/categories/CategoryFormModal";
+import CategoryMobileCard from "@/components/ui/admin/categories/CategoryMobileCard";
+import CategoriesTableSkeleton from "@/components/ui/admin/categories/categoriesTableSkeleton";
+import CategoryTableRow from "@/components/ui/admin/categories/CategoryTableRow";
+import { toaster } from "@/components/ui/toaster";
+import { useThemeColors } from "@/hooks/useThemeColors";
+import type { ICategory } from "@/interfaces";
+import {
+  Box,
+  Flex,
+  HStack,
+  Icon,
+  Stack,
+  Table,
+  Text,
+  useDisclosure,
+} from "@chakra-ui/react";
+import { Plus } from "lucide-react";
+import { useCallback, useState } from "react";
+import { useGetCategoriesWithProductsQuery } from "@/app/services/categories";
+import { useNavigate } from "react-router-dom";
 
 interface CategoryFormData {
-  title: string
-  description?: string
+  title: string;
+  description?: string;
 }
 
 const Categories = () => {
-  const {data} = useGetCategoriesWithProductsQuery()
-  console.log(Categories)
-  const { textPrimary, textMuted, bgCard, bgCardHover, borderDefault, accentPrimary, statusSuccess, statusWarning } =
-    useThemeColors()
+  const navigate = useNavigate();
+  const { data } = useGetCategoriesWithProductsQuery();
+  const {
+    textPrimary,
+    textMuted,
+    bgCard,
+    bgCardHover,
+    borderDefault,
+    accentPrimary,
+    statusSuccess,
+    statusWarning,
+  } = useThemeColors();
 
-  const { onOpen, open, onClose } = useDisclosure()
-  const [selectedCategory, setSelectedCategory] = useState<ICategory | undefined>()
-  const [createModalOpen, setCreateModalOpen] = useState(false)
-  const [editModalOpen, setEditModalOpen] = useState(false)
-  const [isLoading] = useState(false)
-  const [isCreating] = useState(false)
-  const [isEditing] = useState(false)
-  const [isDeleting] = useState(false)
-
-  
+  const { onOpen, open, onClose } = useDisclosure();
+  const [selectedCategory, setSelectedCategory] = useState<
+    ICategory | undefined
+  >();
+  const [createModalOpen, setCreateModalOpen] = useState(false);
+  const [editModalOpen, setEditModalOpen] = useState(false);
+  const [isLoading] = useState(false);
+  const [isCreating] = useState(false);
+  const [isEditing] = useState(false);
+  const [isDeleting] = useState(false);
 
   const handleView = (category: ICategory) => {
-    console.log("View category:", category)
-  }
+    const params = new URLSearchParams({
+      categoryId: category.id.toString(),
+      categoryName:
+        category.title.replaceAll("&", "").replaceAll(" ", "_") || "",
+    });
+
+    navigate(`/?${params.toString()}`);
+    console.log("View category:", category);
+  };
 
   const handleConfirmCreateCategory = async (data: CategoryFormData) => {
     try {
-      console.log("Create category:", data)
+      console.log("Create category:", data);
       toaster.success({
         title: "Category created successfully",
         duration: 3000,
         closable: true,
-      })
-      setCreateModalOpen(false)
+      });
+      setCreateModalOpen(false);
     } catch {
       toaster.error({
         title: "Failed to create category",
         duration: 3000,
-      })
+      });
     }
-  }
+  };
 
   const handleEdit = (category: ICategory) => {
-    setSelectedCategory(category)
-    setEditModalOpen(true)
-  }
+    setSelectedCategory(category);
+    setEditModalOpen(true);
+  };
 
   const handleConfirmEdit = async (data: CategoryFormData) => {
-    if (!selectedCategory) return
+    if (!selectedCategory) return;
     try {
-      console.log("Edit category:", data)
+      console.log("Edit category:", data);
       toaster.success({
         title: "Category edited successfully",
         duration: 3000,
         closable: true,
-      })
-      setEditModalOpen(false)
+      });
+      setEditModalOpen(false);
     } catch {
       toaster.error({
         title: "Failed to update category",
         duration: 3000,
         closable: true,
-      })
+      });
     }
-  }
+  };
 
   const handleConfirmDelete = async () => {
-    if (!selectedCategory) return
+    if (!selectedCategory) return;
     try {
-      console.log("Delete category:", selectedCategory)
+      console.log("Delete category:", selectedCategory);
       toaster.success({
         title: "Category deleted successfully",
         duration: 3000,
         closable: true,
-      })
-      setSelectedCategory(undefined)
-      onClose()
+      });
+      setSelectedCategory(undefined);
+      onClose();
     } catch (error) {
-      console.error(error)
+      console.error(error);
       toaster.error({
         title: "Failed to delete category",
         duration: 3000,
-      })
+      });
     }
-  }
+  };
 
   const handleDelete = useCallback(
     (category: ICategory) => {
-      setSelectedCategory(category)
-      onOpen()
+      setSelectedCategory(category);
+      onOpen();
     },
-    [onOpen],
-  )
+    [onOpen]
+  );
 
   const getProductCountStatus = (count: number) => {
-    if (count === 0) return { label: "No Products", color: textMuted }
-    if (count < 3) return { label: `${count} Products`, color: statusWarning }
-    return { label: `${count} Products`, color: statusSuccess }
-  }
+    if (count === 0) return { label: "No Products", color: textMuted };
+    if (count < 3) return { label: `${count} Products`, color: statusWarning };
+    return { label: `${count} Products`, color: statusSuccess };
+  };
 
   const getPriceRange = (category: ICategory) => {
     if (!category.products || category.products.length === 0) {
-      return "N/A"
+      return "N/A";
     }
-    const prices = category.products.map((p) => p.price)
-    const min = Math.min(...prices)
-    const max = Math.max(...prices)
+    const prices = category.products.map((p) => p.price);
+    const min = Math.min(...prices);
+    const max = Math.max(...prices);
     if (min === max) {
-      return `$${min.toFixed(2)}`
+      return `$${min.toFixed(2)}`;
     }
-    return `$${min.toFixed(2)} - $${max.toFixed(2)}`
-  }
+    return `$${min.toFixed(2)} - $${max.toFixed(2)}`;
+  };
 
   return (
     <Box>
       {/* Header */}
-      <Flex justify="space-between" align="center" mb={6} flexWrap="wrap" gap={4}>
+      <Flex
+        justify="space-between"
+        align="center"
+        mb={6}
+        flexWrap="wrap"
+        gap={4}
+      >
         <Text fontSize="2xl" fontWeight="bold" color={textPrimary}>
           Categories
         </Text>
@@ -168,24 +198,47 @@ const Categories = () => {
             <Table.Root size="lg">
               <Table.Header>
                 <Table.Row bg={bgCardHover}>
-                  <Table.ColumnHeader color={textMuted} fontWeight="600" py={4} px={6}>
+                  <Table.ColumnHeader
+                    color={textMuted}
+                    fontWeight="600"
+                    py={4}
+                    px={6}
+                  >
                     Category
                   </Table.ColumnHeader>
-                  <Table.ColumnHeader color={textMuted} fontWeight="600" py={4} px={6}>
+                  <Table.ColumnHeader
+                    color={textMuted}
+                    fontWeight="600"
+                    py={4}
+                    px={6}
+                  >
                     Products
                   </Table.ColumnHeader>
-                  <Table.ColumnHeader color={textMuted} fontWeight="600" py={4} px={6}>
+                  <Table.ColumnHeader
+                    color={textMuted}
+                    fontWeight="600"
+                    py={4}
+                    px={6}
+                  >
                     Price Range
                   </Table.ColumnHeader>
-                  <Table.ColumnHeader color={textMuted} fontWeight="600" py={4} px={6} textAlign="center">
+                  <Table.ColumnHeader
+                    color={textMuted}
+                    fontWeight="600"
+                    py={4}
+                    px={6}
+                    textAlign="center"
+                  >
                     Actions
                   </Table.ColumnHeader>
                 </Table.Row>
               </Table.Header>
               <Table.Body>
                 {data?.data.map((category) => {
-                  const productCountStatus = getProductCountStatus(category.products?.length || 0)
-                  const priceRange = getPriceRange(category)
+                  const productCountStatus = getProductCountStatus(
+                    category.products?.length || 0
+                  );
+                  const priceRange = getPriceRange(category);
                   return (
                     <CategoryTableRow
                       key={category.id}
@@ -196,7 +249,7 @@ const Categories = () => {
                       handleEdit={handleEdit}
                       handleDelete={handleDelete}
                     />
-                  )
+                  );
                 })}
               </Table.Body>
             </Table.Root>
@@ -205,8 +258,10 @@ const Categories = () => {
           {/* Mobile Cards */}
           <Stack display={{ base: "flex", lg: "none" }} gap={4}>
             {data?.data.map((category) => {
-              const productCountStatus = getProductCountStatus(category.products?.length || 0)
-              const priceRange = getPriceRange(category)
+              const productCountStatus = getProductCountStatus(
+                category.products?.length || 0
+              );
+              const priceRange = getPriceRange(category);
               return (
                 <CategoryMobileCard
                   key={category.id}
@@ -217,7 +272,7 @@ const Categories = () => {
                   handleEdit={handleEdit}
                   handleDelete={handleDelete}
                 />
-              )
+              );
             })}
           </Stack>
         </>
@@ -257,7 +312,7 @@ const Categories = () => {
         isLoading={isEditing}
       />
     </Box>
-  )
-}
+  );
+};
 
-export default Categories
+export default Categories;
