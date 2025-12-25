@@ -18,7 +18,7 @@ import {
 } from "@chakra-ui/react";
 import { Plus } from "lucide-react";
 import { useCallback, useState } from "react";
-import { useEditCategoryMutation, useGetCategoriesWithProductsQuery } from "@/app/services/categories";
+import { useCreateCategoryMutation, useEditCategoryMutation, useGetCategoriesWithProductsQuery } from "@/app/services/categories";
 import { useNavigate } from "react-router-dom";
 
 interface CategoryFormData {
@@ -40,16 +40,16 @@ const Categories = () => {
   } = useThemeColors();
 
   const { onOpen, open, onClose } = useDisclosure();
-  const [selectedCategory, setSelectedCategory] = useState<
-    ICategory | undefined
-  >();
+  const [selectedCategory, setSelectedCategory] = useState<ICategory | undefined >();
   const [createModalOpen, setCreateModalOpen] = useState(false);
-  const [editModalOpen, setEditModalOpen] = useState(false);
+  
+  // CREATE Category
+  const [createCategory,{isLoading:isCreating}] = useCreateCategoryMutation()
   const [isLoading] = useState(false);
-  const [isCreating] = useState(false);
-
+  
   // EDIT Category 
   const [editCategory,{isLoading:isEditing}] = useEditCategoryMutation()
+  const [editModalOpen, setEditModalOpen] = useState(false);
   const [isDeleting] = useState(false);
 
   const handleView = (category: ICategory) => {
@@ -66,6 +66,12 @@ const Categories = () => {
   const handleConfirmCreateCategory = async (data: CategoryFormData) => {
     console.log(data);
     try {
+        const payLoad={
+        data:{
+          title:data.title
+        }
+      }
+      createCategory(payLoad)
       console.log("Create category:", data);
       toaster.success({
         title: "Category created successfully",

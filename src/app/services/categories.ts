@@ -41,17 +41,15 @@ export const categoriesApi = createApi({
     }),
 
     // CREATE Category
-    createCategory: builder.mutation<ICategory, Partial<ICategory>>({
-      query: (newCategory) => ({
+    createCategory: builder.mutation<ICategory,{data:CategoryFormData}>({
+      query: (body) => ({
         url: `/api/categories`,
         method: "POST",
         headers: {
           Authorization: `Bearer ${cookieService.getCookie("jwt")}`,
           "Content-Type": "application/json",
         },
-        body: {
-          data: newCategory, // 🔴 مهم جدًا في Strapi v4
-        },
+        body,
       }),
       invalidatesTags: [
         { type: "Categories", id: "LIST" },
