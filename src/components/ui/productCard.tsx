@@ -226,7 +226,8 @@ export default function ProductCard({ product }: ProductCardProps) {
             {description}
           </Text>
 
-          <HStack justify="space-between" pt={2}>
+          <HStack justify="space-between" pt={2}         borderTop="1px solid"
+        borderColor={borderDefault}>
             <VStack gap={0} align="start">
               <Text fontSize="xl" fontWeight="bold" color={accentPrimary}>
                 ${price.toFixed(2)}

@@ -18,7 +18,12 @@ import {
 } from "@chakra-ui/react";
 import { Plus } from "lucide-react";
 import { useCallback, useState } from "react";
-import { useCreateCategoryMutation, useEditCategoryMutation, useGetCategoriesWithProductsQuery } from "@/app/services/categories";
+import {
+  useCreateCategoryMutation,
+  useDeleteCategoryMutation,
+  useEditCategoryMutation,
+  useGetCategoriesWithProductsQuery,
+} from "@/app/services/categories";
 import { useNavigate } from "react-router-dom";
 
 interface CategoryFormData {
@@ -27,7 +32,7 @@ interface CategoryFormData {
 
 const Categories = () => {
   const navigate = useNavigate();
-  const { data } = useGetCategoriesWithProductsQuery();
+  const { data, isLoading } = useGetCategoriesWithProductsQuery();
   const {
     textPrimary,
     textMuted,
@@ -40,17 +45,22 @@ const Categories = () => {
   } = useThemeColors();
 
   const { onOpen, open, onClose } = useDisclosure();
-  const [selectedCategory, setSelectedCategory] = useState<ICategory | undefined >();
-  const [createModalOpen, setCreateModalOpen] = useState(false);
-  
+  const [selectedCategory, setSelectedCategory] = useState<
+    ICategory | undefined
+  >();
+
   // CREATE Category
-  const [createCategory,{isLoading:isCreating}] = useCreateCategoryMutation()
-  const [isLoading] = useState(false);
-  
-  // EDIT Category 
-  const [editCategory,{isLoading:isEditing}] = useEditCategoryMutation()
+  const [createCategory, { isLoading: isCreating }] =
+    useCreateCategoryMutation();
+  const [createModalOpen, setCreateModalOpen] = useState(false);
+
+  // EDIT Category
+  const [editCategory, { isLoading: isEditing }] = useEditCategoryMutation();
   const [editModalOpen, setEditModalOpen] = useState(false);
-  const [isDeleting] = useState(false);
+
+  // DELETE Category
+  const [deleteCategory, { isLoading: isDeleting }] =
+    useDeleteCategoryMutation();
 
   const handleView = (category: ICategory) => {
     const params = new URLSearchParams({
@@ -64,15 +74,13 @@ const Categories = () => {
   };
 
   const handleConfirmCreateCategory = async (data: CategoryFormData) => {
-    console.log(data);
     try {
-        const payLoad={
-        data:{
-          title:data.title
-        }
-      }
-      createCategory(payLoad)
-      console.log("Create category:", data);
+      const payLoad = {
+        data: {
+          title: data.title,
+        },
+      };
+      createCategory(payLoad);
       toaster.success({
         title: "Category created successfully",
         duration: 3000,
@@ -96,13 +104,12 @@ const Categories = () => {
   const handleConfirmEdit = async (data: CategoryFormData) => {
     if (!selectedCategory) return;
     try {
-      const payLoad={
-        data:{
-          title:data.title
-        }
-      }
-      console.log("Edit category:",payLoad);
-      editCategory({id:selectedCategory.documentId,body:payLoad})
+      const payLoad = {
+        data: {
+          title: data.title,
+        },
+      };
+      editCategory({ id: selectedCategory.documentId, body: payLoad });
       toaster.success({
         title: "Category edited successfully",
         duration: 3000,
@@ -122,7 +129,7 @@ const Categories = () => {
   const handleConfirmDelete = async () => {
     if (!selectedCategory) return;
     try {
-      console.log("Delete category:", selectedCategory);
+      deleteCategory(selectedCategory.documentId);
       toaster.success({
         title: "Category deleted successfully",
         duration: 3000,
