@@ -1,20 +1,19 @@
 /* eslint-disable react-hooks/set-state-in-effect */
 import { useGetProductsQuery, useProductsPrefetch } from "@/app/services/products";
-import ErrorHandler from "@/components/ui/ErrorHandler";
-import ProductSkeleton from "@/components/ui/productCardSkeleton";
-import { Box, Grid, Text, HStack, Badge, Button, Icon, Flex, VStack } from "@chakra-ui/react";
-import ProductCard from "../components/ui/productCard";
+import { Box, Grid, Text, Button, Icon, Flex, VStack } from "@chakra-ui/react";
+import ProductCard from "@/components/ui/productCard";
 import type { IProduct } from "@/interfaces";
 import { useEffect, useState } from "react";
-import { useSearchParams, useNavigate } from "react-router-dom";
+import { useSearchParams } from "react-router-dom";
 import { useThemeColors } from "@/hooks/useThemeColors";
-import { X, ArrowLeft, Package } from "lucide-react";
-import ProductFilters  from '@/components/ui/productsFilter';
+import { Package } from "lucide-react";
+import ProductFilters from '@/components/ui/productsFilter';
 import Pagination from "@/components/ui/Pagination";
+import  ProductSkeleton  from '@/components/ui/productCardSkeleton';
+import { useGetCategoriesQuery } from "@/app/services/categories";
 
 export default function Products() {
   const [searchParams, setSearchParams] = useSearchParams();
-  const navigate = useNavigate();
   
   // Get initial values from URL
   const initialCategoryId = searchParams.get("categoryId") || "";
@@ -25,7 +24,6 @@ export default function Products() {
     textMuted,
     bgCard,
     borderDefault,
-    accentPrimary,
     bgMain,
     bgCardHover,
     buttonText,
@@ -39,10 +37,12 @@ export default function Products() {
   const [maxPrice, setMaxPrice] = useState("");
   const [categoryId, setCategoryId] = useState(initialCategoryId);
   const [debouncedSearch, setDebouncedSearch] = useState("");
+  const [selectedCategoryName, setSelectedCategoryName] = useState(categoryName);
 
   // Pagination states
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState<number>(12);
+
 
   // Debounce search
   useEffect(() => {
@@ -55,9 +55,12 @@ export default function Products() {
   // Update categoryId when URL changes
   useEffect(() => {
     const urlCategoryId = searchParams.get("categoryId") || "";
+    const urlCategoryName = searchParams.get("categoryName") || "";
+    console.log(urlCategoryName)
     setCategoryId(urlCategoryId);
+    setSelectedCategoryName(urlCategoryName);
   }, [searchParams]);
-
+console.log(selectedCategoryName)
   // Reset page when filters change
   useEffect(() => {
     setCurrentPage(1);
@@ -71,6 +74,8 @@ export default function Products() {
     minPrice: minPrice ? parseFloat(minPrice) : undefined,
     maxPrice: maxPrice ? parseFloat(maxPrice) : undefined,
   });
+  const { data: categoriesData, isLoading: isCategoriesLoading } = useGetCategoriesQuery();
+  console.log(categoriesData)
 
   const prefetchProducts = useProductsPrefetch("getProducts");
 
@@ -106,34 +111,50 @@ export default function Products() {
     }
   }, [currentPage, pageSize, pagination, prefetchProducts, categoryId, debouncedSearch, minPrice, maxPrice]);
 
-  const handleCategoryChange = (value: string) => {
-    setCategoryId(value);
-    // Update URL params
-    if (value) {
-      const category = data?.data.find((p: IProduct) => p.category?.id === parseInt(value));
-      setSearchParams({
-        categoryId: value,
-        categoryName: category?.category?.title || "",
-      });
-    } else {
-      setSearchParams({});
-    }
-  };
+const handleCategoryChange = (value: string) => {
+  setCategoryId(value);
+
+  if (!value) {
+    setSelectedCategoryName("");
+    setSearchParams({});
+    return;
+  }
+
+  const category = categoriesData?.data?.find(
+    (cat) => cat.id === parseInt(value)
+  );
+  console.log(category)
+
+  const catName =
+    category?.title
+      ?.replaceAll("&", "")
+      .replaceAll(" ", "_") || "";
+console.log(catName)
+  setSelectedCategoryName(catName);
+
+  setSearchParams({
+    categoryId: value,
+    categoryName: catName,
+  });
+};
+
 
   const handleClearFilters = () => {
     setSearch("");
     setMinPrice("");
     setMaxPrice("");
     setCategoryId("");
+    setSelectedCategoryName("");
     setSearchParams({});
   };
 
-  const handleClearCategoryFilter = () => {
-    setCategoryId("");
-    setSearchParams({});
-  };
-
-  if (error) return <ErrorHandler error={"Failed to fetch Products"} />;
+  if (error) {
+    return (
+      <Box p={12} textAlign="center">
+        <Text color="red.500">Failed to fetch Products</Text>
+      </Box>
+    );
+  }
 
   return (
     <Box bg={bgMain} minH="100vh">
@@ -145,19 +166,40 @@ export default function Products() {
         gap={6}
         direction={{ base: "column", lg: "row" }}
       >
-        {/* Sidebar Filters */}
+        {/* Sidebar Filters - Fixed Position */}
         <Box
           w={{ base: "full", lg: "300px" }}
           flexShrink={0}
-          position={{ base: "relative", lg: "sticky" }}
-          top={{ lg: "24px" }}
+          position={{ base: "relative", lg: "fixed" }}
+          top={{ lg: "115px" }}
           alignSelf="flex-start"
+          maxH={{ lg: "calc(100vh - 48px)" }}
+          overflowY={{ lg: "auto" }}
+          zIndex={10}
+          css={{
+            '&::-webkit-scrollbar': {
+              width: '6px',
+            },
+            '&::-webkit-scrollbar-track': {
+              background: 'transparent',
+            },
+            '&::-webkit-scrollbar-thumb': {
+              background: borderDefault,
+              borderRadius: '3px',
+            },
+            '&::-webkit-scrollbar-thumb:hover': {
+              background: textMuted,
+            },
+          }}
         >
           <ProductFilters
             search={search}
             minPrice={minPrice}
             maxPrice={maxPrice}
+            categoriesData={categoriesData  }
+            isCategoriesLoading={isCategoriesLoading}
             categoryId={categoryId}
+            categoryName={selectedCategoryName}
             onSearchChange={setSearch}
             onMinPriceChange={setMinPrice}
             onMaxPriceChange={setMaxPrice}
@@ -166,8 +208,11 @@ export default function Products() {
           />
         </Box>
 
-        {/* Main Content */}
-        <Box flex={1}>
+        {/* Main Content - Add margin for fixed sidebar */}
+        <Box 
+          flex={1}
+          ml={{ lg: "324px" }}
+        >
 
           {/* Loading State */}
           {isLoading ? (
@@ -223,13 +268,12 @@ export default function Products() {
                 isLoading={isLoading}
                 totalItems={pagination?.total || 0}
                 pageSize={pageSize}
-                showInfo={true}
+                pageSizeOptions={[12,24,50,100]}
                 currentPageSize={pageSize}
                 onPageSizeChange={(newSize) => {
                   setPageSize(newSize);
                   setCurrentPage(1);
                 }}
-                pageSizeOptions={[12, 24, 50, 100]}
               />
             </>
           )}

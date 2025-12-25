@@ -14,7 +14,7 @@ export default function Layout() {
     <>
       <Navbar />
       <CartDrawer />
-      <Container my={"8"}>
+      <Container my={"5"}>
         <Outlet />
       </Container>
     </>

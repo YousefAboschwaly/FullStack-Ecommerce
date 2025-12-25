@@ -1,5 +1,12 @@
 import { useState } from "react";
-import { Search, SlidersHorizontal, X, ChevronDown, DollarSign, Tag } from "lucide-react";
+import {
+  Search,
+  SlidersHorizontal,
+  X,
+  ChevronDown,
+  DollarSign,
+  Tag,
+} from "lucide-react";
 import {
   Box,
   VStack,
@@ -15,8 +22,8 @@ import {
 } from "@chakra-ui/react";
 import { Select } from "@chakra-ui/react";
 import { createListCollection } from "@chakra-ui/react";
-import { useGetCategoriesQuery } from "@/app/services/categories";
 import { useThemeColors } from "@/hooks/useThemeColors";
+import type { ICategories } from "@/interfaces";
 
 interface ProductFiltersProps {
   search: string;
@@ -24,6 +31,8 @@ interface ProductFiltersProps {
   maxPrice: string;
   categoryId: string;
   categoryName?: string;
+  categoriesData?: ICategories ;
+  isCategoriesLoading: boolean;
   onSearchChange: (value: string) => void;
   onMinPriceChange: (value: string) => void;
   onMaxPriceChange: (value: string) => void;
@@ -35,6 +44,8 @@ const ProductFilters = ({
   search,
   minPrice,
   maxPrice,
+  categoriesData,
+  isCategoriesLoading,
   categoryId,
   categoryName,
   onSearchChange,
@@ -44,8 +55,7 @@ const ProductFilters = ({
   onClearFilters,
 }: ProductFiltersProps) => {
   const [isOpen, setIsOpen] = useState(true);
-  const { data: categoriesData, isLoading: isCategoriesLoading } = useGetCategoriesQuery();
-  
+
   const {
     bgCard,
     bgCardHover,
@@ -61,16 +71,20 @@ const ProductFilters = ({
     statusError,
     shadowCard,
   } = useThemeColors();
-  
+
   const hasActiveFilters = search || minPrice || maxPrice || categoryId;
 
   const categories = categoriesData?.data || [];
 
   // Count active filters
-  const activeFilterCount = [search, minPrice, maxPrice, categoryId].filter(Boolean).length;
+  const activeFilterCount = [search, minPrice, maxPrice, categoryId].filter(
+    Boolean
+  ).length;
 
   // Get category name from ID
-  const selectedCategoryName = categoryName || categories.find((cat) => String(cat.id) === categoryId)?.title;
+  const selectedCategoryName =
+    categoryName ||
+    categories.find((cat) => String(cat.id) === categoryId)?.title;
 
   // Create collection for category select
   const categoryCollection = createListCollection({
@@ -102,7 +116,13 @@ const ProductFilters = ({
           borderColor={borderDefault}
         >
           <Flex justify="space-between" align="center" mb={2}>
-            <Text fontSize="xs" fontWeight="bold" color={textPrimary} textTransform="uppercase" letterSpacing="wide">
+            <Text
+              fontSize="xs"
+              fontWeight="bold"
+              color={textPrimary}
+              textTransform="uppercase"
+              letterSpacing="wide"
+            >
               Active Filters ({activeFilterCount})
             </Text>
             <Button
@@ -132,8 +152,7 @@ const ProductFilters = ({
                 border="1px solid"
                 borderColor={`${accentPrimary}30`}
               >
-                <Icon as={Search} boxSize={3} />
-                "{search}"
+                <Icon as={Search} boxSize={3} />"{search}"
                 <Button
                   variant="ghost"
                   size="xs"
@@ -164,8 +183,8 @@ const ProductFilters = ({
                 border="1px solid"
                 borderColor={`${accentPrimary}30`}
               >
-                <Icon as={DollarSign} boxSize={3} />
-                ${minPrice || "0"} - ${maxPrice || "∞"}
+                <Icon as={DollarSign} boxSize={3} />${minPrice || "0"} - $
+                {maxPrice || "∞"}
                 <Button
                   variant="ghost"
                   size="xs"
@@ -231,12 +250,12 @@ const ProductFilters = ({
             _hover={{ bg: bgCardHover }}
           >
             <HStack gap={3}>
-              <Box
-                p={2}
-                bg={`${accentPrimary}20`}
-                borderRadius="lg"
-              >
-                <Icon as={SlidersHorizontal} boxSize={5} color={accentPrimary} />
+              <Box p={2} bg={`${accentPrimary}20`} borderRadius="lg">
+                <Icon
+                  as={SlidersHorizontal}
+                  boxSize={5}
+                  color={accentPrimary}
+                />
               </Box>
               <Box>
                 <Text fontWeight="semibold" color={textPrimary}>
@@ -244,7 +263,8 @@ const ProductFilters = ({
                 </Text>
                 {activeFilterCount > 0 && (
                   <Text fontSize="xs" color={textMuted}>
-                    {activeFilterCount} active filter{activeFilterCount > 1 ? "s" : ""}
+                    {activeFilterCount} active filter
+                    {activeFilterCount > 1 ? "s" : ""}
                   </Text>
                 )}
               </Box>
@@ -420,7 +440,9 @@ const ProductFilters = ({
                     }}
                   >
                     <Select.ValueText
-                      placeholder={isCategoriesLoading ? "Loading..." : "All Categories"}
+                      placeholder={
+                        isCategoriesLoading ? "Loading..." : "All Categories"
+                      }
                       color={textPrimary}
                     />
                     <Select.IndicatorGroup>
