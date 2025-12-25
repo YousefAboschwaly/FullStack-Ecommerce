@@ -1,23 +1,32 @@
-"use client"
+"use client";
 
-import { useThemeColors } from "@/hooks/useThemeColors"
-import { Box, Button, Field, Flex, HStack, Icon, Input, Text, Textarea, VStack } from "@chakra-ui/react"
-import { FolderOpen, X } from "lucide-react"
-import { memo, useEffect } from "react"
-import { useForm } from "react-hook-form"
+import { useThemeColors } from "@/hooks/useThemeColors";
+import {
+  Box,
+  Button,
+  Field,
+  Flex,
+  HStack,
+  Icon,
+  Input,
+  Text,
+  VStack,
+} from "@chakra-ui/react";
+import { FolderOpen, X } from "lucide-react";
+import { memo, useEffect } from "react";
+import { useForm } from "react-hook-form";
 
 interface CategoryFormData {
-  title: string
-  description?: string
+  title: string;
 }
 
 interface CategoryFormModalProps {
-  isOpen: boolean
-  onClose: () => void
-  onSubmit: (data: CategoryFormData) => void
-  mode: "create" | "edit"
-  initialData?: Partial<CategoryFormData>
-  isLoading?: boolean
+  isOpen: boolean;
+  onClose: () => void;
+  onSubmit: (data: CategoryFormData) => void;
+  mode: "create" | "edit";
+  initialData?: Partial<CategoryFormData>;
+  isLoading?: boolean;
 }
 
 const CategoryFormModal = ({
@@ -39,44 +48,41 @@ const CategoryFormModal = ({
     accentPrimaryHover,
     buttonText,
     statusError,
-  } = useThemeColors()
+  } = useThemeColors();
 
   const {
     register,
     handleSubmit,
     reset,
     formState: { errors },
-  } = useForm<CategoryFormData>()
+  } = useForm<CategoryFormData>();
 
   useEffect(() => {
     if (isOpen) {
       if (initialData) {
         reset({
           title: initialData.title || "",
-          description: initialData.description || "",
-        })
+        });
       } else {
         reset({
           title: "",
-          description: "",
-        })
+        });
       }
     }
-  }, [isOpen, initialData, reset])
+  }, [isOpen, initialData, reset]);
 
   const onFormSubmit = (data: CategoryFormData) => {
-    onSubmit(data)
-  }
+    onSubmit(data);
+  };
 
   const handleClose = () => {
     reset({
       title: "",
-      description: "",
-    })
-    onClose()
-  }
+    });
+    onClose();
+  };
 
-  if (!isOpen) return null
+  if (!isOpen) return null;
 
   return (
     <Box
@@ -118,9 +124,23 @@ const CategoryFormModal = ({
         flexDirection="column"
       >
         {/* Header */}
-        <Flex justify="space-between" align="center" px={6} py={5} borderBottom="1px solid" borderColor={borderDefault}>
+        <Flex
+          justify="space-between"
+          align="center"
+          px={6}
+          py={5}
+          borderBottom="1px solid"
+          borderColor={borderDefault}
+        >
           <HStack gap={3}>
-            <Flex w="40px" h="40px" borderRadius="xl" bg={`${accentPrimary}15`} align="center" justify="center">
+            <Flex
+              w="40px"
+              h="40px"
+              borderRadius="xl"
+              bg={`${accentPrimary}15`}
+              align="center"
+              justify="center"
+            >
               <Icon as={FolderOpen} boxSize={5} color={accentPrimary} />
             </Flex>
             <Box>
@@ -128,7 +148,9 @@ const CategoryFormModal = ({
                 {mode === "create" ? "Add New Category" : "Edit Category"}
               </Text>
               <Text fontSize="sm" color={textMuted}>
-                {mode === "create" ? "Fill in the details to add a new category" : "Update the category information"}
+                {mode === "create"
+                  ? "Fill in the details to add a new category"
+                  : "Update the category information"}
               </Text>
             </Box>
           </HStack>
@@ -148,7 +170,13 @@ const CategoryFormModal = ({
 
         {/* Body */}
         <Box flex={1} overflowY="auto" px={6} py={5}>
-          <VStack as="form" gap={6} align="stretch" onSubmit={handleSubmit(onFormSubmit)} id="category-form">
+          <VStack
+            as="form"
+            gap={6}
+            align="stretch"
+            onSubmit={handleSubmit(onFormSubmit)}
+            id="category-form"
+          >
             {/* Title */}
             <Field.Root invalid={!!errors.title}>
               <Field.Label>
@@ -173,42 +201,29 @@ const CategoryFormModal = ({
                 }}
                 _focus={{
                   borderColor: errors.title ? statusError : accentPrimary,
-                  boxShadow: `0 0 0 1px ${errors.title ? statusError : accentPrimary}`,
+                  boxShadow: `0 0 0 1px ${
+                    errors.title ? statusError : accentPrimary
+                  }`,
                 }}
                 h="48px"
                 borderRadius="lg"
               />
-              {errors.title && <Field.ErrorText>{errors.title.message}</Field.ErrorText>}
-            </Field.Root>
-
-            {/* Description */}
-            <Field.Root invalid={!!errors.description}>
-              <Field.Label>Description (Optional)</Field.Label>
-              <Textarea
-                {...register("description")}
-                placeholder="Enter category description"
-                bg={bgCardHover}
-                border="2px solid"
-                borderColor={borderDefault}
-                _placeholder={{ color: textMuted }}
-                color={textPrimary}
-                _hover={{
-                  borderColor: accentPrimary,
-                }}
-                _focus={{
-                  borderColor: accentPrimary,
-                  boxShadow: `0 0 0 1px ${accentPrimary}`,
-                }}
-                minH="100px"
-                borderRadius="lg"
-                resize="vertical"
-              />
+              {errors.title && (
+                <Field.ErrorText>{errors.title.message}</Field.ErrorText>
+              )}
             </Field.Root>
           </VStack>
         </Box>
 
         {/* Footer */}
-        <HStack gap={3} px={6} py={5} borderTop="1px solid" borderColor={borderDefault} justify="flex-end">
+        <HStack
+          gap={3}
+          px={6}
+          py={5}
+          borderTop="1px solid"
+          borderColor={borderDefault}
+          justify="flex-end"
+        >
           <Button
             variant="outline"
             borderRadius="lg"
@@ -241,7 +256,7 @@ const CategoryFormModal = ({
         </HStack>
       </Box>
     </Box>
-  )
-}
+  );
+};
 
-export default memo(CategoryFormModal)
+export default memo(CategoryFormModal);
