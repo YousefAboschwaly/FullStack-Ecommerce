@@ -28,6 +28,8 @@ export const useThemeColors = () => {
     themeColors.bg.cardTranslucent.light,
     themeColors.bg.cardTranslucent.dark
   );
+  const bgMuted = useColorModeValue("gray.100", "gray.800");
+
 
   // Text colors
   const textPrimary = useColorModeValue(
@@ -123,6 +125,10 @@ export const useThemeColors = () => {
     themeColors.shadow.button.light,
     themeColors.shadow.button.dark
   );
+      const shadowSoft = useColorModeValue(
+    "0 2px 10px -2px rgba(0,0,0,0.05)",
+    "0 2px 10px -2px rgba(0,0,0,0.3)"
+  );
 
   // Gradient colors
   const gradientCardBg = useColorModeValue(
@@ -141,6 +147,9 @@ export const useThemeColors = () => {
     themeColors.gradient.logo.light,
     themeColors.gradient.logo.dark
   );
+
+
+
 
   // Add to useThemeColors hook:
 const badgeCategoryBg = useColorModeValue(themeColors.badge.category.bg.light, themeColors.badge.category.bg.dark);
@@ -161,6 +170,7 @@ const badgeCategoryBorder = useColorModeValue(themeColors.badge.category.border.
     bgCardHover,
     bgOverlay,
     bgCardTranslucent,
+    bgMuted,
 
     // Text
     textPrimary,
@@ -196,6 +206,7 @@ const badgeCategoryBorder = useColorModeValue(themeColors.badge.category.border.
     // Shadows
     shadowCard,
     shadowButton,
+    shadowSoft,
 
     // Gradients
     gradientCardBg,
