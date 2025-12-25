@@ -168,59 +168,6 @@ export default function Products() {
 
         {/* Main Content */}
         <Box flex={1}>
-          {/* Header */}
-          <HStack mb={6} gap={4} flexWrap="wrap" alignItems="center">
-            {categoryName ? (
-              <>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => navigate("/categories")}
-                  color={textMuted}
-                  _hover={{ color: textPrimary, bg: bgCardHover }}
-                >
-                  <Icon as={ArrowLeft} mr={2} />
-                  Back to Categories
-                </Button>
-                <Text fontSize="2xl" fontWeight="bold" color={textPrimary}>
-                  Products in "{categoryName}"
-                </Text>
-                <Badge
-                  bg={accentPrimary}
-                  color={buttonText}
-                  px={3}
-                  py={1}
-                  borderRadius="full"
-                  fontSize="sm"
-                  display="flex"
-                  alignItems="center"
-                  gap={2}
-                  cursor="pointer"
-                  onClick={handleClearCategoryFilter}
-                  _hover={{ opacity: 0.8 }}
-                >
-                  {categoryName}
-                  <Icon as={X} boxSize={3} />
-                </Badge>
-              </>
-            ) : (
-              <HStack gap={3}>
-                <Box p={2} bg={`${accentPrimary}20`} borderRadius="lg">
-                  <Icon as={Package} boxSize={6} color={accentPrimary} />
-                </Box>
-                <VStack align="start" gap={0}>
-                  <Text fontSize="2xl" fontWeight="bold" color={textPrimary}>
-                    All Products
-                  </Text>
-                  {pagination && (
-                    <Text fontSize="sm" color={textMuted}>
-                      {pagination.total} products found
-                    </Text>
-                  )}
-                </VStack>
-              </HStack>
-            )}
-          </HStack>
 
           {/* Loading State */}
           {isLoading ? (

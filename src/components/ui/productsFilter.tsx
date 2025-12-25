@@ -81,6 +81,7 @@ const ProductFilters = ({
       borderRadius="xl"
       boxShadow="sm"
       overflow="hidden"
+
     >
       <Collapsible.Root open={isOpen} onOpenChange={(e) => setIsOpen(e.open)}>
         {/* Header */}
@@ -103,9 +104,6 @@ const ProductFilters = ({
               <Box>
                 <Text fontWeight="semibold" color={textPrimary}>
                   Filters
-                </Text>
-                <Text fontSize="xs" color={textMuted}>
-                  {hasActiveFilters ? "Active filters applied" : "Refine your search"}
                 </Text>
               </Box>
             </HStack>

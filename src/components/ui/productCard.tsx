@@ -10,18 +10,18 @@ import {
   Icon,
   Flex,
 } from "@chakra-ui/react";
-import { ShoppingCart, Heart, Eye, Plus, Minus, Trash2 } from "lucide-react";
+import { ShoppingCart, Heart, Eye, Check } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import { useThemeColors } from "@/hooks/useThemeColors";
 import type { IProduct } from "@/interfaces";
 import { useDispatch, useSelector } from "react-redux";
 import { searchItemInCart } from "@/utils";
-import type { RootState } from "@/app/store";
 import {
   addToCart,
   deleteSelected,
-  removeFromCart,
   selectCart,
 } from "@/app/services/cartSlice";
+import type { RootState } from "@/app/store";
 
 interface ProductCardProps {
   product: IProduct;
@@ -29,8 +29,9 @@ interface ProductCardProps {
 const apiUrl = import.meta.env.VITE_API_URL || "";
 
 export default function ProductCard({ product }: ProductCardProps) {
-  const { title, description, price, stock, thumbnail, category } = product;
+  const { title, description, price, stock, thumbnail, category, documentId } = product;
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const { cartProducts } = useSelector((state: RootState) => selectCart(state));
 
   const {
@@ -54,17 +55,18 @@ export default function ProductCard({ product }: ProductCardProps) {
   // Get current item from cart
   const cartItem = searchItemInCart(cartProducts, product.id);
   const quantityInCart = cartItem?.quantity || 0;
+  const isInCart = quantityInCart > 0;
 
-  const handleAddToCart = () => {
-    dispatch(addToCart(product));
+  const handleCartToggle = () => {
+    if (isInCart) {
+      dispatch(deleteSelected(product.id));
+    } else {
+      dispatch(addToCart(product));
+    }
   };
 
-  const handleRemoveFromCart = () => {
-    dispatch(removeFromCart(product.id));
-  };
-
-  const handleDeleteFromCart = () => {
-    dispatch(deleteSelected(product.id));
+  const handleViewProduct = () => {
+    navigate(`/product/${documentId}`);
   };
 
   return (
@@ -138,6 +140,7 @@ export default function ProductCard({ product }: ProductCardProps) {
             color={accentPrimary}
             boxShadow={shadowSoft}
             _hover={{ bg: buttonPrimary, color: buttonText }}
+            onClick={handleViewProduct}
           >
             <Icon as={Eye} boxSize={4} />
           </Button>
@@ -233,69 +236,51 @@ export default function ProductCard({ product }: ProductCardProps) {
               </Text>
             </VStack>
 
-            {/* Cart Actions */}
-            {quantityInCart > 0 ? (
-              <HStack gap={1}>
-                <Button
-                  size="sm"
-                  borderRadius="full"
-                  variant="outline"
-                  borderColor={borderDefault}
-                  onClick={handleRemoveFromCart}
-                  p={0}
-                  minW="32px"
-                  h="32px"
-                >
-                  <Icon as={Minus} boxSize={4} />
-                </Button>
-                <Text fontWeight="semibold" minW="24px" textAlign="center">
-                  {quantityInCart}
-                </Text>
-                <Button
-                  size="sm"
-                  borderRadius="full"
-                  bg={buttonPrimary}
-                  color={buttonText}
-                  onClick={handleAddToCart}
-                  disabled={quantityInCart >= stock}
-                  p={0}
-                  minW="32px"
-                  h="32px"
-                  _disabled={{ opacity: 0.5, cursor: "not-allowed" }}
-                >
-                  <Icon as={Plus} boxSize={4} />
-                </Button>
-                <Button
-                  size="sm"
-                  borderRadius="full"
-                  variant="ghost"
-                  color="red.500"
-                  onClick={handleDeleteFromCart}
-                  p={0}
-                  minW="32px"
-                  h="32px"
-                  _hover={{ bg: "red.50" }}
-                >
-                  <Icon as={Trash2} boxSize={4} />
-                </Button>
-              </HStack>
-            ) : (
-              <Button
-                size="sm"
-                bg={buttonPrimary}
-                color={buttonText}
-                borderRadius="full"
-                px={4}
-                boxShadow={shadowSoft}
-                disabled={isOutOfStock}
-                onClick={handleAddToCart}
-                _hover={{ opacity: 0.9, boxShadow: shadowCard }}
-                _disabled={{ opacity: 0.5, cursor: "not-allowed" }}
+            {/* Animated Cart Toggle Button */}
+            <Button
+              size="sm"
+              borderRadius="full"
+              px={isInCart ? 4 : 4}
+              boxShadow={isInCart ? shadowCard : shadowSoft}
+              disabled={isOutOfStock}
+              onClick={handleCartToggle}
+              bg={isInCart ? accentPrimary : buttonPrimary}
+              color={buttonText}
+              transition="all 0.4s cubic-bezier(0.4, 0, 0.2, 1)"
+              _hover={{ 
+                opacity: 0.9, 
+                boxShadow: shadowCard,
+                transform: "scale(1.05)"
+              }}
+              _disabled={{ opacity: 0.5, cursor: "not-allowed" }}
+              position="relative"
+              overflow="hidden"
+            >
+              <Flex
+                align="center"
+                gap={2}
+                transition="all 0.4s cubic-bezier(0.4, 0, 0.2, 1)"
               >
-                <Icon as={ShoppingCart} boxSize={4} mr={2} />
-                Add
-              </Button>
-            )}
+                <Box
+                  as="span"
+                  transition="all 0.4s cubic-bezier(0.4, 0, 0.2, 1)"
+                  transform={isInCart ? "translateX(0) rotate(0)" : "translateX(0)"}
+                >
+                  <Icon 
+                    as={isInCart ? Check : ShoppingCart} 
+                    boxSize={4}
+                    transition="all 0.3s ease"
+                  />
+                </Box>
+                <Text
+                  as="span"
+                  transition="all 0.3s ease"
+                  fontWeight="medium"
+                >
+                  {isInCart ? "Added" : "Add"}
+                </Text>
+              </Flex>
+            </Button>
           </HStack>
         </VStack>
       </Card.Body>
