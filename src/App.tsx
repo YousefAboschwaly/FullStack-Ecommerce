@@ -9,15 +9,15 @@ import ProductDetails from "./components/ui/productDetails";
 import { Toaster } from "./components/ui/toaster";
 import { AuthProvider } from "./context/AuthContext";
 import Layout from "./Layout";
+import AdminLayout from "./Layout/AdminLayout";
 import ProtectedRoute from "./Layout/ProtectedRoute";
 import About from "./pages/About";
+import Categories from "./pages/Admin/Categories";
+import Dashboard from "./pages/Admin/Dashboard";
+import AdminProducts from "./pages/Admin/Products";
 import Login from "./pages/Login";
 import NotFound from "./pages/NotFound";
 import Products from "./pages/Products";
-import AdminLayout from "./Layout/AdminLayout";
-import Dashboard from "./pages/Admin/Dashboard";
-import Categories from "./pages/Admin/Categories";
-import AdminProducts  from './pages/Admin/Products';
 
 export default function App() {
   const router = createBrowserRouter(
@@ -42,7 +42,7 @@ export default function App() {
           <Route path="product/:id" element={<ProductDetails />} />
         </Route>
 
-              {/* Admin Routes */}
+        {/* Admin Routes */}
         <Route path="/admin" element={<AdminLayout />}>
           <Route index element={<Dashboard />} />
           <Route path="products" element={<AdminProducts />} />

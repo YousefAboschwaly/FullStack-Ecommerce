@@ -3,6 +3,7 @@ import { Navigate, Outlet } from "react-router-dom";
 import Navbar from "./Navbar";
 import { useAuth } from "@/context/AuthContext";
 import CartDrawer from "@/components/ui/cartDrawer";
+import ScrollToTop from "@/components/ui/scrollToTop";
 
 export default function Layout() {
   const { token } = useAuth();
@@ -12,6 +13,8 @@ export default function Layout() {
   }
   return (
     <>
+      <ScrollToTop />
+
       <Navbar />
       <CartDrawer />
       <Container my={"5"}>
