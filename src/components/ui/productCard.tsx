@@ -22,17 +22,23 @@ import {
   selectCart,
 } from "@/app/services/cartSlice";
 import type { RootState } from "@/app/store";
+import { useState } from "react";
 
 interface ProductCardProps {
   product: IProduct;
 }
+
 const apiUrl = import.meta.env.VITE_API_URL || "";
 
 export default function ProductCard({ product }: ProductCardProps) {
-  const { title, description, price, stock, thumbnail, category, documentId } = product;
+  const { title, description, price, stock, thumbnail, category, documentId } =
+    product;
+
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { cartProducts } = useSelector((state: RootState) => selectCart(state));
+  const { cartProducts } = useSelector((state: RootState) =>
+    selectCart(state)
+  );
 
   const {
     bgCard,
@@ -52,17 +58,26 @@ export default function ProductCard({ product }: ProductCardProps) {
   const isLowStock = stock < 10;
   const isOutOfStock = stock === 0;
 
-  // Get current item from cart
   const cartItem = searchItemInCart(cartProducts, product.id);
   const quantityInCart = cartItem?.quantity || 0;
   const isInCart = quantityInCart > 0;
 
+  // 🔥 animation state
+  const [isAnimating, setIsAnimating] = useState(false);
+
   const handleCartToggle = () => {
-    if (isInCart) {
-      dispatch(deleteSelected(product.id));
-    } else {
-      dispatch(addToCart(product));
-    }
+    if (isOutOfStock) return;
+
+    setIsAnimating(true);
+
+    setTimeout(() => {
+      if (isInCart) {
+        dispatch(deleteSelected(product.id));
+      } else {
+        dispatch(addToCart(product));
+      }
+      setIsAnimating(false);
+    }, 350);
   };
 
   const handleViewProduct = () => {
@@ -85,14 +100,9 @@ export default function ProductCard({ product }: ProductCardProps) {
       position="relative"
       className="group"
     >
-      {/* Image Container */}
+      {/* Image */}
       <Box position="relative" overflow="hidden" bg={bgMuted}>
-        <Box
-          as="div"
-          position="relative"
-          paddingBottom="100%"
-          overflow="hidden"
-        >
+        <Box position="relative" paddingBottom="100%">
           <Image
             src={
               thumbnail?.url
@@ -129,106 +139,56 @@ export default function ProductCard({ product }: ProductCardProps) {
             bg={bgOverlay}
             color={accentPrimary}
             boxShadow={shadowSoft}
-            _hover={{ bg: buttonPrimary, color: buttonText }}
           >
             <Icon as={Heart} boxSize={4} />
           </Button>
+
           <Button
             size="sm"
             borderRadius="full"
             bg={bgOverlay}
             color={accentPrimary}
             boxShadow={shadowSoft}
-            _hover={{ bg: buttonPrimary, color: buttonText }}
             onClick={handleViewProduct}
           >
             <Icon as={Eye} boxSize={4} />
           </Button>
         </Flex>
 
-        {/* Status Badges */}
+        {/* Badges */}
         <Flex position="absolute" left={3} top={3} direction="column" gap={2}>
           {category && (
-            <Badge
-              bg={bgOverlay}
-              color={textPrimary}
-              px={3}
-              py={1}
-              borderRadius="full"
-              fontSize="xs"
-              fontWeight="medium"
-            >
+            <Badge bg={bgOverlay} color={textPrimary} px={3} py={1}>
               {category.title}
             </Badge>
           )}
           {isOutOfStock && (
-            <Badge
-              colorPalette="red"
-              px={3}
-              py={1}
-              borderRadius="full"
-              fontSize="xs"
-            >
-              Out of Stock
-            </Badge>
+            <Badge colorPalette="red">Out of Stock</Badge>
           )}
           {isLowStock && !isOutOfStock && (
-            <Badge
-              colorPalette="orange"
-              px={3}
-              py={1}
-              borderRadius="full"
-              fontSize="xs"
-            >
-              Low Stock
-            </Badge>
+            <Badge colorPalette="orange">Low Stock</Badge>
           )}
         </Flex>
-
-        {/* Cart Badge */}
-        {quantityInCart > 0 && (
-          <Badge
-            position="absolute"
-            bottom={3}
-            right={3}
-            bg={accentPrimary}
-            color={buttonText}
-            px={3}
-            py={1}
-            borderRadius="full"
-            fontSize="xs"
-            fontWeight="bold"
-          >
-            {quantityInCart} in cart
-          </Badge>
-        )}
       </Box>
 
       {/* Content */}
       <Card.Body p={4}>
-        <VStack gap={3} align="stretch">
-          <Text
-            fontWeight="semibold"
-            color={textPrimary}
-            lineClamp={1}
-            transition="color 0.2s"
-            _groupHover={{ color: accentPrimary }}
-          >
+        <VStack align="stretch" gap={3}>
+          <Text fontWeight="semibold" color={textPrimary}>
             {title}
           </Text>
 
-          <Text
-            fontSize="sm"
-            color={textMuted}
-            lineClamp={1}
-            lineHeight="relaxed"
-          >
+          <Text fontSize="sm" color={textMuted} maxLines={1}>
             {description}
           </Text>
 
-          <HStack justify="space-between" pt={2}         borderTop="1px solid"
-        borderColor={borderDefault}>
-            <VStack gap={0} align="start">
+          <HStack
+            justify="space-between"
+            pt={2}
+            borderTop="1px solid"
+            borderColor={borderDefault}
+          >
+            <VStack align="start" gap={0}>
               <Text fontSize="xl" fontWeight="bold" color={accentPrimary}>
                 ${price.toFixed(2)}
               </Text>
@@ -237,46 +197,41 @@ export default function ProductCard({ product }: ProductCardProps) {
               </Text>
             </VStack>
 
-            {/* Animated Cart Toggle Button */}
+            {/* 🛒 Animated Add To Cart */}
             <Button
               size="sm"
               borderRadius="full"
-              px={isInCart ? 4 : 4}
-              boxShadow={isInCart ? shadowCard : shadowSoft}
-              disabled={isOutOfStock}
-              onClick={handleCartToggle}
               bg={isInCart ? accentPrimary : buttonPrimary}
               color={buttonText}
-              transition="all 0.4s cubic-bezier(0.4, 0, 0.2, 1)"
-              _hover={{ 
-                opacity: 0.9, 
-                boxShadow: shadowCard,
-                transform: "scale(1.05)"
-              }}
-              _disabled={{ opacity: 0.5, cursor: "not-allowed" }}
+              onClick={handleCartToggle}
+              disabled={isOutOfStock}
               position="relative"
               overflow="hidden"
+              transition="all 0.3s ease"
             >
-              <Flex
-                align="center"
-                gap={2}
-                transition="all 0.4s cubic-bezier(0.4, 0, 0.2, 1)"
-              >
+              <Flex align="center" gap={2}>
                 <Box
-                  as="span"
-                  transition="all 0.4s cubic-bezier(0.4, 0, 0.2, 1)"
-                  transform={isInCart ? "translateX(0) rotate(0)" : "translateX(0)"}
+                  transition="all 0.35s cubic-bezier(0.4,0,0.2,1)"
+                  transform={
+                    isAnimating
+                      ? "translateX(16px)"
+                      : "translateX(0)"
+                  }
+                  color={isAnimating ? "green.400" : buttonText}
                 >
-                  <Icon 
-                    as={isInCart ? Check : ShoppingCart} 
+                  <Icon
+                    as={
+                      isInCart || isAnimating
+                        ? Check
+                        : ShoppingCart
+                    }
                     boxSize={4}
-                    transition="all 0.3s ease"
                   />
                 </Box>
+
                 <Text
-                  as="span"
-                  transition="all 0.3s ease"
-                  fontWeight="medium"
+                  transition="opacity 0.25s ease"
+                  opacity={isAnimating ? 0 : 1}
                 >
                   {isInCart ? "Added" : "Add"}
                 </Text>
