@@ -25,7 +25,7 @@ export const categoriesApi = createApi({
 
     // GET Categories with Products
     getCategoriesWithProducts: builder.query<ICategories, void>({
-      query: () => `/api/categories?populate[products][populate]=thumbnail`,
+      query: () => `/api/categories?populate[products][populate]=thumbnail&sort=createdAt:Desc`,
       providesTags: (result) =>
         result
           ? [
@@ -56,7 +56,7 @@ export const categoriesApi = createApi({
     // EDIT Category
     editCategory: builder.mutation<
       ICategory,
-      { id: string; body: { data: { title: string; description?: string } } }
+      { id: string; body: { data: { title: string} } }
     >({
       query: ({ id, body }) => ({
         url: `/api/categories/${id}`,

@@ -41,7 +41,6 @@ export default function CategoryTableRow({
     statusError,
   } = useThemeColors();
 
-  console.log(category.products?.at(0));
   return (
     <Table.Row
       key={category.id}

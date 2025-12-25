@@ -23,7 +23,6 @@ import { useNavigate } from "react-router-dom";
 
 interface CategoryFormData {
   title: string;
-  description?: string;
 }
 
 const Categories = () => {
@@ -63,6 +62,7 @@ const Categories = () => {
   };
 
   const handleConfirmCreateCategory = async (data: CategoryFormData) => {
+    console.log(data);
     try {
       console.log("Create category:", data);
       toaster.success({
@@ -70,12 +70,13 @@ const Categories = () => {
         duration: 3000,
         closable: true,
       });
-      setCreateModalOpen(false);
     } catch {
       toaster.error({
         title: "Failed to create category",
         duration: 3000,
       });
+    } finally {
+      setCreateModalOpen(false);
     }
   };
 
@@ -88,18 +89,20 @@ const Categories = () => {
     if (!selectedCategory) return;
     try {
       console.log("Edit category:", data);
+      
       toaster.success({
         title: "Category edited successfully",
         duration: 3000,
         closable: true,
       });
-      setEditModalOpen(false);
     } catch {
       toaster.error({
         title: "Failed to update category",
         duration: 3000,
         closable: true,
       });
+    } finally {
+      setEditModalOpen(false);
     }
   };
 
@@ -112,7 +115,6 @@ const Categories = () => {
         duration: 3000,
         closable: true,
       });
-      setSelectedCategory(undefined);
       onClose();
     } catch (error) {
       console.error(error);
@@ -120,6 +122,8 @@ const Categories = () => {
         title: "Failed to delete category",
         duration: 3000,
       });
+    } finally {
+      setSelectedCategory(undefined);
     }
   };
 
