@@ -1,5 +1,5 @@
-import { useState, } from "react";
-import { Search, SlidersHorizontal, X, ChevronDown } from "lucide-react";
+import { useState } from "react";
+import { Search, SlidersHorizontal, X, ChevronDown, DollarSign, Tag } from "lucide-react";
 import {
   Box,
   VStack,
@@ -10,6 +10,8 @@ import {
   Icon,
   Collapsible,
   Portal,
+  Badge,
+  Flex,
 } from "@chakra-ui/react";
 import { Select } from "@chakra-ui/react";
 import { createListCollection } from "@chakra-ui/react";
@@ -21,6 +23,7 @@ interface ProductFiltersProps {
   minPrice: string;
   maxPrice: string;
   categoryId: string;
+  categoryName?: string;
   onSearchChange: (value: string) => void;
   onMinPriceChange: (value: string) => void;
   onMaxPriceChange: (value: string) => void;
@@ -33,6 +36,7 @@ const ProductFilters = ({
   minPrice,
   maxPrice,
   categoryId,
+  categoryName,
   onSearchChange,
   onMinPriceChange,
   onMaxPriceChange,
@@ -62,6 +66,12 @@ const ProductFilters = ({
 
   const categories = categoriesData?.data || [];
 
+  // Count active filters
+  const activeFilterCount = [search, minPrice, maxPrice, categoryId].filter(Boolean).length;
+
+  // Get category name from ID
+  const selectedCategoryName = categoryName || categories.find((cat) => String(cat.id) === categoryId)?.title;
+
   // Create collection for category select
   const categoryCollection = createListCollection({
     items: [
@@ -81,8 +91,135 @@ const ProductFilters = ({
       borderRadius="xl"
       boxShadow="sm"
       overflow="hidden"
-
     >
+      {/* Active Filters Summary - Shows at TOP */}
+      {hasActiveFilters && (
+        <Box
+          px={4}
+          py={3}
+          bg={`${accentPrimary}10`}
+          borderBottom="1px solid"
+          borderColor={borderDefault}
+        >
+          <Flex justify="space-between" align="center" mb={2}>
+            <Text fontSize="xs" fontWeight="bold" color={textPrimary} textTransform="uppercase" letterSpacing="wide">
+              Active Filters ({activeFilterCount})
+            </Text>
+            <Button
+              variant="ghost"
+              size="xs"
+              onClick={onClearFilters}
+              color={statusError}
+              _hover={{ bg: `${statusError}15` }}
+            >
+              <Icon as={X} boxSize={3} mr={1} />
+              Clear all
+            </Button>
+          </Flex>
+          <Flex wrap="wrap" gap={2}>
+            {search && (
+              <Badge
+                bg={`${accentPrimary}20`}
+                color={accentPrimary}
+                px={3}
+                py={1.5}
+                borderRadius="full"
+                fontSize="xs"
+                fontWeight="medium"
+                display="flex"
+                alignItems="center"
+                gap={1}
+                border="1px solid"
+                borderColor={`${accentPrimary}30`}
+              >
+                <Icon as={Search} boxSize={3} />
+                "{search}"
+                <Button
+                  variant="ghost"
+                  size="xs"
+                  p={0}
+                  minW="auto"
+                  h="auto"
+                  ml={1}
+                  onClick={() => onSearchChange("")}
+                  color={accentPrimary}
+                  _hover={{ color: statusError }}
+                >
+                  <Icon as={X} boxSize={3} />
+                </Button>
+              </Badge>
+            )}
+            {(minPrice || maxPrice) && (
+              <Badge
+                bg={`${accentPrimary}20`}
+                color={accentPrimary}
+                px={3}
+                py={1.5}
+                borderRadius="full"
+                fontSize="xs"
+                fontWeight="medium"
+                display="flex"
+                alignItems="center"
+                gap={1}
+                border="1px solid"
+                borderColor={`${accentPrimary}30`}
+              >
+                <Icon as={DollarSign} boxSize={3} />
+                ${minPrice || "0"} - ${maxPrice || "∞"}
+                <Button
+                  variant="ghost"
+                  size="xs"
+                  p={0}
+                  minW="auto"
+                  h="auto"
+                  ml={1}
+                  onClick={() => {
+                    onMinPriceChange("");
+                    onMaxPriceChange("");
+                  }}
+                  color={accentPrimary}
+                  _hover={{ color: statusError }}
+                >
+                  <Icon as={X} boxSize={3} />
+                </Button>
+              </Badge>
+            )}
+            {categoryId && selectedCategoryName && (
+              <Badge
+                bg={`${accentPrimary}20`}
+                color={accentPrimary}
+                px={3}
+                py={1.5}
+                borderRadius="full"
+                fontSize="xs"
+                fontWeight="medium"
+                display="flex"
+                alignItems="center"
+                gap={1}
+                border="1px solid"
+                borderColor={`${accentPrimary}30`}
+              >
+                <Icon as={Tag} boxSize={3} />
+                {selectedCategoryName}
+                <Button
+                  variant="ghost"
+                  size="xs"
+                  p={0}
+                  minW="auto"
+                  h="auto"
+                  ml={1}
+                  onClick={() => onCategoryChange("")}
+                  color={accentPrimary}
+                  _hover={{ color: statusError }}
+                >
+                  <Icon as={X} boxSize={3} />
+                </Button>
+              </Badge>
+            )}
+          </Flex>
+        </Box>
+      )}
+
       <Collapsible.Root open={isOpen} onOpenChange={(e) => setIsOpen(e.open)}>
         {/* Header */}
         <Collapsible.Trigger asChild>
@@ -105,24 +242,14 @@ const ProductFilters = ({
                 <Text fontWeight="semibold" color={textPrimary}>
                   Filters
                 </Text>
+                {activeFilterCount > 0 && (
+                  <Text fontSize="xs" color={textMuted}>
+                    {activeFilterCount} active filter{activeFilterCount > 1 ? "s" : ""}
+                  </Text>
+                )}
               </Box>
             </HStack>
             <HStack gap={2}>
-              {hasActiveFilters && (
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    onClearFilters();
-                  }}
-                  color={statusError}
-                  _hover={{ bg: `${statusError}15` }}
-                >
-                  <Icon as={X} boxSize={4} mr={1} />
-                  Clear
-                </Button>
-              )}
               <Icon
                 as={ChevronDown}
                 boxSize={5}
