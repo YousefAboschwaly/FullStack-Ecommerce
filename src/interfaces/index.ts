@@ -58,6 +58,9 @@ export interface ProductFormData {
   thumbnail: File | string | null;
 }
 
+export interface CategoryFormData{
+  title:string
+}
 export interface ICartItem extends IProduct {
   quantity: number;
 }

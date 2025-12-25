@@ -1,4 +1,4 @@
-import type { ICategories, ICategory } from "@/interfaces";
+import type { CategoryFormData, ICategories, ICategory } from "@/interfaces";
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
 export const categoriesApi = createApi({
@@ -56,9 +56,10 @@ export const categoriesApi = createApi({
     // EDIT Category
     editCategory: builder.mutation<
       ICategory,
-      { id: string; body: { data: { title: string} } }
+      { id: string; body: { data:CategoryFormData  } }
     >({
       query: ({ id, body }) => ({
+        
         url: `/api/categories/${id}`,
         method: "PUT",
         body,

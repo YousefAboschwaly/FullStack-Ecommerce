@@ -18,7 +18,7 @@ import {
 } from "@chakra-ui/react";
 import { Plus } from "lucide-react";
 import { useCallback, useState } from "react";
-import { useGetCategoriesWithProductsQuery } from "@/app/services/categories";
+import { useEditCategoryMutation, useGetCategoriesWithProductsQuery } from "@/app/services/categories";
 import { useNavigate } from "react-router-dom";
 
 interface CategoryFormData {
@@ -47,7 +47,9 @@ const Categories = () => {
   const [editModalOpen, setEditModalOpen] = useState(false);
   const [isLoading] = useState(false);
   const [isCreating] = useState(false);
-  const [isEditing] = useState(false);
+
+  // EDIT Category 
+  const [editCategory,{isLoading:isEditing}] = useEditCategoryMutation()
   const [isDeleting] = useState(false);
 
   const handleView = (category: ICategory) => {
@@ -88,8 +90,13 @@ const Categories = () => {
   const handleConfirmEdit = async (data: CategoryFormData) => {
     if (!selectedCategory) return;
     try {
-      console.log("Edit category:", data);
-      
+      const payLoad={
+        data:{
+          title:data.title
+        }
+      }
+      console.log("Edit category:",payLoad);
+      editCategory({id:selectedCategory.documentId,body:payLoad})
       toaster.success({
         title: "Category edited successfully",
         duration: 3000,
