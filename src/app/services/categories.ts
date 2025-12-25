@@ -1,5 +1,6 @@
 import type { CategoryFormData, ICategories, ICategory } from "@/interfaces";
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+import cookieService from "./cookieService";
 
 export const categoriesApi = createApi({
   reducerPath: "categoriesApi",
@@ -25,7 +26,8 @@ export const categoriesApi = createApi({
 
     // GET Categories with Products
     getCategoriesWithProducts: builder.query<ICategories, void>({
-      query: () => `/api/categories?populate[products][populate]=thumbnail&sort=createdAt:Desc`,
+      query: () =>
+        `/api/categories?populate[products][populate]=thumbnail&sort=createdAt:Desc`,
       providesTags: (result) =>
         result
           ? [
@@ -43,6 +45,10 @@ export const categoriesApi = createApi({
       query: (newCategory) => ({
         url: `/api/categories`,
         method: "POST",
+        headers: {
+          Authorization: `Bearer ${cookieService.getCookie("jwt")}`,
+          "Content-Type": "application/json",
+        },
         body: {
           data: newCategory, // 🔴 مهم جدًا في Strapi v4
         },
@@ -56,12 +62,15 @@ export const categoriesApi = createApi({
     // EDIT Category
     editCategory: builder.mutation<
       ICategory,
-      { id: string; body: { data:CategoryFormData  } }
+      { id: string; body: { data: CategoryFormData } }
     >({
       query: ({ id, body }) => ({
-        
         url: `/api/categories/${id}`,
         method: "PUT",
+        headers: {
+          Authorization: `Bearer ${cookieService.getCookie("jwt")}`,
+          "Content-Type": "application/json",
+        },
         body,
       }),
       invalidatesTags: (_res, _err, { id }) => [
@@ -75,6 +84,10 @@ export const categoriesApi = createApi({
     deleteCategory: builder.mutation<void, string>({
       query: (id) => ({
         url: `/api/categories/${id}`,
+        headers: {
+          Authorization: `Bearer ${cookieService.getCookie("jwt")}`,
+          "Content-Type": "application/json",
+        },
         method: "DELETE",
       }),
       invalidatesTags: [
