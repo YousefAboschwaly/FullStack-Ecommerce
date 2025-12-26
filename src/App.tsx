@@ -18,6 +18,7 @@ import AdminProducts from "./pages/Admin/Products";
 import Login from "./pages/Login";
 import NotFound from "./pages/NotFound";
 import Products from "./pages/Products";
+import EmailConfirmation from "./components/ui/EmailConfirmation";
 
 export default function App() {
   const router = createBrowserRouter(
@@ -25,6 +26,7 @@ export default function App() {
       <>
         {/* Public routes */}
         <Route path="login" element={<Login />} />
+        <Route path="email-confirmation" element={<EmailConfirmation />} />
 
         {/* Main Layout */}
         <Route
